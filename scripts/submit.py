@@ -178,9 +178,12 @@ def main():
                         "type": "ageRatingDeclarations",
                         "id": ard_id,
                         "attributes": {
+                            "gambling": False,
                             "gamblingSimulated": "INFREQUENT_OR_MILD",
+                            "sexualContentOrNudity": "NONE",
                             "sexualContentGraphicAndNudity": "NONE",
                             "userGeneratedContent": False,
+                            "ageAssurance": "NONE",
                         },
                     }
                 })
