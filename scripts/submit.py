@@ -66,6 +66,18 @@ def main():
         else:
             raise
 
+    # Set copyright on the version
+    try:
+        api("PATCH", f"/appStoreVersions/{version_id}", json={
+            "data": {
+                "type": "appStoreVersions", "id": version_id,
+                "attributes": {"copyright": "2026 tokyonasu"}
+            }
+        })
+        print("Copyright set")
+    except RuntimeError as e:
+        print(f"Copyright: {e}")
+
     review_details = api("GET", f"/appStoreVersions/{version_id}/appStoreReviewDetail")
     attrs = {**REVIEW_CONTACT, "demoAccountRequired": False, "demoAccountName": "", "demoAccountPassword": ""}
     if review_details.get("data"):
