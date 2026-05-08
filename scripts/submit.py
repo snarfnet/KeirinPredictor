@@ -66,6 +66,40 @@ def main():
         else:
             raise
 
+    # Set pricing (free) if not already set
+    try:
+        # Find free price point for JPN
+        price_data = api("GET", f"/apps/{app_id}/appPricePoints?filter[territory]=JPN&limit=200")
+        free_point_id = None
+        for pp in price_data.get("data", []):
+            if pp["attributes"].get("customerPrice") == "0.0" or pp["attributes"].get("customerPrice") == "0":
+                free_point_id = pp["id"]
+                break
+        if free_point_id:
+            api("POST", "/appPriceSchedules", json={
+                "data": {
+                    "type": "appPriceSchedules",
+                    "relationships": {
+                        "app": {"data": {"type": "apps", "id": app_id}},
+                        "baseTerritory": {"data": {"type": "territories", "id": "JPN"}},
+                        "manualPrices": {"data": [{"type": "appPrices", "id": "${price1}"}]}
+                    }
+                },
+                "included": [{
+                    "type": "appPrices",
+                    "id": "${price1}",
+                    "attributes": {"startDate": None},
+                    "relationships": {
+                        "appPricePoint": {"data": {"type": "appPricePoints", "id": free_point_id}}
+                    }
+                }]
+            })
+            print("Pricing set to free")
+        else:
+            print("WARNING: Could not find free price point")
+    except RuntimeError as e:
+        print(f"Pricing: {e}")
+
     # Set copyright on the version
     try:
         api("PATCH", f"/appStoreVersions/{version_id}", json={
