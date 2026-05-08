@@ -145,16 +145,57 @@ def main():
             else:
                 raise
 
+    # Set privacyPolicyUrl on appInfoLocalizations (not version localizations)
+    try:
+        app_info = api("GET", f"/apps/{app_id}/appInfos?limit=1")
+        if app_info.get("data"):
+            app_info_id = app_info["data"][0]["id"]
+            info_locs = api("GET", f"/appInfos/{app_info_id}/appInfoLocalizations")
+            for info_loc in info_locs.get("data", []):
+                api("PATCH", f"/appInfoLocalizations/{info_loc['id']}", json={
+                    "data": {
+                        "type": "appInfoLocalizations",
+                        "id": info_loc["id"],
+                        "attributes": {
+                            "privacyPolicyUrl": "https://snarfnet.github.io/",
+                        },
+                    }
+                })
+            print("privacyPolicyUrl set on appInfoLocalizations")
+    except RuntimeError as e:
+        print(f"appInfoLocalizations: {e}")
+
+    # Set age rating declaration
+    try:
+        app_info = api("GET", f"/apps/{app_id}/appInfos?limit=1")
+        if app_info.get("data"):
+            app_info_id = app_info["data"][0]["id"]
+            age_rating = api("GET", f"/appInfos/{app_info_id}/ageRatingDeclaration")
+            if age_rating.get("data"):
+                ard_id = age_rating["data"]["id"]
+                api("PATCH", f"/ageRatingDeclarations/{ard_id}", json={
+                    "data": {
+                        "type": "ageRatingDeclarations",
+                        "id": ard_id,
+                        "attributes": {
+                            "gamblingSimulated": "INFREQUENT_OR_MILD",
+                            "sexualContentGraphicAndNudity": "NONE",
+                            "userGeneratedContent": False,
+                        },
+                    }
+                })
+                print("Age rating set")
+    except RuntimeError as e:
+        print(f"Age rating: {e}")
+
     loc_id = get_localization_id(version_id)
     if loc_id:
-        # Set URLs separately so a 409 on whatsNew doesn't skip them
         try:
             api("PATCH", f"/appStoreVersionLocalizations/{loc_id}", json={
                 "data": {
                     "type": "appStoreVersionLocalizations",
                     "id": loc_id,
                     "attributes": {
-                        "privacyPolicyUrl": "https://snarfnet.github.io/",
                         "marketingUrl": "https://snarfnet.github.io/",
                         "supportUrl": "https://snarfnet.github.io/",
                     },

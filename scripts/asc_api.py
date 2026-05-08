@@ -89,7 +89,6 @@ def get_localization_id(version_id):
                 "keywords": "競輪,予測,レース,選手,バンク,RPG,ライン,逆張り,ギャンブル,keirin",
                 "marketingUrl": "https://snarfnet.github.io/",
                 "supportUrl": "https://snarfnet.github.io/",
-                "privacyPolicyUrl": "https://snarfnet.github.io/",
                 "whatsNew": "パフォーマンス改善と不具合修正",
             },
             "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}}},
