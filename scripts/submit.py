@@ -154,6 +154,9 @@ def main():
                     "id": loc_id,
                     "attributes": {
                         "whatsNew": "初回リリース",
+                        "privacyPolicyUrl": "https://snarfnet.github.io/",
+                        "marketingUrl": "https://snarfnet.github.io/",
+                        "supportUrl": "https://snarfnet.github.io/",
                     },
                 }
             })
