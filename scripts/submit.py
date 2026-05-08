@@ -147,6 +147,23 @@ def main():
 
     loc_id = get_localization_id(version_id)
     if loc_id:
+        # Set URLs separately so a 409 on whatsNew doesn't skip them
+        try:
+            api("PATCH", f"/appStoreVersionLocalizations/{loc_id}", json={
+                "data": {
+                    "type": "appStoreVersionLocalizations",
+                    "id": loc_id,
+                    "attributes": {
+                        "privacyPolicyUrl": "https://snarfnet.github.io/",
+                        "marketingUrl": "https://snarfnet.github.io/",
+                        "supportUrl": "https://snarfnet.github.io/",
+                    },
+                }
+            })
+            print("URLs set")
+        except RuntimeError as e:
+            print(f"URLs: {e}")
+
         try:
             api("PATCH", f"/appStoreVersionLocalizations/{loc_id}", json={
                 "data": {
@@ -154,9 +171,6 @@ def main():
                     "id": loc_id,
                     "attributes": {
                         "whatsNew": "初回リリース",
-                        "privacyPolicyUrl": "https://snarfnet.github.io/",
-                        "marketingUrl": "https://snarfnet.github.io/",
-                        "supportUrl": "https://snarfnet.github.io/",
                     },
                 }
             })
