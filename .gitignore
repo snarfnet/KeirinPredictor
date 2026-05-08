@@ -1,0 +1,7 @@
+build/
+DerivedData/
+*.xcuserdata
+*.xcscmblueprint
+Pods/
+*.ipa
+.DS_Store

@@ -1,0 +1,115 @@
+import Foundation
+
+// MARK: - Player Stats (from player_stats.json compressed keys)
+struct PlayerStats: Codable {
+    let d: String   // 地区
+    let p: String   // 県
+    let s: String   // 脚質
+    let c: String   // 級班
+    let g: Int      // 卒業期
+    let r: Int      // 出走数
+    let w: Int      // 勝数
+    let wr: Double  // 勝率
+    let t2: Double  // 連対率
+    let t3: Double  // 3連対率
+    let rr: [Int]   // 直近着順
+    let rk: [String] // 直近決まり手
+    let vs: [String: VenueRecord] // 場別成績
+    let rpg: RPGStats
+
+    var district: String { d }
+    var prefecture: String { p }
+    var style: String { s }
+    var classRank: String { c }
+    var graduation: Int { g }
+    var races: Int { r }
+    var wins: Int { w }
+    var winRate: Double { wr }
+    var top2Rate: Double { t2 }
+    var top3Rate: Double { t3 }
+    var recentRanks: [Int] { rr }
+    var recentKimarite: [String] { rk }
+    var venueStats: [String: VenueRecord] { vs }
+}
+
+struct VenueRecord: Codable {
+    let r: Int  // 出走数
+    let w: Int  // 勝数
+
+    var races: Int { r }
+    var wins: Int { w }
+    var winRate: Double { r > 0 ? Double(w) / Double(r) : 0 }
+}
+
+struct RPGStats: Codable {
+    let a: Int  // ATK
+    let d: Int  // DEF
+    let s: Int  // SPD
+    let l: Int  // LCK
+
+    var atk: Int { a }
+    var def: Int { d }
+    var spd: Int { s }
+    var lck: Int { l }
+}
+
+// MARK: - Venue Stats (from venue_stats.json)
+struct VenueStats: Codable {
+    let bank: Int       // 周長
+    let races: Int      // レース数
+    let km: [String: Double] // 決まり手分布
+}
+
+// MARK: - Line Matrix (from line_matrix.json)
+struct LineEntry: Codable {
+    let w: Int      // 1-2着組数
+    let t: Int      // 同レース数
+    let r: Double   // 率
+}
+
+// MARK: - Race Entry (UI model)
+struct RaceEntry: Identifiable {
+    let id = UUID()
+    var name: String
+    var waku: Int
+}
+
+// MARK: - Prediction Result
+struct PredictionResult: Identifiable {
+    let id = UUID()
+    let name: String
+    let waku: Int
+    let score: Double
+    let winProb: Double
+    let predRank: Int
+    let district: String
+    let style: String
+    let winRate: Double
+    let top3Rate: Double
+    let recentAvg: Double?
+    let rpg: RPGStats?
+    let classRank: String
+    let isDarkHorse: Bool
+}
+
+// MARK: - Class rank display
+extension String {
+    var classDisplayName: String {
+        switch self {
+        case "S1": return "S級1班"
+        case "S2": return "S級2班"
+        case "A1": return "A級1班"
+        case "A2": return "A級2班"
+        default: return self.isEmpty ? "未格付" : self
+        }
+    }
+
+    var classBadgeColor: String {
+        switch self {
+        case "S1", "S2": return "gold"
+        case "A1": return "silver"
+        case "A2": return "bronze"
+        default: return "gray"
+        }
+    }
+}
