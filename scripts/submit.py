@@ -130,9 +130,9 @@ def main():
             else:
                 raise
 
-    # Clean up stale review submissions
+    # Clean up ALL stale review submissions
     canceled = False
-    for state in ["READY_FOR_REVIEW", "COMPLETING", "UNRESOLVED_ISSUES"]:
+    for state in ["READY_FOR_REVIEW", "COMPLETING", "UNRESOLVED_ISSUES", "WAITING_FOR_REVIEW"]:
         try:
             existing = api("GET", f"/apps/{app_id}/reviewSubmissions?filter[state]={state}")
             for item in existing.get("data", []):
@@ -140,49 +140,73 @@ def main():
                     api("PATCH", f"/reviewSubmissions/{item['id']}", json={
                         "data": {"type": "reviewSubmissions", "id": item["id"], "attributes": {"canceled": True}}
                     })
-                    print(f"Canceled review submission {item['id']}")
+                    print(f"Canceled {item['id']} ({state})")
                     canceled = True
-                except RuntimeError:
-                    pass
+                except RuntimeError as e:
+                    print(f"Cancel {item['id']} failed: {e}")
         except RuntimeError:
             pass
 
     if canceled:
-        print("Waiting for cancellation to propagate...")
-        time.sleep(10)
+        print("Waiting 30s for cancellations...")
+        time.sleep(30)
 
-    for attempt in range(3):
-        try:
-            review = api("POST", "/reviewSubmissions", json={
-                "data": {
-                    "type": "reviewSubmissions",
-                    "attributes": {"platform": "IOS"},
-                    "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
-                }
-            })
-            review_id = review["data"]["id"]
+    # Try reusing existing empty READY_FOR_REVIEW submission
+    review_id = None
+    try:
+        existing = api("GET", f"/apps/{app_id}/reviewSubmissions?filter[state]=READY_FOR_REVIEW&limit=10")
+        for sub in existing.get("data", []):
+            sid = sub["id"]
+            items = api("GET", f"/reviewSubmissions/{sid}/items")
+            if not items.get("data"):
+                review_id = sid
+                print(f"Reusing submission: {review_id}")
+                break
+    except RuntimeError:
+        pass
 
-            api("POST", "/reviewSubmissionItems", json={
-                "data": {
-                    "type": "reviewSubmissionItems",
-                    "relationships": {
-                        "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": review_id}},
-                        "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
-                    },
-                }
-            })
-
-            api("PATCH", f"/reviewSubmissions/{review_id}", json={
-                "data": {"type": "reviewSubmissions", "id": review_id, "attributes": {"submitted": True}}
-            })
-            print("Submitted for review")
-            break
-        except RuntimeError as e:
-            if "409" in str(e) and attempt < 2:
-                print(f"Submit attempt {attempt + 1} failed (409), waiting 15s...")
+    if not review_id:
+        for attempt in range(5):
+            try:
+                review = api("POST", "/reviewSubmissions", json={
+                    "data": {
+                        "type": "reviewSubmissions",
+                        "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
+                    }
+                })
+                review_id = review["data"]["id"]
+                print(f"Created submission: {review_id}")
+                break
+            except RuntimeError as e:
+                print(f"Create attempt {attempt+1}/5: {e}")
                 time.sleep(15)
-            else:
-                raise
+
+    if not review_id:
+        print("Could not create review submission")
+        return
+
+    try:
+        api("POST", "/reviewSubmissionItems", json={
+            "data": {
+                "type": "reviewSubmissionItems",
+                "relationships": {
+                    "reviewSubmission": {"data": {"type": "reviewSubmissions", "id": review_id}},
+                    "appStoreVersion": {"data": {"type": "appStoreVersions", "id": version_id}},
+                },
+            }
+        })
+        print("Item added")
+    except RuntimeError as e:
+        print(f"Add item failed: {e}")
+        return
+
+    try:
+        api("PATCH", f"/reviewSubmissions/{review_id}", json={
+            "data": {"type": "reviewSubmissions", "id": review_id, "attributes": {"submitted": True}}
+        })
+        print("Submitted for review!")
+    except RuntimeError as e:
+        print(f"Submit failed: {e}")
 
 
 if __name__ == "__main__":
