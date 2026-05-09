@@ -5,9 +5,9 @@ struct ContentView: View {
 
     var body: some View {
         TabView {
-            PredictionView()
+            RaceListView()
                 .tabItem {
-                    Label("予測", systemImage: "bolt.fill")
+                    Label("レース", systemImage: "flag.checkered")
                 }
 
             PlayerDatabaseView()
@@ -18,6 +18,11 @@ struct ContentView: View {
             VenueInfoView()
                 .tabItem {
                     Label("競輪場", systemImage: "mappin.circle.fill")
+                }
+
+            PredictionView()
+                .tabItem {
+                    Label("RPG", systemImage: "bolt.fill")
                 }
         }
         .accentColor(Color(hex: "#FFD700"))

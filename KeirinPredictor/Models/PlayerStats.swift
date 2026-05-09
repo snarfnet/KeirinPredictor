@@ -67,6 +67,40 @@ struct LineEntry: Codable {
     let r: Double   // 率
 }
 
+// MARK: - Today's Race (from today_entries.json)
+struct TodayRacesData: Codable {
+    let date: String
+    let races: [TodayRace]
+}
+
+struct TodayRace: Codable, Identifiable {
+    var id: String { race_id }
+    let race_id: String
+    let venue: String
+    let venue_cd: String
+    let race_no: Int
+    let entries: [TodayRaceEntry]
+
+    var raceNo: Int { race_no }
+}
+
+struct TodayRaceEntry: Codable, Identifiable {
+    var id: String { "\(umaban)_\(name)" }
+    let waku: Int
+    let umaban: Int
+    let name: String
+    let name_kana: String
+    let score: Double
+    let style: String
+    let win_rate: Double
+    let top2_rate: Double
+    let top3_rate: Double
+    let gear: String
+    let comment: String
+
+    var winRate: Double { win_rate }
+}
+
 // MARK: - Race Entry (UI model)
 struct RaceEntry: Identifiable {
     let id = UUID()

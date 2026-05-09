@@ -47,6 +47,8 @@ add_sources(views_group, target, [
   'LoadingView.swift',
   'PlayerDatabaseView.swift',
   'PredictionView.swift',
+  'RaceDetailView.swift',
+  'RaceListView.swift',
   'VenueInfoView.swift'
 ])
 
@@ -56,7 +58,7 @@ privacy_ref = app_group.new_file('PrivacyInfo.xcprivacy')
 target.add_resources([privacy_ref])
 
 resources_group = app_group.new_group('Resources', 'Resources')
-['player_stats.json', 'venue_stats.json', 'line_matrix.json'].each do |name|
+['player_stats.json', 'venue_stats.json', 'line_matrix.json', 'today_entries.json'].each do |name|
   ref = resources_group.new_file(name)
   target.add_resources([ref])
 end
