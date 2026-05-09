@@ -5,6 +5,7 @@ class DataLoader: ObservableObject {
     @Published var venueStats: [String: VenueStats] = [:]
     @Published var lineMatrix: [String: LineEntry] = [:]
     @Published var todayRaces: [TodayRace] = []
+    @Published var todayResults: [TodayRaceResult] = []
     @Published var todayDateString: String = ""
     @Published var isLoaded = false
 
@@ -31,6 +32,7 @@ class DataLoader: ObservableObject {
                 }
                 self.isLoaded = true
                 self.fetchRemoteTodayEntries()
+                self.fetchRemoteTodayResults()
             }
         }
     }
@@ -81,6 +83,27 @@ class DataLoader: ObservableObject {
                 }
             } catch {
                 print("Remote today_entries decode error: \(error)")
+            }
+        }.resume()
+    }
+
+    func fetchRemoteTodayResults() {
+        guard let url = URL(string: "\(Self.remoteBaseURL)/today_results.json") else { return }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data,
+                  let httpResp = response as? HTTPURLResponse,
+                  httpResp.statusCode == 200 else { return }
+            do {
+                let result = try JSONDecoder().decode(TodayResultsData.self, from: data)
+                if let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
+                    let fileURL = cacheDir.appendingPathComponent("today_results.json")
+                    try? data.write(to: fileURL)
+                }
+                DispatchQueue.main.async {
+                    self.todayResults = result.results
+                }
+            } catch {
+                print("Remote today_results decode error: \(error)")
             }
         }.resume()
     }

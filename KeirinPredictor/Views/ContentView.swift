@@ -7,7 +7,12 @@ struct ContentView: View {
         TabView {
             RaceListView()
                 .tabItem {
-                    Label("レース", systemImage: "flag.checkered")
+                    Label("予測", systemImage: "flag.checkered")
+                }
+
+            ResultsListView()
+                .tabItem {
+                    Label("結果", systemImage: "trophy.fill")
                 }
 
             PlayerDatabaseView()

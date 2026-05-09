@@ -2,7 +2,7 @@ import SwiftUI
 
 struct RaceListView: View {
     @EnvironmentObject var dataLoader: DataLoader
-    @State private var selectedRace: RaceEntry? = nil
+    @State private var showAllRaces = false
 
     var body: some View {
         NavigationStack {
@@ -22,9 +22,24 @@ struct RaceListView: View {
                     ScrollView {
                         VStack(spacing: 16) {
                             todayHeader
+                            filterToggle
 
                             ForEach(groupedByVenue, id: \.venue) { group in
                                 VenueSection(venue: group.venue, races: group.races)
+                            }
+
+                            if upcomingRaces.isEmpty && !showAllRaces {
+                                VStack(spacing: 12) {
+                                    Text("本日のレースは全て終了しました")
+                                        .font(.system(size: 14, design: .monospaced))
+                                        .foregroundColor(.white.opacity(0.6))
+                                    Button("全レースを表示") {
+                                        showAllRaces = true
+                                    }
+                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                                    .foregroundColor(Color(hex: "#FFD700"))
+                                }
+                                .padding(20)
                             }
 
                             BannerAdView()
@@ -46,7 +61,32 @@ struct RaceListView: View {
                         .foregroundColor(Color(hex: "#FFD700"))
                 }
             }
+            .navigationDestination(for: TodayRace.self) { race in
+                RaceDetailView(race: race)
+            }
         }
+    }
+
+    // Estimate which races are upcoming based on race number and current hour
+    private var upcomingRaces: [TodayRace] {
+        let hour = Calendar.current.component(.hour, from: Date())
+        // Rough mapping: 12 races per venue, starting ~10:30, ending ~16:30
+        // Each race ~30 min apart. Race 1 = 10:30, Race 7 = 13:30, Race 12 = 16:00
+        let estimatedCurrentRace: Int
+        if hour < 11 { estimatedCurrentRace = 0 }
+        else if hour < 12 { estimatedCurrentRace = 3 }
+        else if hour < 13 { estimatedCurrentRace = 5 }
+        else if hour < 14 { estimatedCurrentRace = 7 }
+        else if hour < 15 { estimatedCurrentRace = 9 }
+        else if hour < 16 { estimatedCurrentRace = 10 }
+        else if hour < 17 { estimatedCurrentRace = 11 }
+        else { estimatedCurrentRace = 99 }
+
+        return dataLoader.todayRaces.filter { $0.raceNo > estimatedCurrentRace }
+    }
+
+    private var displayRaces: [TodayRace] {
+        showAllRaces ? dataLoader.todayRaces : upcomingRaces
     }
 
     private var todayHeader: some View {
@@ -57,7 +97,7 @@ struct RaceListView: View {
                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                 .foregroundColor(.white.opacity(0.8))
             Spacer()
-            Text("\(dataLoader.todayRaces.count)レース")
+            Text("\(displayRaces.count)/\(dataLoader.todayRaces.count)レース")
                 .font(.system(size: 12, design: .monospaced))
                 .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
         }
@@ -66,8 +106,29 @@ struct RaceListView: View {
         .cornerRadius(8)
     }
 
+    private var filterToggle: some View {
+        HStack {
+            Button {
+                showAllRaces.toggle()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: showAllRaces ? "clock" : "clock.badge.checkmark")
+                    Text(showAllRaces ? "全レース表示中" : "これからのレース")
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
+                }
+                .foregroundColor(showAllRaces ? .white.opacity(0.5) : Color(hex: "#FFD700"))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.white.opacity(showAllRaces ? 0.05 : 0.1))
+                .cornerRadius(8)
+            }
+            Spacer()
+        }
+    }
+
     private var groupedByVenue: [VenueGroup] {
-        let dict = Dictionary(grouping: dataLoader.todayRaces, by: { $0.venue })
+        let races = displayRaces
+        let dict = Dictionary(grouping: races, by: { $0.venue })
         return dict.map { VenueGroup(venue: $0.key, races: $0.value.sorted { $0.raceNo < $1.raceNo }) }
             .sorted { $0.venue < $1.venue }
     }
@@ -97,9 +158,10 @@ struct VenueSection: View {
             }
 
             ForEach(races) { race in
-                NavigationLink(destination: RaceDetailView(race: race)) {
+                NavigationLink(value: race) {
                     RaceRowView(race: race)
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(12)

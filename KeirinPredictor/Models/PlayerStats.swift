@@ -73,7 +73,7 @@ struct TodayRacesData: Codable {
     let races: [TodayRace]
 }
 
-struct TodayRace: Codable, Identifiable {
+struct TodayRace: Codable, Identifiable, Hashable {
     var id: String { race_id }
     let race_id: String
     let venue: String
@@ -82,6 +82,9 @@ struct TodayRace: Codable, Identifiable {
     let entries: [TodayRaceEntry]
 
     var raceNo: Int { race_no }
+
+    static func == (lhs: TodayRace, rhs: TodayRace) -> Bool { lhs.race_id == rhs.race_id }
+    func hash(into hasher: inout Hasher) { hasher.combine(race_id) }
 }
 
 struct TodayRaceEntry: Codable, Identifiable {
@@ -99,6 +102,35 @@ struct TodayRaceEntry: Codable, Identifiable {
     let comment: String
 
     var winRate: Double { win_rate }
+}
+
+// MARK: - Today's Race Results (from today_results.json)
+struct TodayResultsData: Codable {
+    let date: String
+    let results: [TodayRaceResult]
+}
+
+struct TodayRaceResult: Codable, Identifiable {
+    var id: String { race_id }
+    let race_id: String
+    let venue: String
+    let race_no: Int
+    let finishers: [Finisher]
+    let paybacks: [Payback]
+}
+
+struct Finisher: Codable {
+    let rank: Int
+    let waku: Int
+    let umaban: Int
+    let name: String
+    let kimarite: String
+}
+
+struct Payback: Codable {
+    let type: String    // 3連単, 3連複, 2車単, 2車複, ワイド
+    let combination: String
+    let payout: Int
 }
 
 // MARK: - Race Entry (UI model)

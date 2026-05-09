@@ -49,6 +49,7 @@ add_sources(views_group, target, [
   'PredictionView.swift',
   'RaceDetailView.swift',
   'RaceListView.swift',
+  'ResultsListView.swift',
   'VenueInfoView.swift'
 ])
 
