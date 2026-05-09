@@ -166,6 +166,17 @@ struct PredictionResult: Identifiable {
     let isDarkHorse: Bool
 }
 
+// MARK: - Bet Recommendation
+struct BetRecommendation: Identifiable {
+    let id = UUID()
+    let type: String        // 3連単, 2車単, 2車複, ワイド
+    let combination: [Int]  // umaban list
+    let names: [String]
+    let probability: Double
+    let confidence: String  // S, A, B, C
+    let expectedValue: Double? // odds × probability (nil if no odds)
+}
+
 // MARK: - Class rank display
 extension String {
     var classDisplayName: String {

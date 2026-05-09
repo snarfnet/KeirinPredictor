@@ -5,9 +5,11 @@ struct RaceDetailView: View {
     let race: TodayRace
 
     @State private var predictions: [PredictionResult] = []
+    @State private var bets: [BetRecommendation] = []
     @State private var isAnimating = false
     @State private var showResults = false
     @State private var showBattle = false
+    @State private var selectedBetType = "3連単"
 
     var body: some View {
         ZStack {
@@ -19,6 +21,7 @@ struct RaceDetailView: View {
 
                     if showResults {
                         resultsSection
+                        betSection
                         battleButton
                     } else if isAnimating {
                         animatingView
@@ -154,6 +157,49 @@ struct RaceDetailView: View {
         }
     }
 
+    private var betSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Image(systemName: "yensign.circle.fill")
+                    .foregroundColor(Color(hex: "#FFD700"))
+                Text("推奨買い目")
+                    .font(.system(size: 14, weight: .black, design: .monospaced))
+                    .foregroundColor(Color(hex: "#FFD700"))
+                Spacer()
+                Text("\(filteredBets.count)点")
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.5))
+            }
+
+            // Bet type filter
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(["3連単", "2車単", "ワイド"], id: \.self) { type in
+                        Button {
+                            selectedBetType = type
+                        } label: {
+                            Text(type)
+                                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                .foregroundColor(selectedBetType == type ? .black : .white.opacity(0.6))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(selectedBetType == type ? Color(hex: "#FFD700") : Color.white.opacity(0.08))
+                                .cornerRadius(6)
+                        }
+                    }
+                }
+            }
+
+            ForEach(filteredBets) { bet in
+                BetCardView(bet: bet)
+            }
+        }
+    }
+
+    private var filteredBets: [BetRecommendation] {
+        bets.filter { $0.type == selectedBetType }
+    }
+
     private var battleButton: some View {
         Button {
             showBattle = true
@@ -194,6 +240,7 @@ struct RaceDetailView: View {
                 venueStats: dataLoader.venueStats,
                 entryScores: entryScores
             )
+            bets = PredictionEngine.generateBets(predictions: predictions)
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 isAnimating = false
                 showResults = true
@@ -406,6 +453,84 @@ struct BattleView: View {
                 battleLog.append("\(p1.name)\(attack) → \(p2.name)に勝利")
                 currentMatchIndex += 1
             }
+        }
+    }
+}
+
+// MARK: - Bet Card
+struct BetCardView: View {
+    let bet: BetRecommendation
+
+    var body: some View {
+        HStack(spacing: 10) {
+            // Confidence badge
+            Text(bet.confidence)
+                .font(.system(size: 14, weight: .black, design: .monospaced))
+                .foregroundColor(.black)
+                .frame(width: 28, height: 28)
+                .background(confidenceColor)
+                .cornerRadius(6)
+
+            // Combination
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 4) {
+                    ForEach(Array(bet.combination.enumerated()), id: \.offset) { (i, waku) in
+                        if i > 0 {
+                            Image(systemName: bet.type == "ワイド" ? "minus" : "arrow.right")
+                                .font(.system(size: 8))
+                                .foregroundColor(.white.opacity(0.3))
+                        }
+                        Text("\(waku)")
+                            .font(.system(size: 13, weight: .black, design: .monospaced))
+                            .foregroundColor(.black)
+                            .frame(width: 24, height: 24)
+                            .background(wakuColor(waku))
+                            .cornerRadius(4)
+                    }
+                }
+                HStack(spacing: 4) {
+                    ForEach(Array(bet.names.enumerated()), id: \.offset) { (i, name) in
+                        if i > 0 {
+                            Text("-")
+                                .font(.system(size: 9))
+                                .foregroundColor(.white.opacity(0.2))
+                        }
+                        Text(String(name.prefix(3)))
+                            .font(.system(size: 10))
+                            .foregroundColor(.white.opacity(0.5))
+                    }
+                }
+            }
+
+            Spacer()
+
+            // Probability
+            VStack(alignment: .trailing, spacing: 2) {
+                Text("\(String(format: "%.1f", bet.probability))%")
+                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .foregroundColor(bet.confidence == "S" ? Color(hex: "#FFD700") : .white)
+                if let ev = bet.expectedValue {
+                    Text("EV \(String(format: "%.1f", ev))")
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundColor(ev > 1.0 ? .green : .red)
+                }
+            }
+        }
+        .padding(10)
+        .background(bet.confidence == "S" ? Color(hex: "#FFD700").opacity(0.08) : Color.white.opacity(0.04))
+        .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(bet.confidence == "S" ? Color(hex: "#FFD700").opacity(0.3) : Color.clear, lineWidth: 1)
+        )
+    }
+
+    private var confidenceColor: Color {
+        switch bet.confidence {
+        case "S": return Color(hex: "#FFD700")
+        case "A": return Color(hex: "#C0C0C0")
+        case "B": return Color(hex: "#CD7F32")
+        default: return Color.gray
         }
     }
 }

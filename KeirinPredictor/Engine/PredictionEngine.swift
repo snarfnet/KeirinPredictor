@@ -232,6 +232,137 @@ struct PredictionEngine {
         }
     }
 
+    // MARK: - Bet Recommendations
+    static func generateBets(predictions: [PredictionResult]) -> [BetRecommendation] {
+        guard predictions.count >= 3 else { return [] }
+
+        var bets: [BetRecommendation] = []
+        let top = predictions.sorted { $0.score > $1.score }
+        let darkHorses = top.filter { $0.isDarkHorse }
+
+        // === 3連単 (Trifecta exact order) ===
+        // Pattern 1: Top 3 box (6 bets) - confidence S/A
+        let top3 = Array(top.prefix(3))
+        let top3Perms = permutations(top3)
+        for perm in top3Perms {
+            let prob = estimateTrifectaProb(perm, allPredictions: top)
+            let conf = prob > 0.08 ? "S" : (prob > 0.04 ? "A" : "B")
+            bets.append(BetRecommendation(
+                type: "3連単",
+                combination: perm.map { $0.waku },
+                names: perm.map { $0.name },
+                probability: round(prob * 1000) / 10,
+                confidence: conf,
+                expectedValue: nil
+            ))
+        }
+
+        // Pattern 2: Top 2 + dark horse (if exists)
+        if let dh = darkHorses.first, !top3.contains(where: { $0.waku == dh.waku }) {
+            let top2 = Array(top.prefix(2))
+            // Dark horse in 2nd or 3rd
+            for pos in [1, 2] {
+                var combo = top2
+                combo.insert(dh, at: pos)
+                let prob = estimateTrifectaProb(Array(combo.prefix(3)), allPredictions: top)
+                bets.append(BetRecommendation(
+                    type: "3連単",
+                    combination: Array(combo.prefix(3)).map { $0.waku },
+                    names: Array(combo.prefix(3)).map { $0.name },
+                    probability: round(prob * 1000) / 10,
+                    confidence: "B",
+                    expectedValue: nil
+                ))
+            }
+        }
+
+        // Pattern 3: Top1 fixed, Top 2-4 for 2nd/3rd
+        if top.count >= 4 {
+            let axis = top[0]
+            let candidates = Array(top[1...3])
+            for i in 0..<candidates.count {
+                for j in 0..<candidates.count where j != i {
+                    let combo = [axis, candidates[i], candidates[j]]
+                    // Skip if already in top3 box
+                    let key = combo.map { $0.waku }
+                    let alreadyExists = bets.contains { $0.type == "3連単" && $0.combination == key }
+                    if !alreadyExists {
+                        let prob = estimateTrifectaProb(combo, allPredictions: top)
+                        bets.append(BetRecommendation(
+                            type: "3連単",
+                            combination: key,
+                            names: combo.map { $0.name },
+                            probability: round(prob * 1000) / 10,
+                            confidence: prob > 0.04 ? "A" : "B",
+                            expectedValue: nil
+                        ))
+                    }
+                }
+            }
+        }
+
+        // === 2車単 (Exacta) ===
+        let top4 = Array(top.prefix(min(4, top.count)))
+        for i in 0..<min(3, top4.count) {
+            for j in 0..<top4.count where j != i {
+                let prob = top4[i].winProb / 100 * top4[j].winProb / 100 * 3
+                let conf = prob > 0.15 ? "S" : (prob > 0.08 ? "A" : "B")
+                bets.append(BetRecommendation(
+                    type: "2車単",
+                    combination: [top4[i].waku, top4[j].waku],
+                    names: [top4[i].name, top4[j].name],
+                    probability: round(min(prob, 0.99) * 1000) / 10,
+                    confidence: conf,
+                    expectedValue: nil
+                ))
+            }
+        }
+
+        // === ワイド (Wide - any 2 in top 3) ===
+        for i in 0..<min(4, top.count) {
+            for j in (i+1)..<min(4, top.count) {
+                let prob = (top[i].winProb + top[j].winProb) / 100 * 0.6
+                bets.append(BetRecommendation(
+                    type: "ワイド",
+                    combination: [top[i].waku, top[j].waku],
+                    names: [top[i].name, top[j].name],
+                    probability: round(min(prob, 0.99) * 1000) / 10,
+                    confidence: prob > 0.3 ? "S" : (prob > 0.15 ? "A" : "B"),
+                    expectedValue: nil
+                ))
+            }
+        }
+
+        // Sort: confidence S first, then by probability
+        let confOrder: [String: Int] = ["S": 0, "A": 1, "B": 2, "C": 3]
+        return bets.sorted {
+            let c1 = confOrder[$0.confidence] ?? 3
+            let c2 = confOrder[$1.confidence] ?? 3
+            if c1 != c2 { return c1 < c2 }
+            return $0.probability > $1.probability
+        }
+    }
+
+    private static func estimateTrifectaProb(_ trio: [PredictionResult], allPredictions: [PredictionResult]) -> Double {
+        guard trio.count >= 3 else { return 0 }
+        let p1 = trio[0].winProb / 100
+        let remaining1 = 1 - p1
+        let p2 = remaining1 > 0 ? (trio[1].winProb / 100) / remaining1 : 0
+        let remaining2 = remaining1 - trio[1].winProb / 100
+        let p3 = remaining2 > 0 ? (trio[2].winProb / 100) / max(0.01, remaining2) : 0
+        return p1 * min(p2, 1) * min(p3, 1)
+    }
+
+    private static func permutations(_ arr: [PredictionResult]) -> [[PredictionResult]] {
+        guard arr.count == 3 else { return [arr] }
+        let a = arr[0], b = arr[1], c = arr[2]
+        return [
+            [a, b, c], [a, c, b],
+            [b, a, c], [b, c, a],
+            [c, a, b], [c, b, a]
+        ]
+    }
+
     // MARK: - Style x Bank bonus (refined)
     private static func styleBankBonus(style: String, bank: Int) -> Double {
         // 333m: 先行圧倒的有利、捲りも有効
