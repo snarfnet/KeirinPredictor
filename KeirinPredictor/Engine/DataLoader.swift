@@ -67,6 +67,31 @@ class DataLoader: ObservableObject {
     }
 
     func fetchRemoteTodayEntries() {
+        // First try upcoming_entries.json (multi-day)
+        guard let upcomingURL = URL(string: "\(Self.remoteBaseURL)/upcoming_entries.json") else { return }
+        URLSession.shared.dataTask(with: upcomingURL) { data, response, error in
+            if let data = data,
+               let httpResp = response as? HTTPURLResponse,
+               httpResp.statusCode == 200 {
+                do {
+                    let result = try JSONDecoder().decode(UpcomingRacesData.self, from: data)
+                    if !result.races.isEmpty {
+                        DispatchQueue.main.async {
+                            self.todayRaces = result.races
+                            self.todayDateString = self.formatDateString(result.days.first ?? "")
+                        }
+                        return
+                    }
+                } catch {
+                    print("Remote upcoming_entries decode error: \(error)")
+                }
+            }
+            // Fallback to today_entries.json
+            self.fetchTodayEntriesFallback()
+        }.resume()
+    }
+
+    private func fetchTodayEntriesFallback() {
         guard let url = URL(string: "\(Self.remoteBaseURL)/today_entries.json") else { return }
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data,
@@ -74,7 +99,6 @@ class DataLoader: ObservableObject {
                   httpResp.statusCode == 200 else { return }
             do {
                 let result = try JSONDecoder().decode(TodayRacesData.self, from: data)
-                // Cache locally
                 if let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
                     let fileURL = cacheDir.appendingPathComponent("today_entries.json")
                     try? data.write(to: fileURL)
