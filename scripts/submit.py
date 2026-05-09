@@ -174,8 +174,9 @@ def main():
             if age_rating.get("data"):
                 ard_id = age_rating["data"]["id"]
                 existing = age_rating["data"].get("attributes", {})
-                # Start with existing values, then override
-                attrs = {k: v for k, v in existing.items() if v is not None}
+                # Start with existing values, exclude conflicting override fields
+                skip = {"ageRatingOverride", "ageRatingOverrideV2"}
+                attrs = {k: v for k, v in existing.items() if v is not None and k not in skip}
                 # Set all known fields to safe defaults
                 # Fields with "NONE" / "INFREQUENT_OR_MILD" / "FREQUENT_OR_INTENSE" values
                 for field in [
