@@ -270,25 +270,25 @@ struct LinePartyView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(district)
-                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
                 .foregroundColor(Color(hex: "#FFD700"))
-            HStack(spacing: 4) {
+            HStack(spacing: 5) {
                 ForEach(members.sorted(by: { $0.predRank < $1.predRank })) { m in
                     VStack(spacing: 2) {
                         Text("\(m.waku)")
-                            .font(.system(size: 11, weight: .bold))
+                            .font(.system(size: 13, weight: .bold))
                             .foregroundColor(.black)
-                            .frame(width: 22, height: 22)
+                            .frame(width: 26, height: 26)
                             .background(wakuColor(m.waku))
                             .clipShape(Circle())
                         Text(String(m.name.prefix(2)))
-                            .font(.system(size: 9))
+                            .font(.system(size: 11))
                             .foregroundColor(.white.opacity(0.7))
                     }
                 }
             }
         }
-        .padding(8)
+        .padding(10)
         .background(Color.white.opacity(0.06))
         .cornerRadius(8)
     }
@@ -307,26 +307,26 @@ struct ResultCardView: View {
             ZStack {
                 Circle()
                     .fill(rankGradient)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 44, height: 44)
                     .shadow(color: rankShadow, radius: index == 0 ? 8 : 0)
 
                 Text("\(result.predRank)")
-                    .font(.system(size: 18, weight: .black, design: .monospaced))
+                    .font(.system(size: 20, weight: .black, design: .monospaced))
                     .foregroundColor(index == 0 ? .black : .white)
             }
 
             // Player info
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
                     Text(result.name)
-                        .font(.system(size: 15, weight: .bold))
+                        .font(.system(size: 17, weight: .bold))
                         .foregroundColor(.white)
                     if !result.classRank.isEmpty {
                         ClassBadge(classRank: result.classRank)
                     }
                     if result.isDarkHorse {
                         Text("DARK HORSE")
-                            .font(.system(size: 9, weight: .black, design: .monospaced))
+                            .font(.system(size: 10, weight: .black, design: .monospaced))
                             .foregroundColor(.white)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
@@ -337,17 +337,17 @@ struct ResultCardView: View {
                 HStack(spacing: 8) {
                     if !result.district.isEmpty {
                         Text(result.district)
-                            .font(.system(size: 11))
+                            .font(.system(size: 13))
                             .foregroundColor(.white.opacity(0.5))
                     }
                     if !result.style.isEmpty {
                         Text(result.style)
-                            .font(.system(size: 11))
+                            .font(.system(size: 13))
                             .foregroundColor(styleColor(result.style))
                     }
                     if let avg = result.recentAvg {
                         Text("直近\(String(format: "%.1f", avg))着")
-                            .font(.system(size: 11))
+                            .font(.system(size: 13))
                             .foregroundColor(.white.opacity(0.5))
                     }
                 }
@@ -358,14 +358,14 @@ struct ResultCardView: View {
             // Win prob
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(String(format: "%.1f", result.winProb))%")
-                    .font(.system(size: 18, weight: .black, design: .monospaced))
+                    .font(.system(size: 20, weight: .black, design: .monospaced))
                     .foregroundColor(index == 0 ? Color(hex: "#FFD700") : .white)
                 Text("勝率\(String(format: "%.1f", result.winRate))%")
-                    .font(.system(size: 10))
+                    .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.4))
             }
         }
-        .padding(12)
+        .padding(14)
         .background(cardBackground)
         .cornerRadius(12)
         .overlay(
@@ -424,10 +424,10 @@ struct ClassBadge: View {
 
     var body: some View {
         Text(classRank)
-            .font(.system(size: 9, weight: .black, design: .monospaced))
+            .font(.system(size: 11, weight: .black, design: .monospaced))
             .foregroundColor(.black)
-            .padding(.horizontal, 5)
-            .padding(.vertical, 2)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
             .background(badgeColor)
             .cornerRadius(4)
     }

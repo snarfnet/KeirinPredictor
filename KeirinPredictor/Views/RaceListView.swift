@@ -38,7 +38,7 @@ struct RaceListView: View {
                         Image(systemName: "chart.line.uptrend.xyaxis")
                             .foregroundColor(Color(hex: "#FFD700"))
                         Text("KEIRIN PREDICTOR")
-                            .font(.system(size: 15, weight: .black, design: .monospaced))
+                            .font(.system(size: 17, weight: .black, design: .monospaced))
                             .foregroundColor(Color(hex: "#FFD700"))
                     }
                 }
@@ -50,7 +50,7 @@ struct RaceListView: View {
                             Image(systemName: homeVenue.isEmpty ? "house" : "house.fill")
                             if !homeVenue.isEmpty {
                                 Text(homeVenue)
-                                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
                             }
                         }
                         .foregroundColor(Color(hex: "#FFD700"))
@@ -76,12 +76,12 @@ struct RaceListView: View {
                 .font(.system(size: 48))
                 .foregroundColor(Color(hex: "#FFD700").opacity(0.5))
             Text("レースデータなし")
-                .font(.system(size: 14, design: .monospaced))
+                .font(.system(size: 16, design: .monospaced))
                 .foregroundColor(.white.opacity(0.6))
             Button("更新") {
                 dataLoader.fetchRemoteTodayEntries()
             }
-            .font(.system(size: 13, weight: .bold, design: .monospaced))
+            .font(.system(size: 15, weight: .bold, design: .monospaced))
             .foregroundColor(Color(hex: "#FFD700"))
             .padding(.horizontal, 20)
             .padding(.vertical, 8)
@@ -165,12 +165,12 @@ struct DaySectionView: View {
             // Day header
             HStack(spacing: 10) {
                 Text(group.label)
-                    .font(.system(size: 20, weight: .black, design: .monospaced))
+                    .font(.system(size: 22, weight: .black, design: .monospaced))
                     .foregroundColor(group.label == "今日" ? Color(hex: "#FFD700") : .white)
 
                 if group.label != group.date {
                     Text(group.date.suffix(4).prefix(2) + "/" + group.date.suffix(2))
-                        .font(.system(size: 13, design: .monospaced))
+                        .font(.system(size: 15, design: .monospaced))
                         .foregroundColor(.white.opacity(0.4))
                 }
 
@@ -178,9 +178,9 @@ struct DaySectionView: View {
 
                 HStack(spacing: 4) {
                     Image(systemName: "flag.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: 12))
                     Text("\(group.totalRaces)R")
-                        .font(.system(size: 13, weight: .bold, design: .monospaced))
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
                 }
                 .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
             }
@@ -213,7 +213,7 @@ struct HomeVenuePickerView: View {
                             HStack {
                                 Image(systemName: "xmark.circle")
                                 Text("ホーム設定なし")
-                                    .font(.system(size: 14, design: .monospaced))
+                                    .font(.system(size: 16, design: .monospaced))
                                 Spacer()
                                 if homeVenue.isEmpty {
                                     Image(systemName: "checkmark")
@@ -233,7 +233,7 @@ struct HomeVenuePickerView: View {
                             } label: {
                                 HStack {
                                     Text(venue)
-                                        .font(.system(size: 15, weight: venue == homeVenue ? .bold : .regular, design: .monospaced))
+                                        .font(.system(size: 17, weight: venue == homeVenue ? .bold : .regular, design: .monospaced))
                                         .foregroundColor(venue == homeVenue ? Color(hex: "#FFD700") : .white)
                                     Spacer()
                                     if venue == homeVenue {
@@ -274,28 +274,28 @@ struct VenueSectionView: View {
             HStack(spacing: 8) {
                 if isHome {
                     Image(systemName: "house.fill")
-                        .font(.system(size: 10))
+                        .font(.system(size: 13))
                         .foregroundColor(Color(hex: "#FFD700"))
                 } else {
                     Circle()
                         .fill(Color(hex: "#FFD700"))
-                        .frame(width: 8, height: 8)
+                        .frame(width: 10, height: 10)
                 }
                 Text(venue)
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .font(.system(size: 16, weight: .bold, design: .monospaced))
                     .foregroundColor(isHome ? Color(hex: "#FFD700") : .white)
                 if isHome {
                     Text("HOME")
-                        .font(.system(size: 9, weight: .black, design: .monospaced))
+                        .font(.system(size: 11, weight: .black, design: .monospaced))
                         .foregroundColor(.black)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
                         .background(Color(hex: "#FFD700"))
                         .cornerRadius(4)
                 }
                 Spacer()
                 Text("\(races.count)R")
-                    .font(.system(size: 11, design: .monospaced))
+                    .font(.system(size: 13, design: .monospaced))
                     .foregroundColor(.white.opacity(0.4))
             }
             .padding(.horizontal, 12)
@@ -327,13 +327,13 @@ struct RaceCardView: View {
             // Race number
             VStack {
                 Text("\(race.raceNo)")
-                    .font(.system(size: 22, weight: .black, design: .monospaced))
+                    .font(.system(size: 26, weight: .black, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
                 Text("R")
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700").opacity(0.6))
             }
-            .frame(width: 44)
+            .frame(width: 50)
 
             // Divider
             Rectangle()
@@ -342,20 +342,20 @@ struct RaceCardView: View {
                 .padding(.vertical, 4)
 
             // Entries preview
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 // Top 3 by score
                 HStack(spacing: 8) {
                     ForEach(Array(topEntries.prefix(3).enumerated()), id: \.offset) { (i, entry) in
                         HStack(spacing: 4) {
                             Text("\(entry.umaban)")
-                                .font(.system(size: 10, weight: .black, design: .monospaced))
+                                .font(.system(size: 12, weight: .black, design: .monospaced))
                                 .foregroundColor(.black)
-                                .frame(width: 18, height: 18)
+                                .frame(width: 22, height: 22)
                                 .background(wakuColor(entry.waku))
                                 .clipShape(Circle())
 
                             Text(entry.name)
-                                .font(.system(size: 11, weight: i == 0 ? .bold : .regular))
+                                .font(.system(size: 13, weight: i == 0 ? .bold : .regular))
                                 .foregroundColor(i == 0 ? .white : .white.opacity(0.7))
                                 .lineLimit(1)
                         }
@@ -366,11 +366,11 @@ struct RaceCardView: View {
                 HStack(spacing: 8) {
                     if let top = topEntries.first {
                         Text("\(String(format: "%.0f", top.score))点")
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
                             .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
                     }
                     Text("\(race.entries.count)車立")
-                        .font(.system(size: 10))
+                        .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.3))
 
                     Spacer()
@@ -382,12 +382,12 @@ struct RaceCardView: View {
 
             // Arrow
             Image(systemName: "chevron.right")
-                .font(.system(size: 12, weight: .semibold))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(Color(hex: "#FFD700").opacity(0.4))
                 .padding(.trailing, 8)
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 4)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 6)
         .background(Color.white.opacity(0.02))
         .cornerRadius(8)
         .padding(.horizontal, 8)

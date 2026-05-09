@@ -14,12 +14,12 @@ struct ResultsListView: View {
                             .font(.system(size: 48))
                             .foregroundColor(Color(hex: "#FFD700").opacity(0.5))
                         Text("結果データを取得中...")
-                            .font(.system(size: 14, design: .monospaced))
+                            .font(.system(size: 16, design: .monospaced))
                             .foregroundColor(.white.opacity(0.6))
                         Button("更新") {
                             dataLoader.fetchRemoteTodayResults()
                         }
-                        .font(.system(size: 13, weight: .bold, design: .monospaced))
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
                         .foregroundColor(Color(hex: "#FFD700"))
                         .padding(.horizontal, 20)
                         .padding(.vertical, 8)
@@ -50,7 +50,7 @@ struct ResultsListView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("RESULTS")
-                        .font(.system(size: 16, weight: .black, design: .monospaced))
+                        .font(.system(size: 18, weight: .black, design: .monospaced))
                         .foregroundColor(Color(hex: "#FFD700"))
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -70,14 +70,14 @@ struct ResultsListView: View {
             Image(systemName: "trophy.fill")
                 .foregroundColor(Color(hex: "#FFD700"))
             Text(dataLoader.todayDateString)
-                .font(.system(size: 14, weight: .bold, design: .monospaced))
+                .font(.system(size: 16, weight: .bold, design: .monospaced))
                 .foregroundColor(.white.opacity(0.8))
             Spacer()
             Text("\(dataLoader.todayResults.count)レース確定")
-                .font(.system(size: 12, design: .monospaced))
+                .font(.system(size: 14, design: .monospaced))
                 .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
         }
-        .padding(10)
+        .padding(12)
         .background(Color.white.opacity(0.05))
         .cornerRadius(8)
     }
@@ -104,11 +104,11 @@ struct VenueResultSection: View {
                 Image(systemName: "mappin.circle.fill")
                     .foregroundColor(Color(hex: "#FFD700"))
                 Text(venue)
-                    .font(.system(size: 15, weight: .bold, design: .monospaced))
+                    .font(.system(size: 17, weight: .bold, design: .monospaced))
                     .foregroundColor(.white)
                 Spacer()
                 Text("\(results.count)R")
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(.white.opacity(0.5))
             }
 
@@ -129,7 +129,7 @@ struct RaceResultRow: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("\(result.race_no)R")
-                    .font(.system(size: 14, weight: .black, design: .monospaced))
+                    .font(.system(size: 16, weight: .black, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
                 Spacer()
             }
@@ -138,24 +138,24 @@ struct RaceResultRow: View {
             ForEach(Array(result.finishers.prefix(3).enumerated()), id: \.offset) { (i, finisher) in
                 HStack(spacing: 8) {
                     Text("\(i + 1)着")
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .font(.system(size: 13, weight: .bold, design: .monospaced))
                         .foregroundColor(i == 0 ? Color(hex: "#FFD700") : .white.opacity(0.6))
-                        .frame(width: 30)
+                        .frame(width: 34)
 
                     Text("\(finisher.umaban)")
-                        .font(.system(size: 12, weight: .black, design: .monospaced))
+                        .font(.system(size: 14, weight: .black, design: .monospaced))
                         .foregroundColor(.black)
-                        .frame(width: 22, height: 22)
+                        .frame(width: 26, height: 26)
                         .background(wakuColor(finisher.waku))
                         .clipShape(Circle())
 
                     Text(finisher.name)
-                        .font(.system(size: 13, weight: i == 0 ? .bold : .regular))
+                        .font(.system(size: 15, weight: i == 0 ? .bold : .regular))
                         .foregroundColor(.white)
 
                     if !finisher.kimarite.isEmpty {
                         Text(finisher.kimarite)
-                            .font(.system(size: 10))
+                            .font(.system(size: 12))
                             .foregroundColor(styleColor(finisher.kimarite))
                     }
 
@@ -170,10 +170,10 @@ struct RaceResultRow: View {
                     ForEach(result.paybacks.prefix(3), id: \.type) { pb in
                         VStack(spacing: 2) {
                             Text(pb.type)
-                                .font(.system(size: 9, weight: .bold))
+                                .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(.white.opacity(0.5))
                             Text("\(pb.payout)円")
-                                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                                .font(.system(size: 13, weight: .bold, design: .monospaced))
                                 .foregroundColor(pb.payout >= 10000 ? .red : Color(hex: "#FFD700"))
                         }
                     }
@@ -181,8 +181,8 @@ struct RaceResultRow: View {
                 }
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 6)
+        .padding(.vertical, 10)
+        .padding(.horizontal, 8)
         .background(Color.white.opacity(0.02))
         .cornerRadius(8)
     }

@@ -52,20 +52,20 @@ struct RaceDetailView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("\(race.venue) \(race.raceNo)R")
-                        .font(.system(size: 20, weight: .black, design: .monospaced))
+                        .font(.system(size: 22, weight: .black, design: .monospaced))
                         .foregroundColor(Color(hex: "#FFD700"))
                     Text("\(race.entries.count)車立")
-                        .font(.system(size: 13, design: .monospaced))
+                        .font(.system(size: 15, design: .monospaced))
                         .foregroundColor(.white.opacity(0.6))
                 }
                 Spacer()
                 if let bankInfo = dataLoader.venueStats[race.venue] {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("\(bankInfo.bank)m")
-                            .font(.system(size: 14, weight: .bold, design: .monospaced))
+                            .font(.system(size: 16, weight: .bold, design: .monospaced))
                             .foregroundColor(Color(hex: "#FFD700"))
                         Text("バンク")
-                            .font(.system(size: 10))
+                            .font(.system(size: 12))
                             .foregroundColor(.white.opacity(0.4))
                     }
                 }
@@ -79,7 +79,7 @@ struct RaceDetailView: View {
     private var entryListSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("出走表")
-                .font(.system(size: 13, weight: .semibold, design: .monospaced))
+                .font(.system(size: 16, weight: .semibold, design: .monospaced))
                 .foregroundColor(Color(hex: "#FFD700"))
 
             ForEach(race.entries) { entry in
@@ -95,7 +95,7 @@ struct RaceDetailView: View {
             HStack(spacing: 10) {
                 Image(systemName: "bolt.fill")
                 Text("予測開始")
-                    .font(.system(size: 16, weight: .black, design: .monospaced))
+                    .font(.system(size: 18, weight: .black, design: .monospaced))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
@@ -117,7 +117,7 @@ struct RaceDetailView: View {
                 .scaleEffect(1.5)
                 .tint(Color(hex: "#FFD700"))
             Text("予測中...")
-                .font(.system(size: 14, weight: .bold, design: .monospaced))
+                .font(.system(size: 16, weight: .bold, design: .monospaced))
                 .foregroundColor(Color(hex: "#FFD700"))
         }
         .padding(40)
@@ -127,14 +127,14 @@ struct RaceDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Text("予測結果")
-                    .font(.system(size: 14, weight: .black, design: .monospaced))
+                    .font(.system(size: 17, weight: .black, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
                 Spacer()
                 Button("リセット") {
                     showResults = false
                     predictions = []
                 }
-                .font(.system(size: 12, design: .monospaced))
+                .font(.system(size: 14, design: .monospaced))
                 .foregroundColor(.white.opacity(0.5))
             }
 
@@ -163,11 +163,11 @@ struct RaceDetailView: View {
                 Image(systemName: "yensign.circle.fill")
                     .foregroundColor(Color(hex: "#FFD700"))
                 Text("推奨買い目")
-                    .font(.system(size: 14, weight: .black, design: .monospaced))
+                    .font(.system(size: 17, weight: .black, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
                 Spacer()
                 Text("\(filteredBets.count)点")
-                    .font(.system(size: 12, design: .monospaced))
+                    .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(.white.opacity(0.5))
             }
 
@@ -179,10 +179,10 @@ struct RaceDetailView: View {
                             selectedBetType = type
                         } label: {
                             Text(type)
-                                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                                .font(.system(size: 14, weight: .bold, design: .monospaced))
                                 .foregroundColor(selectedBetType == type ? .black : .white.opacity(0.6))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 8)
                                 .background(selectedBetType == type ? Color(hex: "#FFD700") : Color.white.opacity(0.08))
                                 .cornerRadius(6)
                         }
@@ -207,7 +207,7 @@ struct RaceDetailView: View {
             HStack(spacing: 10) {
                 Image(systemName: "gamecontroller.fill")
                 Text("RPGバトルで見る")
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .font(.system(size: 16, weight: .bold, design: .monospaced))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
@@ -465,25 +465,25 @@ struct BetCardView: View {
         HStack(spacing: 10) {
             // Confidence badge
             Text(bet.confidence)
-                .font(.system(size: 14, weight: .black, design: .monospaced))
+                .font(.system(size: 16, weight: .black, design: .monospaced))
                 .foregroundColor(.black)
-                .frame(width: 28, height: 28)
+                .frame(width: 32, height: 32)
                 .background(confidenceColor)
                 .cornerRadius(6)
 
             // Combination
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 4) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 5) {
                     ForEach(Array(bet.combination.enumerated()), id: \.offset) { (i, waku) in
                         if i > 0 {
                             Image(systemName: bet.type == "ワイド" ? "minus" : "arrow.right")
-                                .font(.system(size: 8))
+                                .font(.system(size: 10))
                                 .foregroundColor(.white.opacity(0.3))
                         }
                         Text("\(waku)")
-                            .font(.system(size: 13, weight: .black, design: .monospaced))
+                            .font(.system(size: 15, weight: .black, design: .monospaced))
                             .foregroundColor(.black)
-                            .frame(width: 24, height: 24)
+                            .frame(width: 28, height: 28)
                             .background(wakuColor(waku))
                             .cornerRadius(4)
                     }
@@ -492,11 +492,11 @@ struct BetCardView: View {
                     ForEach(Array(bet.names.enumerated()), id: \.offset) { (i, name) in
                         if i > 0 {
                             Text("-")
-                                .font(.system(size: 9))
+                                .font(.system(size: 11))
                                 .foregroundColor(.white.opacity(0.2))
                         }
                         Text(String(name.prefix(3)))
-                            .font(.system(size: 10))
+                            .font(.system(size: 12))
                             .foregroundColor(.white.opacity(0.5))
                     }
                 }
@@ -507,16 +507,16 @@ struct BetCardView: View {
             // Probability
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(String(format: "%.1f", bet.probability))%")
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
+                    .font(.system(size: 16, weight: .bold, design: .monospaced))
                     .foregroundColor(bet.confidence == "S" ? Color(hex: "#FFD700") : .white)
                 if let ev = bet.expectedValue {
                     Text("EV \(String(format: "%.1f", ev))")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .font(.system(size: 12, weight: .bold, design: .monospaced))
                         .foregroundColor(ev > 1.0 ? .green : .red)
                 }
             }
         }
-        .padding(10)
+        .padding(12)
         .background(bet.confidence == "S" ? Color(hex: "#FFD700").opacity(0.08) : Color.white.opacity(0.04))
         .cornerRadius(8)
         .overlay(
@@ -541,24 +541,24 @@ struct EntryRowView: View {
     var body: some View {
         HStack(spacing: 10) {
             Text("\(entry.umaban)")
-                .font(.system(size: 14, weight: .black, design: .monospaced))
+                .font(.system(size: 16, weight: .black, design: .monospaced))
                 .foregroundColor(.black)
-                .frame(width: 26, height: 26)
+                .frame(width: 30, height: 30)
                 .background(wakuColor(entry.waku))
                 .clipShape(Circle())
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     Text(entry.name)
-                        .font(.system(size: 14, weight: .bold))
+                        .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.white)
                     Text(entry.style)
-                        .font(.system(size: 11))
+                        .font(.system(size: 13))
                         .foregroundColor(styleColor(entry.style))
                 }
                 if !entry.comment.isEmpty {
                     Text(entry.comment)
-                        .font(.system(size: 10))
+                        .font(.system(size: 12))
                         .foregroundColor(.white.opacity(0.4))
                         .lineLimit(1)
                 }
@@ -568,15 +568,15 @@ struct EntryRowView: View {
 
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(String(format: "%.1f", entry.score))点")
-                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                    .font(.system(size: 15, weight: .bold, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
                 Text("勝率\(String(format: "%.0f", entry.winRate))%")
-                    .font(.system(size: 10))
+                    .font(.system(size: 12))
                     .foregroundColor(.white.opacity(0.4))
             }
         }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 10)
         .background(Color.white.opacity(0.04))
         .cornerRadius(8)
     }
