@@ -73,6 +73,12 @@ struct TodayRacesData: Codable {
     let races: [TodayRace]
 }
 
+struct UpcomingRacesData: Codable {
+    let updated: String
+    let days: [String]
+    let races: [TodayRace]
+}
+
 struct TodayRace: Codable, Identifiable, Hashable {
     var id: String { race_id }
     let race_id: String
@@ -80,8 +86,10 @@ struct TodayRace: Codable, Identifiable, Hashable {
     let venue_cd: String
     let race_no: Int
     let entries: [TodayRaceEntry]
+    let date: String?
 
     var raceNo: Int { race_no }
+    var dateString: String { date ?? "" }
 
     static func == (lhs: TodayRace, rhs: TodayRace) -> Bool { lhs.race_id == rhs.race_id }
     func hash(into hasher: inout Hasher) { hasher.combine(race_id) }

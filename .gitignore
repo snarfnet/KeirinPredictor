@@ -5,3 +5,5 @@ DerivedData/
 Pods/
 *.ipa
 .DS_Store
+.omc/
+__pycache__/
