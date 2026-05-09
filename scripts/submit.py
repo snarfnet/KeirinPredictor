@@ -165,7 +165,7 @@ def main():
     except RuntimeError as e:
         print(f"appInfoLocalizations: {e}")
 
-    # Set age rating declaration
+    # Set age rating declaration — fetch existing, override all with defaults
     try:
         app_info = api("GET", f"/apps/{app_id}/appInfos?limit=1")
         if app_info.get("data"):
@@ -173,28 +173,33 @@ def main():
             age_rating = api("GET", f"/appInfos/{app_info_id}/ageRatingDeclaration")
             if age_rating.get("data"):
                 ard_id = age_rating["data"]["id"]
+                existing = age_rating["data"].get("attributes", {})
+                # Start with existing values, then override
+                attrs = {k: v for k, v in existing.items() if v is not None}
+                # Set all known fields to safe defaults
+                for field in [
+                    "alcoholTobaccoOrDrugUseOrReferences", "contests",
+                    "horrorOrFearThemes", "matureOrSuggestiveThemes",
+                    "medicalOrTreatmentInformation", "profanityOrCrudeHumor",
+                    "sexualContentGraphicAndNudity", "sexualContentOrNudity",
+                    "violenceCartoonOrFantasy", "violenceRealistic",
+                    "violenceRealisticProlongedGraphicOrSadistic",
+                    "healthOrWellnessTopics", "gunsOrOtherWeapons",
+                    "advertising", "messagingAndChat", "parentalControls",
+                ]:
+                    attrs.setdefault(field, "NONE")
+                for field in [
+                    "gambling", "unrestrictedWebAccess", "userGeneratedContent",
+                    "ageAssurance", "lootBox",
+                ]:
+                    attrs.setdefault(field, False)
+                attrs["gamblingSimulated"] = "INFREQUENT_OR_MILD"
+                attrs["advertising"] = "INFREQUENT_OR_MILD"
                 api("PATCH", f"/ageRatingDeclarations/{ard_id}", json={
                     "data": {
                         "type": "ageRatingDeclarations",
                         "id": ard_id,
-                        "attributes": {
-                            "alcoholTobaccoOrDrugUseOrReferences": "NONE",
-                            "contests": "NONE",
-                            "gambling": False,
-                            "gamblingSimulated": "INFREQUENT_OR_MILD",
-                            "horrorOrFearThemes": "NONE",
-                            "matureOrSuggestiveThemes": "NONE",
-                            "medicalOrTreatmentInformation": "NONE",
-                            "profanityOrCrudeHumor": "NONE",
-                            "sexualContentGraphicAndNudity": "NONE",
-                            "sexualContentOrNudity": "NONE",
-                            "violenceCartoonOrFantasy": "NONE",
-                            "violenceRealistic": "NONE",
-                            "violenceRealisticProlongedGraphicOrSadistic": "NONE",
-                            "unrestrictedWebAccess": False,
-                            "userGeneratedContent": False,
-                            "ageAssurance": False,
-                        },
+                        "attributes": attrs,
                     }
                 })
                 print("Age rating set")
