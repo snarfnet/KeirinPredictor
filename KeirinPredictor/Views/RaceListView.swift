@@ -15,6 +15,11 @@ struct RaceListView: View {
                 } else {
                     ScrollView {
                         VStack(spacing: 20) {
+                            // 鉄脚先生のAI予測
+                            if !aiPicks.isEmpty {
+                                AISenseiSection(picks: aiPicks, venueStats: dataLoader.venueStats, playerStats: dataLoader.playerStats)
+                            }
+
                             ForEach(dayGroups, id: \.date) { group in
                                 DaySectionView(group: group, homeVenue: homeVenue)
                             }
@@ -68,6 +73,30 @@ struct RaceListView: View {
 
     private var availableVenues: [String] {
         Array(dataLoader.venueStats.keys).sorted()
+    }
+
+    /// 鉄脚先生のおすすめ: スコア差が大きい（予測しやすい）レースを最大3つピック
+    private var aiPicks: [TodayRace] {
+        let todayStr = todayString()
+        let todayRaces = dataLoader.todayRaces.filter {
+            let d = $0.dateString.isEmpty ? todayStr : $0.dateString
+            return d == todayStr
+        }
+
+        // Score differential: top1 - top2 score gap = confidence
+        let scored = todayRaces.compactMap { race -> (TodayRace, Double)? in
+            let sorted = race.entries.sorted { $0.score > $1.score }
+            guard sorted.count >= 3 else { return nil }
+            let gap = sorted[0].score - sorted[2].score
+            // Prefer races with clear favorites
+            guard gap >= 5 else { return nil }
+            return (race, gap)
+        }
+
+        return scored
+            .sorted { $0.1 > $1.1 }
+            .prefix(3)
+            .map { $0.0 }
     }
 
     private var emptyState: some View {
@@ -391,5 +420,180 @@ struct RaceCardView: View {
         .background(Color.white.opacity(0.02))
         .cornerRadius(8)
         .padding(.horizontal, 8)
+    }
+}
+
+// MARK: - 鉄脚先生のAI予測
+struct AISenseiSection: View {
+    let picks: [TodayRace]
+    let venueStats: [String: VenueStats]
+    let playerStats: [String: PlayerStats]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            // Header
+            HStack(spacing: 8) {
+                Text("🔥")
+                    .font(.system(size: 24))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("鉄脚先生のAI予測")
+                        .font(.system(size: 18, weight: .black, design: .monospaced))
+                        .foregroundColor(Color(hex: "#FFD700"))
+                    Text("本日のおすすめレース")
+                        .font(.system(size: 13, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.6))
+                }
+                Spacer()
+            }
+            .padding(.bottom, 4)
+
+            ForEach(picks) { race in
+                NavigationLink(value: race) {
+                    AISenseiPickCard(race: race, venueStats: venueStats, playerStats: playerStats)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(16)
+        .background(
+            LinearGradient(
+                colors: [Color(hex: "#FFD700").opacity(0.08), Color(hex: "#0A0E27")],
+                startPoint: .top, endPoint: .bottom
+            )
+        )
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color(hex: "#FFD700").opacity(0.3), lineWidth: 1)
+        )
+    }
+}
+
+struct AISenseiPickCard: View {
+    let race: TodayRace
+    let venueStats: [String: VenueStats]
+    let playerStats: [String: PlayerStats]
+
+    private var sortedEntries: [TodayRaceEntry] {
+        race.entries.sorted { $0.score > $1.score }
+    }
+
+    private var commentary: String {
+        guard let top = sortedEntries.first else { return "" }
+        let stat = playerStats[top.name]
+        let bank = venueStats[race.venue]?.bank ?? 400
+
+        var lines: [String] = []
+
+        // Class rank
+        let classRank = stat?.classRank ?? ""
+        if classRank.hasPrefix("S") {
+            lines.append("\(top.name)はS級の実力者")
+        } else if classRank == "A1" {
+            lines.append("\(top.name)はA1級で安定感あり")
+        }
+
+        // Style x Bank match
+        let style = stat?.style ?? top.style
+        if style == "逃" && bank <= 335 {
+            lines.append("333mバンクは逃げ天国、先行有利の展開")
+        } else if style == "追" && bank >= 500 {
+            lines.append("500mバンクは追込み有利、後方から一気に")
+        } else if style == "捲" && bank == 400 {
+            lines.append("400mバンクで捲りが決まりやすい")
+        } else if style == "差" && bank >= 500 {
+            lines.append("500mの長い直線で差しが届く")
+        }
+
+        // Win rate
+        let wr = stat?.winRate ?? top.win_rate / 100
+        if wr > 0.3 {
+            lines.append("勝率\(String(format: "%.0f", wr * 100))%の高勝率")
+        }
+
+        // Score gap
+        if sortedEntries.count >= 2 {
+            let gap = sortedEntries[0].score - sortedEntries[1].score
+            if gap >= 10 {
+                lines.append("2番手との実力差が大きく、堅い予想")
+            } else if gap >= 5 {
+                lines.append("頭一つ抜けた存在、軸に最適")
+            }
+        }
+
+        // Recent form
+        if let rr = stat?.recentRanks, rr.count >= 3 {
+            let recent3 = Array(rr.prefix(3))
+            let wins = recent3.filter { $0 == 1 }.count
+            if wins >= 2 {
+                lines.append("直近\(wins)連勝と絶好調")
+            }
+        }
+
+        if lines.isEmpty {
+            return "\(top.name)が総合力で上位、安定した成績に注目"
+        }
+        return lines.prefix(3).joined(separator: "。") + "。"
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            // Race info
+            HStack(spacing: 8) {
+                Text("\(race.venue)")
+                    .font(.system(size: 16, weight: .black, design: .monospaced))
+                    .foregroundColor(.white)
+                Text("\(race.raceNo)R")
+                    .font(.system(size: 20, weight: .black, design: .monospaced))
+                    .foregroundColor(Color(hex: "#FFD700"))
+                if let bank = venueStats[race.venue]?.bank {
+                    Text("\(bank)m")
+                        .font(.system(size: 13, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.5))
+                }
+                Spacer()
+                Text("\(race.entries.count)車立")
+                    .font(.system(size: 13, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.4))
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13))
+                    .foregroundColor(Color(hex: "#FFD700").opacity(0.5))
+            }
+
+            // Top 3 prediction
+            HStack(spacing: 10) {
+                ForEach(Array(sortedEntries.prefix(3).enumerated()), id: \.offset) { (i, entry) in
+                    HStack(spacing: 5) {
+                        Text(i == 0 ? "◎" : i == 1 ? "○" : "▲")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(i == 0 ? Color(hex: "#FFD700") : .white.opacity(0.7))
+                        Text("\(entry.umaban)")
+                            .font(.system(size: 14, weight: .black, design: .monospaced))
+                            .foregroundColor(.black)
+                            .frame(width: 24, height: 24)
+                            .background(wakuColor(entry.waku))
+                            .clipShape(Circle())
+                        Text(entry.name)
+                            .font(.system(size: 14, weight: i == 0 ? .bold : .regular))
+                            .foregroundColor(i == 0 ? .white : .white.opacity(0.7))
+                            .lineLimit(1)
+                    }
+                }
+            }
+
+            // Commentary
+            Text(commentary)
+                .font(.system(size: 13))
+                .foregroundColor(.white.opacity(0.8))
+                .lineSpacing(4)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(14)
+        .background(Color.white.opacity(0.05))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color(hex: "#FFD700").opacity(0.15), lineWidth: 1)
+        )
     }
 }
