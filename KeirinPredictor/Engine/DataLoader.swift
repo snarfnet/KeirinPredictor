@@ -44,8 +44,14 @@ class DataLoader: ObservableObject {
         if let cached = loadCachedTodayEntries() {
             return cached
         }
-        // Fall back to bundle
-        return loadJSON(name: "today_entries", type: TodayRacesData.self)
+        // Fall back to bundle only if date matches today
+        if let bundle = loadJSON(name: "today_entries", type: TodayRacesData.self) {
+            let todayStr = Self.todayString()
+            if bundle.date == todayStr {
+                return bundle
+            }
+        }
+        return nil
     }
 
     private func loadCachedTodayEntries() -> TodayRacesData? {
