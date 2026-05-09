@@ -177,6 +177,7 @@ def main():
                 # Start with existing values, then override
                 attrs = {k: v for k, v in existing.items() if v is not None}
                 # Set all known fields to safe defaults
+                # Fields with "NONE" / "INFREQUENT_OR_MILD" / "FREQUENT_OR_INTENSE" values
                 for field in [
                     "alcoholTobaccoOrDrugUseOrReferences", "contests",
                     "horrorOrFearThemes", "matureOrSuggestiveThemes",
@@ -184,17 +185,18 @@ def main():
                     "sexualContentGraphicAndNudity", "sexualContentOrNudity",
                     "violenceCartoonOrFantasy", "violenceRealistic",
                     "violenceRealisticProlongedGraphicOrSadistic",
-                    "healthOrWellnessTopics", "gunsOrOtherWeapons",
-                    "advertising", "messagingAndChat", "parentalControls",
+                    "gunsOrOtherWeapons",
                 ]:
                     attrs.setdefault(field, "NONE")
+                # Boolean fields
                 for field in [
                     "gambling", "unrestrictedWebAccess", "userGeneratedContent",
-                    "ageAssurance", "lootBox",
+                    "ageAssurance", "lootBox", "messagingAndChat",
+                    "parentalControls", "advertising",
+                    "healthOrWellnessTopics",
                 ]:
                     attrs.setdefault(field, False)
                 attrs["gamblingSimulated"] = "INFREQUENT_OR_MILD"
-                attrs["advertising"] = "INFREQUENT_OR_MILD"
                 api("PATCH", f"/ageRatingDeclarations/{ard_id}", json={
                     "data": {
                         "type": "ageRatingDeclarations",
