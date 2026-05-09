@@ -240,7 +240,8 @@ struct RaceDetailView: View {
                 venueStats: dataLoader.venueStats,
                 entryScores: entryScores
             )
-            bets = PredictionEngine.generateBets(predictions: predictions)
+            let raceOdds = dataLoader.todayOdds[race.race_id]?.trifecta ?? [:]
+            bets = PredictionEngine.generateBets(predictions: predictions, odds: raceOdds)
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 isAnimating = false
                 showResults = true

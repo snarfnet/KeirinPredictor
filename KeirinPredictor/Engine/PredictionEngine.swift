@@ -233,12 +233,19 @@ struct PredictionEngine {
     }
 
     // MARK: - Bet Recommendations
-    static func generateBets(predictions: [PredictionResult]) -> [BetRecommendation] {
+    static func generateBets(predictions: [PredictionResult], odds: [String: Double] = [:]) -> [BetRecommendation] {
         guard predictions.count >= 3 else { return [] }
 
         var bets: [BetRecommendation] = []
         let top = predictions.sorted { $0.score > $1.score }
         let darkHorses = top.filter { $0.isDarkHorse }
+
+        // Helper: calculate EV from odds
+        func trifectaEV(_ combo: [PredictionResult], prob: Double) -> Double? {
+            let key = combo.map { "\($0.waku)" }.joined(separator: "-")
+            guard let o = odds[key] else { return nil }
+            return round(o * prob * 100) / 100
+        }
 
         // === 3連単 (Trifecta exact order) ===
         // Pattern 1: Top 3 box (6 bets) - confidence S/A
@@ -246,14 +253,19 @@ struct PredictionEngine {
         let top3Perms = permutations(top3)
         for perm in top3Perms {
             let prob = estimateTrifectaProb(perm, allPredictions: top)
-            let conf = prob > 0.08 ? "S" : (prob > 0.04 ? "A" : "B")
+            let ev = trifectaEV(perm, prob: prob)
+            let conf: String
+            if let ev = ev, ev > 1.5 { conf = "S" }
+            else if prob > 0.08 { conf = "S" }
+            else if prob > 0.04 { conf = "A" }
+            else { conf = "B" }
             bets.append(BetRecommendation(
                 type: "3連単",
                 combination: perm.map { $0.waku },
                 names: perm.map { $0.name },
                 probability: round(prob * 1000) / 10,
                 confidence: conf,
-                expectedValue: nil
+                expectedValue: ev
             ))
         }
 
@@ -264,14 +276,17 @@ struct PredictionEngine {
             for pos in [1, 2] {
                 var combo = top2
                 combo.insert(dh, at: pos)
-                let prob = estimateTrifectaProb(Array(combo.prefix(3)), allPredictions: top)
+                let c3 = Array(combo.prefix(3))
+                let prob = estimateTrifectaProb(c3, allPredictions: top)
+                let ev = trifectaEV(c3, prob: prob)
+                let conf = ev != nil && ev! > 1.5 ? "A" : "B"
                 bets.append(BetRecommendation(
                     type: "3連単",
-                    combination: Array(combo.prefix(3)).map { $0.waku },
-                    names: Array(combo.prefix(3)).map { $0.name },
+                    combination: c3.map { $0.waku },
+                    names: c3.map { $0.name },
                     probability: round(prob * 1000) / 10,
-                    confidence: "B",
-                    expectedValue: nil
+                    confidence: conf,
+                    expectedValue: ev
                 ))
             }
         }
@@ -288,13 +303,18 @@ struct PredictionEngine {
                     let alreadyExists = bets.contains { $0.type == "3連単" && $0.combination == key }
                     if !alreadyExists {
                         let prob = estimateTrifectaProb(combo, allPredictions: top)
+                        let ev = trifectaEV(combo, prob: prob)
+                        let conf: String
+                        if let ev = ev, ev > 1.5 { conf = "A" }
+                        else if prob > 0.04 { conf = "A" }
+                        else { conf = "B" }
                         bets.append(BetRecommendation(
                             type: "3連単",
                             combination: key,
                             names: combo.map { $0.name },
                             probability: round(prob * 1000) / 10,
-                            confidence: prob > 0.04 ? "A" : "B",
-                            expectedValue: nil
+                            confidence: conf,
+                            expectedValue: ev
                         ))
                     }
                 }

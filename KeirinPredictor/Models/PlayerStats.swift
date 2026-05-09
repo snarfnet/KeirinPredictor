@@ -141,6 +141,20 @@ struct Payback: Codable {
     let payout: Int
 }
 
+// MARK: - Odds Data (from today_odds.json)
+struct TodayOddsData: Codable {
+    let date: String
+    let updated: String
+    let races: [RaceOdds]
+}
+
+struct RaceOdds: Codable {
+    let race_id: String
+    let venue: String
+    let race_no: Int
+    let trifecta: [String: Double]  // "1-2-3": 7.7
+}
+
 // MARK: - Race Entry (UI model)
 struct RaceEntry: Identifiable {
     let id = UUID()

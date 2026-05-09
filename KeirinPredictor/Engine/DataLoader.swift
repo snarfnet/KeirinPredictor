@@ -6,6 +6,7 @@ class DataLoader: ObservableObject {
     @Published var lineMatrix: [String: LineEntry] = [:]
     @Published var todayRaces: [TodayRace] = []
     @Published var todayResults: [TodayRaceResult] = []
+    @Published var todayOdds: [String: RaceOdds] = [:] // race_id -> RaceOdds
     @Published var todayDateString: String = ""
     @Published var isLoaded = false
 
@@ -33,6 +34,7 @@ class DataLoader: ObservableObject {
                 self.isLoaded = true
                 self.fetchRemoteTodayEntries()
                 self.fetchRemoteTodayResults()
+                self.fetchRemoteTodayOdds()
             }
         }
     }
@@ -83,6 +85,27 @@ class DataLoader: ObservableObject {
                 }
             } catch {
                 print("Remote today_entries decode error: \(error)")
+            }
+        }.resume()
+    }
+
+    func fetchRemoteTodayOdds() {
+        guard let url = URL(string: "\(Self.remoteBaseURL)/today_odds.json") else { return }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data,
+                  let httpResp = response as? HTTPURLResponse,
+                  httpResp.statusCode == 200 else { return }
+            do {
+                let result = try JSONDecoder().decode(TodayOddsData.self, from: data)
+                var oddsMap: [String: RaceOdds] = [:]
+                for race in result.races {
+                    oddsMap[race.race_id] = race
+                }
+                DispatchQueue.main.async {
+                    self.todayOdds = oddsMap
+                }
+            } catch {
+                print("Remote today_odds decode error: \(error)")
             }
         }.resume()
     }
