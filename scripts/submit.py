@@ -145,6 +145,24 @@ def main():
             else:
                 raise
 
+    # Set primary category (Entertainment)
+    try:
+        app_info = api("GET", f"/apps/{app_id}/appInfos?limit=1")
+        if app_info.get("data"):
+            app_info_id = app_info["data"][0]["id"]
+            api("PATCH", f"/appInfos/{app_info_id}", json={
+                "data": {
+                    "type": "appInfos",
+                    "id": app_info_id,
+                    "relationships": {
+                        "primaryCategory": {"data": {"type": "appCategories", "id": "ENTERTAINMENT"}},
+                    },
+                }
+            })
+            print("Primary category set")
+    except RuntimeError as e:
+        print(f"Category: {e}")
+
     # Set privacyPolicyUrl on appInfoLocalizations (not version localizations)
     try:
         app_info = api("GET", f"/apps/{app_id}/appInfos?limit=1")
