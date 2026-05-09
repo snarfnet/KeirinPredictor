@@ -183,7 +183,7 @@ def main():
                             "sexualContentOrNudity": "NONE",
                             "sexualContentGraphicAndNudity": "NONE",
                             "userGeneratedContent": False,
-                            "ageAssurance": "NONE",
+                            "ageAssurance": False,
                         },
                     }
                 })
@@ -199,12 +199,14 @@ def main():
                     "type": "appStoreVersionLocalizations",
                     "id": loc_id,
                     "attributes": {
+                        "description": "競輪レースの予測をRPGバトル風UIで楽しめるアプリ。2400人以上の選手データ・40会場の特性・ライン相性を分析して勝敗を予測。逆張りAIモードで穴狙いも。",
+                        "keywords": "競輪,予測,レース,選手,バンク,RPG,ライン,逆張り,ギャンブル,keirin",
                         "marketingUrl": "https://snarfnet.github.io/",
                         "supportUrl": "https://snarfnet.github.io/",
                     },
                 }
             })
-            print("URLs set")
+            print("URLs and metadata set")
         except RuntimeError as e:
             print(f"URLs: {e}")
 
