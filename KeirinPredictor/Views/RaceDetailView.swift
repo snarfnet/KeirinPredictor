@@ -181,13 +181,18 @@ struct RaceDetailView: View {
         let entries = race.entries.map { e in
             RaceEntry(name: e.name, waku: e.umaban)
         }
+        var entryScores: [String: Double] = [:]
+        for e in race.entries {
+            entryScores[e.name] = e.score
+        }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             predictions = PredictionEngine.predict(
                 entries: entries,
                 venue: race.venue,
                 playerStats: dataLoader.playerStats,
-                venueStats: dataLoader.venueStats
+                venueStats: dataLoader.venueStats,
+                entryScores: entryScores
             )
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 isAnimating = false
