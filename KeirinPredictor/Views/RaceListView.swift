@@ -13,25 +13,37 @@ struct RaceListView: View {
                 if dataLoader.todayRaces.isEmpty {
                     emptyState
                 } else {
-                    ScrollView {
-                        VStack(spacing: 20) {
-                            // 鉄脚先生のAI予測
-                            if !aiPicks.isEmpty {
+                    List {
+                        // 鉄脚先生のAI予測
+                        if !aiPicks.isEmpty {
+                            Section {
                                 AISenseiSection(picks: aiPicks, venueStats: dataLoader.venueStats, playerStats: dataLoader.playerStats)
                             }
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                            .listRowSeparator(.hidden)
+                        }
 
-                            ForEach(dayGroups, id: \.date) { group in
+                        ForEach(dayGroups, id: \.date) { group in
+                            Section {
                                 DaySectionView(group: group, homeVenue: homeVenue)
                             }
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                            .listRowSeparator(.hidden)
+                        }
 
+                        Section {
                             BannerAdView()
                                 .frame(height: 50)
-                                .padding(.horizontal)
-
-                            Spacer(minLength: 40)
                         }
-                        .padding(.horizontal)
-                        .padding(.top, 8)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                    }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .refreshable {
+                        dataLoader.fetchRemoteTodayEntries()
                     }
                 }
             }
