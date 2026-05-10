@@ -166,18 +166,20 @@ struct RaceResultRow: View {
             // Paybacks
             if !result.paybacks.isEmpty {
                 Divider().background(Color.white.opacity(0.1))
-                HStack(spacing: 12) {
-                    ForEach(result.paybacks.prefix(3), id: \.type) { pb in
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 8)], alignment: .leading, spacing: 6) {
+                    ForEach(Array(result.paybacks.enumerated()), id: \.offset) { _, pb in
                         VStack(spacing: 2) {
                             Text(pb.type)
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(.white.opacity(0.5))
+                            Text(pb.combination)
+                                .font(.system(size: 11))
+                                .foregroundColor(.white.opacity(0.7))
                             Text("\(pb.payout)円")
                                 .font(.system(size: 13, weight: .bold, design: .monospaced))
                                 .foregroundColor(pb.payout >= 10000 ? .red : Color(hex: "#FFD700"))
                         }
                     }
-                    Spacer()
                 }
             }
         }
