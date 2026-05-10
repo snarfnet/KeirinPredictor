@@ -75,16 +75,21 @@ class DataLoader: ObservableObject {
     func fetchRemoteTodayEntries() {
         // First try upcoming_entries.json (multi-day)
         guard let upcomingURL = URL(string: "\(Self.remoteBaseURL)/upcoming_entries.json") else { return }
-        URLSession.shared.dataTask(with: upcomingURL) { data, response, error in
+        var request = URLRequest(url: upcomingURL)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data,
                let httpResp = response as? HTTPURLResponse,
                httpResp.statusCode == 200 {
                 do {
                     let result = try JSONDecoder().decode(UpcomingRacesData.self, from: data)
                     if !result.races.isEmpty {
+                        // Show today or the nearest upcoming day
+                        let todayStr = Self.todayString()
+                        let displayDay = result.days.first(where: { $0 >= todayStr }) ?? result.days.last ?? ""
                         DispatchQueue.main.async {
                             self.todayRaces = result.races
-                            self.todayDateString = self.formatDateString(result.days.first ?? "")
+                            self.todayDateString = self.formatDateString(displayDay)
                         }
                         return
                     }
@@ -99,7 +104,9 @@ class DataLoader: ObservableObject {
 
     private func fetchTodayEntriesFallback() {
         guard let url = URL(string: "\(Self.remoteBaseURL)/today_entries.json") else { return }
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
                   httpResp.statusCode == 200 else { return }
@@ -121,7 +128,9 @@ class DataLoader: ObservableObject {
 
     func fetchRemoteTodayOdds() {
         guard let url = URL(string: "\(Self.remoteBaseURL)/today_odds.json") else { return }
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
                   httpResp.statusCode == 200 else { return }
@@ -142,7 +151,9 @@ class DataLoader: ObservableObject {
 
     func fetchRemoteTodayResults() {
         guard let url = URL(string: "\(Self.remoteBaseURL)/today_results.json") else { return }
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
                   httpResp.statusCode == 200 else { return }
