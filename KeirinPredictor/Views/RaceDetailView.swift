@@ -138,16 +138,23 @@ struct RaceDetailView: View {
                 .foregroundColor(.white.opacity(0.5))
             }
 
-            // Line formations
-            let districts = Dictionary(grouping: predictions.filter { !$0.district.isEmpty }, by: { $0.district })
-            if districts.count > 1 {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
-                        ForEach(districts.keys.sorted(), id: \.self) { dist in
-                            LinePartyView(district: dist, members: districts[dist] ?? [])
+            // Line formations with roles
+            let lineFormations = PredictionEngine.analyzeLines(
+                entries: race.entries.map { RaceEntry(name: $0.name, waku: $0.umaban) },
+                playerStats: dataLoader.playerStats
+            )
+            if !lineFormations.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("ライン予測")
+                        .font(.system(size: 13, weight: .bold, design: .monospaced))
+                        .foregroundColor(Color(hex: "#FFD700").opacity(0.8))
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(Array(lineFormations.enumerated()), id: \.offset) { (i, line) in
+                                LineFormationCard(line: line, isStrongest: i == 0)
+                            }
                         }
                     }
-                    .padding(.vertical, 4)
                 }
             }
 
@@ -317,6 +324,54 @@ struct BetCardView: View {
         case "B": return Color(hex: "#CD7F32")
         default: return Color.gray
         }
+    }
+}
+
+// MARK: - Line Formation Card
+struct LineFormationCard: View {
+    let line: PredictionEngine.LineFormation
+    let isStrongest: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 4) {
+                Text(line.district)
+                    .font(.system(size: 13, weight: .bold, design: .monospaced))
+                    .foregroundColor(isStrongest ? Color(hex: "#FFD700") : .white)
+                if isStrongest {
+                    Text("本命")
+                        .font(.system(size: 10, weight: .black))
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 1)
+                        .background(Color(hex: "#FFD700"))
+                        .cornerRadius(3)
+                }
+            }
+            ForEach(Array(line.members.enumerated()), id: \.offset) { (_, member) in
+                HStack(spacing: 5) {
+                    Text("\(member.1)")
+                        .font(.system(size: 12, weight: .black, design: .monospaced))
+                        .foregroundColor(.black)
+                        .frame(width: 22, height: 22)
+                        .background(wakuColor(member.1))
+                        .clipShape(Circle())
+                    Text(String(member.0.prefix(3)))
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white)
+                    Text(member.2)
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(member.2 == "先行" ? .orange : .white.opacity(0.4))
+                }
+            }
+        }
+        .padding(10)
+        .background(isStrongest ? Color(hex: "#FFD700").opacity(0.08) : Color.white.opacity(0.04))
+        .cornerRadius(8)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isStrongest ? Color(hex: "#FFD700").opacity(0.3) : Color.clear, lineWidth: 1)
+        )
     }
 }
 

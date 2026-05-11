@@ -44,6 +44,10 @@ struct PredictionEngine {
             }
         }
 
+        // Pre-compute line formations and scenario bonuses (once)
+        let lines = analyzeLines(entries: entries, playerStats: playerStats)
+        let scenarioBonuses = simulateScenarios(lines: lines, bank: bank, entries: entries, playerStats: playerStats)
+
         var scored: [(entry: RaceEntry, score: Double, stat: PlayerStats?)] = []
 
         for entry in entries {
@@ -174,7 +178,10 @@ struct PredictionEngine {
                 }
             }
 
-            // ========== 8. Fewer entries = more predictable ==========
+            // ========== 8. Line scenario bonuses (NEW) ==========
+            score += scenarioBonuses[entry.name] ?? 0
+
+            // ========== 9. Fewer entries = more predictable ==========
             if entryCount <= 5 && wr > 0.2 {
                 score += 3 // Strong riders dominate in small fields
             }
@@ -404,6 +411,123 @@ struct PredictionEngine {
             [b, a, c], [b, c, a],
             [c, a, b], [c, b, a]
         ]
+    }
+
+    // MARK: - Line Formation Analysis
+    struct LineFormation {
+        let district: String
+        let members: [(name: String, waku: Int, role: String, style: String)] // role: 先行/番手/3番手
+        var strength: Double // combined line power
+    }
+
+    /// Analyze line formations: assign roles based on style within each district group
+    static func analyzeLines(
+        entries: [RaceEntry],
+        playerStats: [String: PlayerStats]
+    ) -> [LineFormation] {
+        // Group by district
+        var districtGroups: [String: [(entry: RaceEntry, stat: PlayerStats?)]] = [:]
+        for entry in entries {
+            let stat = playerStats[entry.name]
+            let d = stat?.district ?? ""
+            if !d.isEmpty {
+                districtGroups[d, default: []].append((entry, stat))
+            }
+        }
+
+        var lines: [LineFormation] = []
+        for (district, group) in districtGroups where group.count >= 2 {
+            // Sort by role assignment priority:
+            // 逃 → 先行 (leader), 捲/両 → 番手 (2nd), 差/追 → 3番手 (3rd)
+            let rolePriority: [String: Int] = ["逃": 0, "捲": 1, "両": 1, "差": 2, "追": 2]
+            let sorted = group.sorted {
+                let p0 = rolePriority[$0.stat?.style ?? ""] ?? 3
+                let p1 = rolePriority[$1.stat?.style ?? ""] ?? 3
+                if p0 != p1 { return p0 < p1 }
+                return ($0.stat?.winRate ?? 0) > ($1.stat?.winRate ?? 0)
+            }
+
+            let roles = ["先行", "番手", "3番手", "4番手", "5番手"]
+            var members: [(String, Int, String, String)] = []
+            var strength = 0.0
+
+            for (i, item) in sorted.enumerated() {
+                let role = i < roles.count ? roles[i] : "追走"
+                let style = item.stat?.style ?? ""
+                members.append((item.entry.name, item.entry.waku, role, style))
+
+                // Line strength calculation
+                let classScore = classWeight[item.stat?.classRank ?? ""] ?? 0
+                let wr = item.stat?.winRate ?? 0
+                let positionMultiplier = i == 0 ? 1.5 : (i == 1 ? 1.2 : 1.0)
+                strength += (classScore + wr * 20) * positionMultiplier
+            }
+
+            // Larger lines are stronger
+            strength *= (1.0 + Double(members.count - 2) * 0.15)
+
+            lines.append(LineFormation(district: district, members: members, strength: strength))
+        }
+
+        return lines.sorted { $0.strength > $1.strength }
+    }
+
+    /// Simulate race scenarios based on line formations and bank type
+    static func simulateScenarios(
+        lines: [LineFormation],
+        bank: Int,
+        entries: [RaceEntry],
+        playerStats: [String: PlayerStats]
+    ) -> [String: Double] {
+        // Returns waku -> bonus score from scenario simulation
+        var bonuses: [String: Double] = [:]
+
+        guard let strongestLine = lines.first else { return bonuses }
+
+        // Scenario 1: Strongest line controls the race
+        let leader = strongestLine.members.first
+        if let leader = leader {
+            let leaderStyle = leader.3 // style
+            // Leader of strongest line gets bonus
+            bonuses[leader.0, default: 0] += strongestLine.strength * 0.1
+
+            // If leader is 逃 on short bank, huge advantage
+            if leaderStyle == "逃" && bank <= 335 {
+                bonuses[leader.0, default: 0] += 5
+            }
+
+            // 番手 (2nd position) often wins — the drafter advantage
+            if strongestLine.members.count >= 2 {
+                let bante = strongestLine.members[1]
+                bonuses[bante.0, default: 0] += strongestLine.strength * 0.08
+                // 番手 on 400m bank is golden position
+                if bank == 400 {
+                    bonuses[bante.0, default: 0] += 3
+                }
+            }
+        }
+
+        // Scenario 2: Lone wolves (single-member districts) can upset on long banks
+        let soloRiders = entries.filter { entry in
+            let d = playerStats[entry.name]?.district ?? ""
+            return d.isEmpty || !lines.contains(where: { $0.district == d })
+        }
+        for solo in soloRiders {
+            let stat = playerStats[solo.name]
+            if bank >= 500 && (stat?.style == "追" || stat?.style == "差") {
+                bonuses[solo.name, default: 0] += 4 // Solo closers thrive on long banks
+            }
+        }
+
+        // Scenario 3: Weak line members get penalized
+        if lines.count >= 2 {
+            let weakestLine = lines.last!
+            for member in weakestLine.members {
+                bonuses[member.0, default: 0] -= 2
+            }
+        }
+
+        return bonuses
     }
 
     // MARK: - Style x Bank bonus (refined)
