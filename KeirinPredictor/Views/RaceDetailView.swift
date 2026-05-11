@@ -88,7 +88,11 @@ struct RaceDetailView: View {
             runPrediction()
         } label: {
             HStack(spacing: 10) {
-                Image(systemName: "bolt.fill")
+                Image("HakaseAvatar")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 28, height: 28)
+                    .clipShape(Circle())
                 Text("予測開始")
                     .font(.system(size: 18, weight: .black, design: .monospaced))
             }

@@ -10,9 +10,11 @@ struct ResultsListView: View {
 
                 if dataLoader.todayResults.isEmpty {
                     VStack(spacing: 16) {
-                        Image(systemName: "trophy")
-                            .font(.system(size: 48))
-                            .foregroundColor(Color(hex: "#FFD700").opacity(0.5))
+                        Image("EmptyState")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 160, height: 160)
+                            .opacity(0.7)
                         Text("結果データを取得中...")
                             .font(.system(size: 16, design: .monospaced))
                             .foregroundColor(.white.opacity(0.6))

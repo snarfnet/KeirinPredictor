@@ -113,9 +113,11 @@ struct RaceListView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image(systemName: "flag.2.crossed")
-                .font(.system(size: 48))
-                .foregroundColor(Color(hex: "#FFD700").opacity(0.5))
+            Image("EmptyState")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 180, height: 180)
+                .opacity(0.7)
             Text("レースデータなし")
                 .font(.system(size: 16, design: .monospaced))
                 .foregroundColor(.white.opacity(0.6))
@@ -444,9 +446,13 @@ struct AISenseiSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             // Header
-            HStack(spacing: 8) {
-                Text("🔥")
-                    .font(.system(size: 24))
+            HStack(spacing: 10) {
+                Image("HakaseAvatar")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 44, height: 44)
+                    .clipShape(Circle())
+                    .overlay(Circle().stroke(Color(hex: "#FFD700").opacity(0.5), lineWidth: 2))
                 VStack(alignment: .leading, spacing: 2) {
                     Text("鉄脚博士のAI予測")
                         .font(.system(size: 18, weight: .black, design: .monospaced))
@@ -468,11 +474,18 @@ struct AISenseiSection: View {
         }
         .padding(16)
         .background(
-            LinearGradient(
-                colors: [Color(hex: "#FFD700").opacity(0.08), Color(hex: "#0A0E27")],
-                startPoint: .top, endPoint: .bottom
-            )
+            ZStack {
+                Image("HeaderBg")
+                    .resizable()
+                    .scaledToFill()
+                    .opacity(0.3)
+                LinearGradient(
+                    colors: [Color(hex: "#FFD700").opacity(0.08), Color(hex: "#0A0E27")],
+                    startPoint: .top, endPoint: .bottom
+                )
+            }
         )
+        .clipped()
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
