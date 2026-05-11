@@ -65,9 +65,12 @@ struct PredictionView: View {
     // MARK: - Header
     private var headerBanner: some View {
         HStack(spacing: 8) {
-            Image(systemName: "bolt.fill")
-                .foregroundColor(Color(hex: "#FFD700"))
-            Text("RPGバトル予測")
+            Image("HakaseAvatar")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+                .clipShape(Circle())
+            Text("鉄脚博士のAI予測")
                 .font(.system(size: 14, weight: .bold, design: .monospaced))
                 .foregroundColor(.white.opacity(0.8))
             Spacer()
@@ -176,7 +179,7 @@ struct PredictionView: View {
                 } else {
                     Image(systemName: "bolt.fill")
                 }
-                Text(isAnimating ? "バトル中..." : "予測開始 / PREDICT")
+                Text(isAnimating ? "分析中..." : "予測開始 / PREDICT")
                     .font(.system(size: 16, weight: .black, design: .monospaced))
             }
             .frame(maxWidth: .infinity)
@@ -200,7 +203,7 @@ struct PredictionView: View {
     private var resultsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("BATTLE RESULT")
+                Text("PREDICTION RESULT")
                     .font(.system(size: 14, weight: .black, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
                 Spacer()
@@ -349,6 +352,15 @@ struct ResultCardView: View {
                         Text("直近\(String(format: "%.1f", avg))着")
                             .font(.system(size: 13))
                             .foregroundColor(.white.opacity(0.5))
+                    }
+                    if result.formScore > 0 {
+                        HStack(spacing: 2) {
+                            Image(systemName: "flame.fill")
+                                .font(.system(size: 10))
+                            Text(String(format: "%.0f", result.formScore))
+                                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                        }
+                        .foregroundColor(result.formScore >= 7 ? .orange : .white.opacity(0.4))
                     }
                 }
             }
