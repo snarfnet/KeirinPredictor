@@ -8,6 +8,7 @@ struct KeirinPredictorApp: App {
 
     init() {
         MobileAds.shared.start(completionHandler: nil)
+        NotificationManager.shared.requestPermission()
     }
 
     var body: some Scene {

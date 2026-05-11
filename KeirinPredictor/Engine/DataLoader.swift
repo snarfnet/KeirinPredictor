@@ -142,6 +142,12 @@ class DataLoader: ObservableObject {
                 }
                 DispatchQueue.main.async {
                     self.todayOdds = oddsMap
+                    NotificationManager.shared.scanForHighEV(
+                        races: self.todayRaces,
+                        playerStats: self.playerStats,
+                        venueStats: self.venueStats,
+                        odds: oddsMap
+                    )
                 }
             } catch {
                 print("Remote today_odds decode error: \(error)")

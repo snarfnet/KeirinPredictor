@@ -36,6 +36,7 @@ add_sources(app_group, target, ['KeirinPredictorApp.swift'])
 
 add_sources(engine_group, target, [
   'DataLoader.swift',
+  'NotificationManager.swift',
   'PredictionEngine.swift',
   'PredictionTracker.swift'
 ])
