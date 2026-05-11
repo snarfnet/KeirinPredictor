@@ -25,10 +25,6 @@ struct ContentView: View {
                     Label("競輪場", systemImage: "mappin.circle.fill")
                 }
 
-            PredictionView()
-                .tabItem {
-                    Label("RPG", systemImage: "bolt.fill")
-                }
         }
         .accentColor(Color(hex: "#FFD700"))
         .preferredColorScheme(.dark)

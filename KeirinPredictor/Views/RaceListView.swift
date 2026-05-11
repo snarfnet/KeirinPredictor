@@ -14,7 +14,7 @@ struct RaceListView: View {
                     emptyState
                 } else {
                     List {
-                        // 鉄脚先生のAI予測
+                        // 鉄脚博士のAI予測
                         if !aiPicks.isEmpty {
                             Section {
                                 AISenseiSection(picks: aiPicks, venueStats: dataLoader.venueStats, playerStats: dataLoader.playerStats)
@@ -435,7 +435,7 @@ struct RaceCardView: View {
     }
 }
 
-// MARK: - 鉄脚先生のAI予測
+// MARK: - 鉄脚博士のAI予測
 struct AISenseiSection: View {
     let picks: [TodayRace]
     let venueStats: [String: VenueStats]
@@ -448,7 +448,7 @@ struct AISenseiSection: View {
                 Text("🔥")
                     .font(.system(size: 24))
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("鉄脚先生のAI予測")
+                    Text("鉄脚博士のAI予測")
                         .font(.system(size: 18, weight: .black, design: .monospaced))
                         .foregroundColor(Color(hex: "#FFD700"))
                     Text("本日のおすすめレース")

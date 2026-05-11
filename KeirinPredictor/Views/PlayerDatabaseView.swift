@@ -100,7 +100,7 @@ struct PlayerWrapper: Identifiable {
     let name: String
 }
 
-// MARK: - Player Card (RPG style)
+// MARK: - Player Card
 struct PlayerCardView: View {
     let name: String
     let stat: PlayerStats
@@ -134,19 +134,13 @@ struct PlayerCardView: View {
 
             Spacer()
 
-            // Mini RPG stats
             VStack(alignment: .trailing, spacing: 3) {
-                HStack(spacing: 4) {
-                    MiniStatBar(value: stat.rpg.atk, color: Color(hex: "#FF4444"), label: "A")
-                    MiniStatBar(value: stat.rpg.def, color: Color(hex: "#4488FF"), label: "D")
-                }
-                HStack(spacing: 4) {
-                    MiniStatBar(value: stat.rpg.spd, color: Color(hex: "#44CC88"), label: "S")
-                    MiniStatBar(value: stat.rpg.lck, color: Color(hex: "#CC44CC"), label: "L")
-                }
-                Text("\(String(format: "%.1f", stat.winRate * 100))%")
-                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                Text("勝率 \(String(format: "%.1f", stat.winRate * 100))%")
+                    .font(.system(size: 12, weight: .bold, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
+                Text("\(stat.races)走")
+                    .font(.system(size: 11, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.5))
             }
         }
         .padding(10)
@@ -164,28 +158,6 @@ struct PlayerCardView: View {
         case "A1": return Color(hex: "#C0C0C0")
         case "A2": return Color(hex: "#CD7F32")
         default: return Color.gray.opacity(0.5)
-        }
-    }
-}
-
-struct MiniStatBar: View {
-    let value: Int
-    let color: Color
-    let label: String
-
-    var body: some View {
-        HStack(spacing: 2) {
-            Text(label)
-                .font(.system(size: 8, weight: .bold, design: .monospaced))
-                .foregroundColor(color)
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Color.white.opacity(0.1)).frame(height: 4)
-                    Capsule().fill(color).frame(width: geo.size.width * CGFloat(value) / 100, height: 4)
-                }
-                .frame(maxHeight: .infinity, alignment: .center)
-            }
-            .frame(width: 30, height: 10)
         }
     }
 }
@@ -248,27 +220,6 @@ struct PlayerDetailView: View {
                     .padding(.top, 24)
 
                     if let s = stat {
-                        // RPG Stats Card
-                        VStack(spacing: 12) {
-                            Text("RPG STATS")
-                                .font(.system(size: 12, weight: .black, design: .monospaced))
-                                .foregroundColor(Color(hex: "#FFD700"))
-
-                            HStack(spacing: 20) {
-                                RPGStatItem(label: "ATK", value: s.rpg.atk, color: Color(hex: "#FF4444"))
-                                RPGStatItem(label: "DEF", value: s.rpg.def, color: Color(hex: "#4488FF"))
-                                RPGStatItem(label: "SPD", value: s.rpg.spd, color: Color(hex: "#44CC88"))
-                                RPGStatItem(label: "LCK", value: s.rpg.lck, color: Color(hex: "#CC44CC"))
-                            }
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.05))
-                        .cornerRadius(12)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color(hex: "#FFD700").opacity(0.2), lineWidth: 1)
-                        )
-
                         // Race stats
                         HStack(spacing: 12) {
                             StatBox(label: "出走", value: "\(s.races)")
@@ -333,33 +284,6 @@ struct PlayerDetailView: View {
                 }
                 .padding(.horizontal)
             }
-        }
-    }
-}
-
-struct RPGStatItem: View {
-    let label: String
-    let value: Int
-    let color: Color
-
-    var body: some View {
-        VStack(spacing: 6) {
-            ZStack {
-                Circle()
-                    .stroke(color.opacity(0.3), lineWidth: 3)
-                    .frame(width: 52, height: 52)
-                Circle()
-                    .trim(from: 0, to: CGFloat(value) / 100)
-                    .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                    .frame(width: 52, height: 52)
-                    .rotationEffect(.degrees(-90))
-                Text("\(value)")
-                    .font(.system(size: 14, weight: .black, design: .monospaced))
-                    .foregroundColor(.white)
-            }
-            Text(label)
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundColor(color)
         }
     }
 }
