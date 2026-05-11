@@ -15,6 +15,11 @@ struct ContentView: View {
                     Label("結果", systemImage: "trophy.fill")
                 }
 
+            TrackingView()
+                .tabItem {
+                    Label("成績", systemImage: "chart.bar.fill")
+                }
+
             PlayerDatabaseView()
                 .tabItem {
                     Label("選手", systemImage: "person.3.fill")

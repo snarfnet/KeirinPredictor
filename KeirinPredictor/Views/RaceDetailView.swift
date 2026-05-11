@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RaceDetailView: View {
     @EnvironmentObject var dataLoader: DataLoader
+    @EnvironmentObject var tracker: PredictionTracker
     let race: TodayRace
 
     @State private var predictions: [PredictionResult] = []
@@ -220,6 +221,14 @@ struct RaceDetailView: View {
             )
             let raceOdds = dataLoader.todayOdds[race.race_id]?.trifecta ?? [:]
             bets = PredictionEngine.generateBets(predictions: predictions, odds: raceOdds)
+            // Save prediction to tracker
+            let top3Waku = predictions.prefix(3).map { $0.waku }
+            tracker.savePrediction(
+                raceId: race.race_id, venue: race.venue,
+                raceNo: race.raceNo, date: race.dateString,
+                predictedTop3: top3Waku
+            )
+
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 isAnimating = false
                 showResults = true
@@ -275,15 +284,20 @@ struct BetCardView: View {
 
             Spacer()
 
-            // Probability
+            // Probability + EV
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(String(format: "%.1f", bet.probability))%")
                     .font(.system(size: 16, weight: .bold, design: .monospaced))
                     .foregroundColor(bet.confidence == "S" ? Color(hex: "#FFD700") : .white)
                 if let ev = bet.expectedValue {
-                    Text("EV \(String(format: "%.1f", ev))")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(ev > 1.0 ? .green : .red)
+                    HStack(spacing: 3) {
+                        Text("EV")
+                            .font(.system(size: 10))
+                            .foregroundColor(.white.opacity(0.4))
+                        Text(String(format: "%.1f", ev))
+                            .font(.system(size: 13, weight: .bold, design: .monospaced))
+                            .foregroundColor(ev > 1.0 ? .green : .red)
+                    }
                 }
             }
         }

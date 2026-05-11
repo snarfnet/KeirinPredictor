@@ -36,7 +36,8 @@ add_sources(app_group, target, ['KeirinPredictorApp.swift'])
 
 add_sources(engine_group, target, [
   'DataLoader.swift',
-  'PredictionEngine.swift'
+  'PredictionEngine.swift',
+  'PredictionTracker.swift'
 ])
 
 add_sources(models_group, target, ['PlayerStats.swift'])
@@ -50,6 +51,7 @@ add_sources(views_group, target, [
   'RaceDetailView.swift',
   'RaceListView.swift',
   'ResultsListView.swift',
+  'TrackingView.swift',
   'VenueInfoView.swift'
 ])
 

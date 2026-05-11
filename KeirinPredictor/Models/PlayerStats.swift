@@ -15,7 +15,9 @@ struct PlayerStats: Codable {
     let rr: [Int]   // 直近着順
     let rk: [String] // 直近決まり手
     let vs: [String: VenueRecord] // 場別成績
-    let rpg: RPGStats
+    let bk: [String: BankRecord]? // バンク別成績 (s=333m, m=400m, l=500m)
+    let fm: Double?  // フォームスコア (加重直近調子)
+    let dk: String?  // 得意決まり手
 
     var district: String { d }
     var prefecture: String { p }
@@ -30,6 +32,9 @@ struct PlayerStats: Codable {
     var recentRanks: [Int] { rr }
     var recentKimarite: [String] { rk }
     var venueStats: [String: VenueRecord] { vs }
+    var bankStats: [String: BankRecord] { bk ?? [:] }
+    var formScore: Double { fm ?? 0 }
+    var dominantKimarite: String { dk ?? "" }
 }
 
 struct VenueRecord: Codable {
@@ -41,16 +46,16 @@ struct VenueRecord: Codable {
     var winRate: Double { r > 0 ? Double(w) / Double(r) : 0 }
 }
 
-struct RPGStats: Codable {
-    let a: Int  // ATK
-    let d: Int  // DEF
-    let s: Int  // SPD
-    let l: Int  // LCK
+struct BankRecord: Codable {
+    let r: Int   // 出走数
+    let w: Int   // 勝数
+    let t3: Int  // 3着以内
 
-    var atk: Int { a }
-    var def: Int { d }
-    var spd: Int { s }
-    var lck: Int { l }
+    var races: Int { r }
+    var wins: Int { w }
+    var top3: Int { t3 }
+    var winRate: Double { r > 0 ? Double(w) / Double(r) : 0 }
+    var top3Rate: Double { r > 0 ? Double(t3) / Double(r) : 0 }
 }
 
 // MARK: - Venue Stats (from venue_stats.json)
@@ -175,9 +180,46 @@ struct PredictionResult: Identifiable {
     let winRate: Double
     let top3Rate: Double
     let recentAvg: Double?
-    let rpg: RPGStats?
+    let formScore: Double
     let classRank: String
     let isDarkHorse: Bool
+}
+
+// MARK: - Prediction Tracking
+struct PredictionRecord: Codable, Identifiable {
+    var id: String { raceId }
+    let raceId: String
+    let venue: String
+    let raceNo: Int
+    let date: String
+    let predictedTop3: [Int]  // umaban
+    let actualTop3: [Int]     // umaban (empty until result)
+    let betType: String?
+    let betCombination: [Int]?
+    let betAmount: Int?
+    let payout: Int?
+
+    var isHit: Bool {
+        guard !actualTop3.isEmpty, !predictedTop3.isEmpty else { return false }
+        return predictedTop3[0] == actualTop3[0]  // 1着的中
+    }
+    var isTop3Hit: Bool {
+        guard actualTop3.count >= 3, predictedTop3.count >= 3 else { return false }
+        return Set(predictedTop3.prefix(3)) == Set(actualTop3.prefix(3))
+    }
+    var profit: Int {
+        (payout ?? 0) - (betAmount ?? 0)
+    }
+}
+
+// MARK: - Bankroll
+struct BankrollState: Codable {
+    var budget: Int = 10000
+    var spent: Int = 0
+    var returned: Int = 0
+
+    var balance: Int { budget - spent + returned }
+    var roi: Double { spent > 0 ? Double(returned - spent) / Double(spent) * 100 : 0 }
 }
 
 // MARK: - Bet Recommendation

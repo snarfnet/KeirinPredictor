@@ -79,13 +79,27 @@ struct PredictionEngine {
                 }
             }
 
+            // ========== 3b. Bank category record (NEW: 3年分データ) ==========
+            let bankCat = bank <= 335 ? "s" : (bank <= 400 ? "m" : "l")
+            if let br = stat?.bankStats[bankCat], br.races >= 3 {
+                let confidence = min(1.0, Double(br.races) / 15.0)
+                score += br.winRate * 20 * confidence
+                score += br.top3Rate * 8 * confidence
+            }
+
             // ========== 4. Venue record (min 2 races, weighted by sample) ==========
             if let vr = stat?.venueStats[venue], vr.races >= 2 {
                 let confidence = min(1.0, Double(vr.races) / 10.0)
                 score += vr.winRate * 25 * confidence
             }
 
-            // ========== 5. Recent form (trend analysis) ==========
+            // ========== 5. Recent form (trend + weighted form score) ==========
+            let formScore = stat?.formScore ?? 0
+            if formScore > 0 {
+                // formScore: 0-10 scale, higher = better recent form
+                score += formScore * 1.5
+            }
+
             let recentRanks = Array((stat?.recentRanks ?? []).prefix(8))
             if recentRanks.count >= 3 {
                 let avg = Double(recentRanks.reduce(0, +)) / Double(recentRanks.count)
@@ -107,7 +121,17 @@ struct PredictionEngine {
                 }
             }
 
-            // ========== 6. Kimarite pattern ==========
+            // ========== 6. Kimarite pattern + dominant kimarite x bank ==========
+            let dominantK = stat?.dominantKimarite ?? ""
+            if !dominantK.isEmpty {
+                score += 3
+                // Dominant kimarite matches bank characteristics
+                if dominantK == "逃" && bank <= 335 { score += 4 }
+                if dominantK == "捲" && bank == 400 { score += 3 }
+                if dominantK == "差" && bank >= 500 { score += 3 }
+                if dominantK == "追" && bank >= 500 { score += 4 }
+            }
+
             let rk = stat?.recentKimarite ?? []
             if rk.count >= 3 {
                 var counts: [String: Int] = [:]
@@ -115,11 +139,10 @@ struct PredictionEngine {
                 if let (topK, topCount) = counts.max(by: { $0.value < $1.value }) {
                     let dominance = Double(topCount) / Double(rk.count)
                     if dominance >= 0.5 {
-                        score += 4
-                        // Extra if dominant style matches bank
-                        if topK == "逃" && bank <= 335 { score += 3 }
-                        if topK == "捲" && bank == 400 { score += 2 }
-                        if topK == "差" && bank >= 500 { score += 2 }
+                        score += 2
+                        if topK == "逃" && bank <= 335 { score += 2 }
+                        if topK == "捲" && bank == 400 { score += 1.5 }
+                        if topK == "差" && bank >= 500 { score += 1.5 }
                     }
                 }
             }
@@ -225,7 +248,7 @@ struct PredictionEngine {
                 winRate: round((stat?.winRate ?? 0) * 1000) / 10,
                 top3Rate: round((stat?.top3Rate ?? 0) * 1000) / 10,
                 recentAvg: recentAvg.map { round($0 * 10) / 10 },
-                rpg: stat?.rpg,
+                formScore: round((stat?.formScore ?? 0) * 10) / 10,
                 classRank: stat?.classRank ?? "",
                 isDarkHorse: isDarkHorse
             )
