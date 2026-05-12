@@ -74,8 +74,10 @@ struct RaceListView: View {
                     }
                 }
             }
-            .navigationDestination(for: TodayRace.self) { race in
-                RaceDetailView(race: race)
+            .navigationDestination(for: String.self) { raceId in
+                if let race = dataLoader.todayRaces.first(where: { $0.race_id == raceId }) {
+                    RaceDetailView(race: race)
+                }
             }
             .sheet(isPresented: $showVenuePicker) {
                 HomeVenuePickerView(homeVenue: $homeVenue, venues: availableVenues)
@@ -345,7 +347,7 @@ struct VenueSectionView: View {
             .padding(.vertical, 6)
 
             ForEach(races) { race in
-                NavigationLink(value: race) {
+                NavigationLink(value: race.race_id) {
                     RaceCardView(race: race)
                 }
                 .buttonStyle(.plain)
@@ -466,7 +468,7 @@ struct AISenseiSection: View {
             .padding(.bottom, 4)
 
             ForEach(picks) { race in
-                NavigationLink(value: race) {
+                NavigationLink(value: race.race_id) {
                     AISenseiPickCard(race: race, venueStats: venueStats, playerStats: playerStats)
                 }
                 .buttonStyle(.plain)
