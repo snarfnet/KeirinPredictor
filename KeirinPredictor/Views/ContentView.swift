@@ -7,7 +7,7 @@ struct ContentView: View {
         TabView {
             RaceListView()
                 .tabItem {
-                    Label("予測", systemImage: "flag.checkered")
+                    Label("予測", systemImage: "bolt.horizontal.fill")
                 }
 
             ResultsListView()
@@ -29,9 +29,8 @@ struct ContentView: View {
                 .tabItem {
                     Label("競輪場", systemImage: "mappin.circle.fill")
                 }
-
         }
-        .accentColor(Color(hex: "#FFD700"))
+        .accentColor(KeirinUI.gold)
         .preferredColorScheme(.dark)
     }
 }

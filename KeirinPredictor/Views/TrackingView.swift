@@ -6,13 +6,12 @@ struct TrackingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#0A0E27").ignoresSafeArea()
+                KeirinStageBackground()
 
                 ScrollView {
                     VStack(spacing: 16) {
-                        hakaseHeader
+                        performanceHeader
                         statsCards
-                        bankrollCard
                         recentHistory
                         Spacer(minLength: 40)
                     }
@@ -31,9 +30,37 @@ struct TrackingView: View {
         }
     }
 
-    private var hakaseHeader: some View {
+    private var performanceHeader: some View {
+        GlassPanel(cornerRadius: 20, borderColor: KeirinUI.cyan.opacity(0.24)) {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(KeirinUI.cyan.opacity(0.25), lineWidth: 8)
+                        .frame(width: 58, height: 58)
+                    Image(systemName: "chart.xyaxis.line")
+                        .font(.system(size: 24, weight: .black))
+                        .foregroundColor(KeirinUI.gold)
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("PERFORMANCE")
+                        .font(.system(size: 11, weight: .black, design: .monospaced))
+                        .foregroundColor(KeirinUI.cyan)
+                    Text("予測成績")
+                        .font(.system(size: 20, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                    Text(tracker.totalPredictions == 0 ? "まだ予測はありません" : "\(tracker.totalPredictions)レースを解析済み")
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.58))
+                }
+                Spacer()
+            }
+        }
+    }
+
+    private var legacyPerformanceHeader: some View {
         HStack(spacing: 12) {
-            Image("HakaseAvatar")
+            Image(systemName: "chart.xyaxis.line")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 50, height: 50)
@@ -83,86 +110,12 @@ struct TrackingView: View {
                 color: tracker.top3HitRate >= 30 ? .green : Color(hex: "#FFD700")
             )
             StatCard(
-                label: "回収率",
-                value: String(format: "%.0f%%", tracker.bankroll.roi),
-                sub: "\(tracker.bankroll.returned)円",
-                color: tracker.bankroll.roi >= 100 ? .green : (tracker.bankroll.roi >= 75 ? Color(hex: "#FFD700") : .red)
+                label: "記録数",
+                value: "\(tracker.totalPredictions)",
+                sub: "解析済み",
+                color: KeirinUI.cyan
             )
         }
-    }
-
-    private var bankrollCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Image(systemName: "yensign.circle.fill")
-                    .foregroundColor(Color(hex: "#FFD700"))
-                Text("資金管理")
-                    .font(.system(size: 16, weight: .black, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
-                Spacer()
-                Button("リセット") {
-                    tracker.resetBankroll()
-                }
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(.white.opacity(0.4))
-            }
-
-            HStack(spacing: 16) {
-                VStack(spacing: 2) {
-                    Text("予算")
-                        .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.4))
-                    Text("\(tracker.bankroll.budget)円")
-                        .font(.system(size: 16, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white)
-                }
-                VStack(spacing: 2) {
-                    Text("使用")
-                        .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.4))
-                    Text("\(tracker.bankroll.spent)円")
-                        .font(.system(size: 16, weight: .bold, design: .monospaced))
-                        .foregroundColor(.red.opacity(0.8))
-                }
-                VStack(spacing: 2) {
-                    Text("払戻")
-                        .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.4))
-                    Text("\(tracker.bankroll.returned)円")
-                        .font(.system(size: 16, weight: .bold, design: .monospaced))
-                        .foregroundColor(.green)
-                }
-                Spacer()
-                VStack(spacing: 2) {
-                    Text("残高")
-                        .font(.system(size: 11))
-                        .foregroundColor(.white.opacity(0.4))
-                    Text("\(tracker.bankroll.balance)円")
-                        .font(.system(size: 20, weight: .black, design: .monospaced))
-                        .foregroundColor(tracker.bankroll.balance >= tracker.bankroll.budget ? .green : Color(hex: "#FFD700"))
-                }
-            }
-
-            // Progress bar
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.white.opacity(0.1))
-                        .frame(height: 8)
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(tracker.bankroll.roi >= 0 ? Color.green : Color.red)
-                        .frame(width: max(4, geo.size.width * min(1, Double(tracker.bankroll.balance) / Double(max(1, tracker.bankroll.budget)))), height: 8)
-                }
-            }
-            .frame(height: 8)
-        }
-        .padding(14)
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(hex: "#FFD700").opacity(0.15), lineWidth: 1)
-        )
     }
 
     private var recentHistory: some View {

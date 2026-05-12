@@ -4,44 +4,46 @@ struct RaceListView: View {
     @EnvironmentObject var dataLoader: DataLoader
     @AppStorage("homeVenue") private var homeVenue: String = ""
     @State private var showVenuePicker = false
+    @State private var appeared = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#0A0E27").ignoresSafeArea()
+                KeirinStageBackground()
 
                 if dataLoader.todayRaces.isEmpty {
                     emptyState
                 } else {
-                    List {
-                        // 鉄脚博士のAI予測
-                        if !aiPicks.isEmpty {
-                            Section {
-                                AISenseiSection(picks: aiPicks, venueStats: dataLoader.venueStats, playerStats: dataLoader.playerStats)
-                            }
-                            .listRowBackground(Color.clear)
-                            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                            .listRowSeparator(.hidden)
-                        }
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 18) {
+                            heroHeader
 
-                        ForEach(dayGroups, id: \.date) { group in
-                            Section {
+                            if !aiPicks.isEmpty {
+                                AISenseiSection(
+                                    picks: aiPicks,
+                                    venueStats: dataLoader.venueStats,
+                                    playerStats: dataLoader.playerStats
+                                )
+                                .scaleEffect(appeared ? 1 : 0.96)
+                                .opacity(appeared ? 1 : 0)
+                            }
+
+                            ForEach(Array(dayGroups.enumerated()), id: \.element.date) { index, group in
                                 DaySectionView(group: group, homeVenue: homeVenue)
+                                    .opacity(appeared ? 1 : 0)
+                                    .offset(y: appeared ? 0 : 18)
+                                    .animation(.spring(response: 0.55, dampingFraction: 0.82).delay(Double(index) * 0.05), value: appeared)
                             }
-                            .listRowBackground(Color.clear)
-                            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
-                            .listRowSeparator(.hidden)
-                        }
 
-                        Section {
                             BannerAdView()
                                 .frame(height: 50)
+                                .padding(.top, 4)
+
+                            Spacer(minLength: 24)
                         }
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 12)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                     .refreshable {
                         dataLoader.fetchRemoteTodayEntries()
                     }
@@ -51,26 +53,20 @@ struct RaceListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "chart.line.uptrend.xyaxis")
-                            .foregroundColor(Color(hex: "#FFD700"))
+                    HStack(spacing: 7) {
+                        Image(systemName: "bolt.horizontal.circle.fill")
+                            .foregroundColor(KeirinUI.red)
                         Text("KEIRIN PREDICTOR")
-                            .font(.system(size: 17, weight: .black, design: .monospaced))
-                            .foregroundColor(Color(hex: "#FFD700"))
+                            .font(.system(size: 16, weight: .black, design: .monospaced))
+                            .foregroundColor(.white)
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         showVenuePicker = true
                     } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: homeVenue.isEmpty ? "house" : "house.fill")
-                            if !homeVenue.isEmpty {
-                                Text(homeVenue)
-                                    .font(.system(size: 13, weight: .bold, design: .monospaced))
-                            }
-                        }
-                        .foregroundColor(Color(hex: "#FFD700"))
+                        Image(systemName: homeVenue.isEmpty ? "mappin.circle" : "house.and.flag.fill")
+                            .foregroundColor(homeVenue.isEmpty ? KeirinUI.cyan : KeirinUI.gold)
                     }
                 }
             }
@@ -82,6 +78,46 @@ struct RaceListView: View {
             .sheet(isPresented: $showVenuePicker) {
                 HomeVenuePickerView(homeVenue: $homeVenue, venues: availableVenues)
             }
+            .onAppear {
+                withAnimation(.spring(response: 0.7, dampingFraction: 0.82)) {
+                    appeared = true
+                }
+            }
+        }
+    }
+
+    private var heroHeader: some View {
+        GlassPanel(cornerRadius: 22, borderColor: KeirinUI.cyan.opacity(0.28)) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("TODAY'S RACES")
+                            .font(.system(size: 11, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.cyan)
+                        Text("本日のレース一覧")
+                            .font(.system(size: 24, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                            .lineLimit(2)
+                    }
+
+                    Spacer()
+
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("\(dataLoader.todayRaces.count)")
+                            .font(.system(size: 34, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.gold)
+                        Text("RACES")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.45))
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    MetricPill(title: "VENUE", value: "\(availableVenues.count)", color: KeirinUI.cyan)
+                    MetricPill(title: "HOME", value: homeVenue.isEmpty ? "未設定" : homeVenue, color: KeirinUI.gold)
+                    MetricPill(title: "注目指数", value: "\(aiPicks.count)", color: KeirinUI.red)
+                }
+            }
         }
     }
 
@@ -89,7 +125,6 @@ struct RaceListView: View {
         Array(dataLoader.venueStats.keys).sorted()
     }
 
-    /// 鉄脚先生のおすすめ: スコア差が大きい（予測しやすい）レースを最大3つピック
     private var aiPicks: [TodayRace] {
         let todayStr = todayString()
         let todayRaces = dataLoader.todayRaces.filter {
@@ -97,12 +132,10 @@ struct RaceListView: View {
             return d == todayStr
         }
 
-        // Score differential: top1 - top2 score gap = confidence
         let scored = todayRaces.compactMap { race -> (TodayRace, Double)? in
             let sorted = race.entries.sorted { $0.score > $1.score }
             guard sorted.count >= 3 else { return nil }
             let gap = sorted[0].score - sorted[2].score
-            // Prefer races with clear favorites
             guard gap >= 5 else { return nil }
             return (race, gap)
         }
@@ -119,19 +152,19 @@ struct RaceListView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 180, height: 180)
-                .opacity(0.7)
-            Text("レースデータなし")
-                .font(.system(size: 16, design: .monospaced))
-                .foregroundColor(.white.opacity(0.6))
+                .opacity(0.72)
+            Text("レースデータがありません")
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundColor(.white.opacity(0.72))
             Button("更新") {
                 dataLoader.fetchRemoteTodayEntries()
             }
-            .font(.system(size: 15, weight: .bold, design: .monospaced))
-            .foregroundColor(Color(hex: "#FFD700"))
-            .padding(.horizontal, 20)
-            .padding(.vertical, 8)
-            .background(Color.white.opacity(0.1))
-            .cornerRadius(8)
+            .font(.system(size: 15, weight: .black, design: .rounded))
+            .foregroundColor(.black)
+            .padding(.horizontal, 22)
+            .padding(.vertical, 10)
+            .background(KeirinUI.actionGradient)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         }
     }
 
@@ -139,7 +172,6 @@ struct RaceListView: View {
         let todayStr = todayString()
         let tomorrowStr = tomorrowString()
 
-        // Group by date
         var grouped: [String: [TodayRace]] = [:]
         for race in dataLoader.todayRaces {
             let d = race.dateString.isEmpty ? todayStr : race.dateString
@@ -187,7 +219,6 @@ struct RaceListView: View {
     }
 }
 
-// MARK: - Data Structures
 struct DayGroup {
     let date: String
     let label: String
@@ -200,44 +231,39 @@ struct VenueGroup {
     let races: [TodayRace]
 }
 
-// MARK: - Day Section
 struct DaySectionView: View {
     let group: DayGroup
     var homeVenue: String = ""
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            // Day header
-            HStack(spacing: 10) {
+            HStack {
                 Text(group.label)
-                    .font(.system(size: 22, weight: .black, design: .monospaced))
-                    .foregroundColor(group.label == "今日" ? Color(hex: "#FFD700") : .white)
+                    .font(.system(size: 23, weight: .black, design: .rounded))
+                    .foregroundColor(group.label == "今日" ? KeirinUI.gold : .white)
 
-                if group.label != group.date {
-                    Text(group.date.suffix(4).prefix(2) + "/" + group.date.suffix(2))
-                        .font(.system(size: 15, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.4))
-                }
+                Text("\(group.totalRaces)R")
+                    .font(.system(size: 12, weight: .black, design: .monospaced))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 5)
+                    .background(group.label == "今日" ? KeirinUI.gold : KeirinUI.cyan)
+                    .clipShape(Capsule())
 
                 Spacer()
-
-                HStack(spacing: 4) {
-                    Image(systemName: "flag.fill")
-                        .font(.system(size: 12))
-                    Text("\(group.totalRaces)R")
-                        .font(.system(size: 15, weight: .bold, design: .monospaced))
-                }
-                .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
             }
 
             ForEach(group.venues, id: \.venue) { venueGroup in
-                VenueSectionView(venue: venueGroup.venue, races: venueGroup.races, isHome: venueGroup.venue == homeVenue)
+                VenueSectionView(
+                    venue: venueGroup.venue,
+                    races: venueGroup.races,
+                    isHome: venueGroup.venue == homeVenue
+                )
             }
         }
     }
 }
 
-// MARK: - Home Venue Picker
 struct HomeVenuePickerView: View {
     @Binding var homeVenue: String
     let venues: [String]
@@ -246,29 +272,15 @@ struct HomeVenuePickerView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#0A0E27").ignoresSafeArea()
+                KeirinStageBackground()
 
                 ScrollView {
-                    VStack(spacing: 4) {
-                        // Clear option
+                    VStack(spacing: 8) {
                         Button {
                             homeVenue = ""
                             dismiss()
                         } label: {
-                            HStack {
-                                Image(systemName: "xmark.circle")
-                                Text("ホーム設定なし")
-                                    .font(.system(size: 16, design: .monospaced))
-                                Spacer()
-                                if homeVenue.isEmpty {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(Color(hex: "#FFD700"))
-                                }
-                            }
-                            .foregroundColor(.white.opacity(0.6))
-                            .padding(12)
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(8)
+                            pickerRow(title: "ホームを解除", icon: "xmark.circle", selected: homeVenue.isEmpty)
                         }
 
                         ForEach(venues, id: \.self) { venue in
@@ -276,19 +288,7 @@ struct HomeVenuePickerView: View {
                                 homeVenue = venue
                                 dismiss()
                             } label: {
-                                HStack {
-                                    Text(venue)
-                                        .font(.system(size: 17, weight: venue == homeVenue ? .bold : .regular, design: .monospaced))
-                                        .foregroundColor(venue == homeVenue ? Color(hex: "#FFD700") : .white)
-                                    Spacer()
-                                    if venue == homeVenue {
-                                        Image(systemName: "house.fill")
-                                            .foregroundColor(Color(hex: "#FFD700"))
-                                    }
-                                }
-                                .padding(12)
-                                .background(venue == homeVenue ? Color(hex: "#FFD700").opacity(0.1) : Color.white.opacity(0.03))
-                                .cornerRadius(8)
+                                pickerRow(title: venue, icon: "mappin.circle.fill", selected: venue == homeVenue)
                             }
                         }
                     }
@@ -300,66 +300,73 @@ struct HomeVenuePickerView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("閉じる") { dismiss() }
-                        .foregroundColor(Color(hex: "#FFD700"))
+                        .foregroundColor(KeirinUI.cyan)
                 }
             }
         }
     }
+
+    private func pickerRow(title: String, icon: String, selected: Bool) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .foregroundColor(selected ? KeirinUI.gold : KeirinUI.cyan)
+            Text(title)
+                .font(.system(size: 16, weight: selected ? .black : .semibold, design: .rounded))
+                .foregroundColor(.white)
+            Spacer()
+            if selected {
+                Image(systemName: "checkmark.seal.fill")
+                    .foregroundColor(KeirinUI.gold)
+            }
+        }
+        .padding(13)
+        .background(selected ? KeirinUI.gold.opacity(0.16) : Color.white.opacity(0.055))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
 }
 
-// MARK: - Venue Section
 struct VenueSectionView: View {
     let venue: String
     let races: [TodayRace]
     var isHome: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            // Venue header
-            HStack(spacing: 8) {
-                if isHome {
-                    Image(systemName: "house.fill")
-                        .font(.system(size: 13))
-                        .foregroundColor(Color(hex: "#FFD700"))
-                } else {
-                    Circle()
-                        .fill(Color(hex: "#FFD700"))
-                        .frame(width: 10, height: 10)
+        GlassPanel(cornerRadius: 18, borderColor: isHome ? KeirinUI.gold.opacity(0.42) : Color.white.opacity(0.10)) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 10) {
+                    Image(systemName: isHome ? "house.and.flag.fill" : "scope")
+                        .foregroundColor(isHome ? KeirinUI.gold : KeirinUI.cyan)
+                    Text(venue)
+                        .font(.system(size: 18, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                    if isHome {
+                        Text("HOME")
+                            .font(.system(size: 9, weight: .black, design: .monospaced))
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 4)
+                            .background(KeirinUI.gold)
+                            .clipShape(Capsule())
+                    }
+                    Spacer()
+                    Text("\(races.count)R")
+                        .font(.system(size: 13, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.58))
                 }
-                Text(venue)
-                    .font(.system(size: 16, weight: .bold, design: .monospaced))
-                    .foregroundColor(isHome ? Color(hex: "#FFD700") : .white)
-                if isHome {
-                    Text("HOME")
-                        .font(.system(size: 11, weight: .black, design: .monospaced))
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 3)
-                        .background(Color(hex: "#FFD700"))
-                        .cornerRadius(4)
-                }
-                Spacer()
-                Text("\(races.count)R")
-                    .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.4))
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
 
-            ForEach(races) { race in
-                NavigationLink(value: race.race_id) {
-                    RaceCardView(race: race)
+                VStack(spacing: 10) {
+                    ForEach(races) { race in
+                        NavigationLink(value: race.race_id) {
+                            RaceCardView(race: race)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
-                .buttonStyle(.plain)
             }
         }
-        .padding(.vertical, 8)
-        .background(Color.white.opacity(0.03))
-        .cornerRadius(12)
     }
 }
 
-// MARK: - Race Card
 struct RaceCardView: View {
     let race: TodayRace
 
@@ -367,132 +374,129 @@ struct RaceCardView: View {
         race.entries.sorted { $0.score > $1.score }
     }
 
+    private var scoreGap: Double {
+        guard topEntries.count >= 2 else { return 0 }
+        return topEntries[0].score - topEntries[1].score
+    }
+
     var body: some View {
-        HStack(spacing: 0) {
-            // Race number
-            VStack {
-                Text("\(race.raceNo)")
-                    .font(.system(size: 26, weight: .black, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
-                Text("R")
-                    .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700").opacity(0.6))
+        HStack(spacing: 13) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(KeirinUI.actionGradient)
+                    .frame(width: 66, height: 72)
+                    .shadow(color: KeirinUI.red.opacity(0.30), radius: 12, x: 0, y: 7)
+                VStack(spacing: -2) {
+                    Text("\(race.raceNo)")
+                        .font(.system(size: 30, weight: .black, design: .monospaced))
+                    Text("RACE")
+                        .font(.system(size: 9, weight: .black, design: .monospaced))
+                }
+                .foregroundColor(.black)
             }
-            .frame(width: 50)
 
-            // Divider
-            Rectangle()
-                .fill(Color(hex: "#FFD700").opacity(0.2))
-                .frame(width: 1)
-                .padding(.vertical, 4)
-
-            // Entries preview
-            VStack(alignment: .leading, spacing: 6) {
-                // Top 3 by score
-                HStack(spacing: 8) {
-                    ForEach(Array(topEntries.prefix(3).enumerated()), id: \.offset) { (i, entry) in
-                        HStack(spacing: 4) {
-                            Text("\(entry.umaban)")
-                                .font(.system(size: 12, weight: .black, design: .monospaced))
-                                .foregroundColor(.black)
-                                .frame(width: 22, height: 22)
-                                .background(wakuColor(entry.waku))
-                                .clipShape(Circle())
-
-                            Text(entry.name)
-                                .font(.system(size: 13, weight: i == 0 ? .bold : .regular))
-                                .foregroundColor(i == 0 ? .white : .white.opacity(0.7))
-                                .lineLimit(1)
+            VStack(alignment: .leading, spacing: 9) {
+                HStack(spacing: 7) {
+                    if let top = topEntries.first {
+                        LaneBadge(number: top.umaban, size: 29)
+                        VStack(alignment: .leading, spacing: 1) {
+                            HStack(spacing: 6) {
+                                Text(race.venue)
+                                    .font(.system(size: 10, weight: .black, design: .rounded))
+                                    .foregroundColor(KeirinUI.cyan)
+                                Text(top.name)
+                                    .font(.system(size: 16, weight: .black, design: .rounded))
+                                    .foregroundColor(.white)
+                                    .lineLimit(1)
+                            }
+                            Text("本命指数 \(String(format: "%.0f", top.score))")
+                                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                                .foregroundColor(KeirinUI.gold)
                         }
                     }
-                }
-
-                // Score bar + entry count
-                HStack(spacing: 8) {
-                    if let top = topEntries.first {
-                        Text("\(String(format: "%.0f", top.score))点")
-                            .font(.system(size: 12, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
-                    }
-                    Text("\(race.entries.count)車立")
-                        .font(.system(size: 12))
-                        .foregroundColor(.white.opacity(0.3))
-
                     Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundColor(KeirinUI.cyan.opacity(0.72))
                 }
+
+                HStack(spacing: 6) {
+                    ForEach(Array(topEntries.prefix(3).enumerated()), id: \.offset) { index, entry in
+                        HStack(spacing: 4) {
+                            LaneBadge(number: entry.umaban, size: 22)
+                            Text(index == 0 ? "軸" : "\(index + 1)")
+                                .font(.system(size: 9, weight: .black, design: .monospaced))
+                                .foregroundColor(index == 0 ? KeirinUI.gold : .white.opacity(0.5))
+                        }
+                    }
+                    Spacer()
+                    Text(scoreGap >= 8 ? "注目" : "混戦")
+                        .font(.system(size: 10, weight: .black, design: .rounded))
+                        .foregroundColor(scoreGap >= 8 ? .black : .white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(scoreGap >= 8 ? KeirinUI.gold : KeirinUI.cyan.opacity(0.24))
+                        .clipShape(Capsule())
+                }
+
+                ProbabilityBar(value: min(max(scoreGap / 20, 0.08), 1), color: scoreGap >= 8 ? KeirinUI.red : KeirinUI.cyan)
             }
-            .padding(.leading, 10)
-
-            Spacer()
-
-            // Arrow
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(Color(hex: "#FFD700").opacity(0.4))
-                .padding(.trailing, 8)
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 6)
-        .background(Color.white.opacity(0.02))
-        .cornerRadius(8)
-        .padding(.horizontal, 8)
+        .padding(11)
+        .background(
+            RoundedRectangle(cornerRadius: 17, style: .continuous)
+                .fill(Color.white.opacity(0.045))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 17, style: .continuous)
+                .stroke(Color.white.opacity(0.08), lineWidth: 1)
+        )
     }
 }
 
-// MARK: - 鉄脚博士のAI予測
 struct AISenseiSection: View {
     let picks: [TodayRace]
     let venueStats: [String: VenueStats]
     let playerStats: [String: PlayerStats]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Header
-            HStack(spacing: 10) {
-                Image("HakaseAvatar")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 44, height: 44)
-                    .clipShape(Circle())
-                    .overlay(Circle().stroke(Color(hex: "#FFD700").opacity(0.5), lineWidth: 2))
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("鉄脚博士のAI予測")
-                        .font(.system(size: 18, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
-                    Text("本日のおすすめレース")
-                        .font(.system(size: 13, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.6))
-                }
-                Spacer()
-            }
-            .padding(.bottom, 4)
+        GlassPanel(cornerRadius: 24, borderColor: KeirinUI.red.opacity(0.34)) {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack {
+                    Image("HakaseAvatar")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 58, height: 58)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(KeirinUI.gold.opacity(0.68), lineWidth: 2)
+                        )
+                        .shadow(color: KeirinUI.gold.opacity(0.26), radius: 14, x: 0, y: 6)
 
-            ForEach(picks) { race in
-                NavigationLink(value: race.race_id) {
-                    AISenseiPickCard(race: race, venueStats: venueStats, playerStats: playerStats)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("鉄脚博士の注目指数")
+                            .font(.system(size: 12, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.red)
+                        Text("今日の狙い目")
+                            .font(.system(size: 22, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                    }
+                    Spacer()
+                    Image(systemName: "waveform.path.ecg.rectangle.fill")
+                        .font(.system(size: 30, weight: .black))
+                        .foregroundColor(KeirinUI.gold)
+                        .shadow(color: KeirinUI.gold.opacity(0.5), radius: 12)
                 }
-                .buttonStyle(.plain)
+
+                ForEach(picks) { race in
+                    NavigationLink(value: race.race_id) {
+                        AISenseiPickCard(race: race, venueStats: venueStats, playerStats: playerStats)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
-        .padding(16)
-        .background(
-            ZStack {
-                Image("HeaderBg")
-                    .resizable()
-                    .scaledToFill()
-                    .opacity(0.3)
-                LinearGradient(
-                    colors: [Color(hex: "#FFD700").opacity(0.08), Color(hex: "#0A0E27")],
-                    startPoint: .top, endPoint: .bottom
-                )
-            }
-        )
-        .clipped()
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color(hex: "#FFD700").opacity(0.3), lineWidth: 1)
-        )
     }
 }
 
@@ -505,122 +509,57 @@ struct AISenseiPickCard: View {
         race.entries.sorted { $0.score > $1.score }
     }
 
-    private var commentary: String {
-        guard let top = sortedEntries.first else { return "" }
-        let stat = playerStats[top.name]
-        let bank = venueStats[race.venue]?.bank ?? 400
-
-        var lines: [String] = []
-
-        // Class rank
-        let classRank = stat?.classRank ?? ""
-        if classRank.hasPrefix("S") {
-            lines.append("\(top.name)はS級の実力者")
-        } else if classRank == "A1" {
-            lines.append("\(top.name)はA1級で安定感あり")
-        }
-
-        // Style x Bank match
-        let style = stat?.style ?? top.style
-        if style == "逃" && bank <= 335 {
-            lines.append("333mバンクは逃げ天国、先行有利の展開")
-        } else if style == "追" && bank >= 500 {
-            lines.append("500mバンクは追込み有利、後方から一気に")
-        } else if style == "捲" && bank == 400 {
-            lines.append("400mバンクで捲りが決まりやすい")
-        } else if style == "差" && bank >= 500 {
-            lines.append("500mの長い直線で差しが届く")
-        }
-
-        // Win rate
-        let wr = stat?.winRate ?? top.win_rate / 100
-        if wr > 0.3 {
-            lines.append("勝率\(String(format: "%.0f", wr * 100))%の高勝率")
-        }
-
-        // Score gap
-        if sortedEntries.count >= 2 {
-            let gap = sortedEntries[0].score - sortedEntries[1].score
-            if gap >= 10 {
-                lines.append("2番手との実力差が大きく、堅い予想")
-            } else if gap >= 5 {
-                lines.append("頭一つ抜けた存在、軸に最適")
-            }
-        }
-
-        // Recent form
-        if let rr = stat?.recentRanks, rr.count >= 3 {
-            let recent3 = Array(rr.prefix(3))
-            let wins = recent3.filter { $0 == 1 }.count
-            if wins >= 2 {
-                lines.append("直近\(wins)連勝と絶好調")
-            }
-        }
-
-        if lines.isEmpty {
-            return "\(top.name)が総合力で上位、安定した成績に注目"
-        }
-        return lines.prefix(3).joined(separator: "。") + "。"
+    private var topScoreGap: Double {
+        guard sortedEntries.count >= 3 else { return 0 }
+        return sortedEntries[0].score - sortedEntries[2].score
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            // Race info
+        VStack(alignment: .leading, spacing: 11) {
             HStack(spacing: 8) {
-                Text("\(race.venue)")
-                    .font(.system(size: 16, weight: .black, design: .monospaced))
+                Text(race.venue)
+                    .font(.system(size: 16, weight: .black, design: .rounded))
                     .foregroundColor(.white)
                 Text("\(race.raceNo)R")
-                    .font(.system(size: 20, weight: .black, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
+                    .font(.system(size: 18, weight: .black, design: .monospaced))
+                    .foregroundColor(KeirinUI.gold)
                 if let bank = venueStats[race.venue]?.bank {
                     Text("\(bank)m")
-                        .font(.system(size: 13, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.5))
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(KeirinUI.cyan)
                 }
                 Spacer()
-                Text("\(race.entries.count)車立")
-                    .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.4))
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 13))
-                    .foregroundColor(Color(hex: "#FFD700").opacity(0.5))
+                Text("信頼 \(String(format: "%.0f", min(topScoreGap * 7, 99)))")
+                    .font(.system(size: 11, weight: .black, design: .monospaced))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(KeirinUI.gold)
+                    .clipShape(Capsule())
             }
 
-            // Top 3 prediction
-            HStack(spacing: 10) {
-                ForEach(Array(sortedEntries.prefix(3).enumerated()), id: \.offset) { (i, entry) in
-                    HStack(spacing: 5) {
-                        Text(i == 0 ? "◎" : i == 1 ? "○" : "▲")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(i == 0 ? Color(hex: "#FFD700") : .white.opacity(0.7))
-                        Text("\(entry.umaban)")
-                            .font(.system(size: 14, weight: .black, design: .monospaced))
-                            .foregroundColor(.black)
-                            .frame(width: 24, height: 24)
-                            .background(wakuColor(entry.waku))
-                            .clipShape(Circle())
+            HStack(spacing: 8) {
+                ForEach(Array(sortedEntries.prefix(3).enumerated()), id: \.offset) { index, entry in
+                    VStack(spacing: 5) {
+                        LaneBadge(number: entry.umaban, size: index == 0 ? 34 : 28)
                         Text(entry.name)
-                            .font(.system(size: 14, weight: i == 0 ? .bold : .regular))
-                            .foregroundColor(i == 0 ? .white : .white.opacity(0.7))
+                            .font(.system(size: 11, weight: index == 0 ? .black : .semibold, design: .rounded))
+                            .foregroundColor(index == 0 ? .white : .white.opacity(0.66))
                             .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
+                    .frame(maxWidth: .infinity)
                 }
             }
 
-            // Commentary
-            Text(commentary)
-                .font(.system(size: 13))
-                .foregroundColor(.white.opacity(0.8))
-                .lineSpacing(4)
-                .fixedSize(horizontal: false, vertical: true)
+            ProbabilityBar(value: min(topScoreGap / 18, 1), color: KeirinUI.red)
         }
-        .padding(14)
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(12)
+        .padding(13)
+        .background(Color.black.opacity(0.22))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(hex: "#FFD700").opacity(0.15), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(KeirinUI.red.opacity(0.22), lineWidth: 1)
         )
     }
 }

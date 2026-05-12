@@ -46,6 +46,7 @@ add_sources(models_group, target, ['PlayerStats.swift'])
 add_sources(views_group, target, [
   'BannerAdView.swift',
   'ContentView.swift',
+  'KeirinDesign.swift',
   'LoadingView.swift',
   'PlayerDatabaseView.swift',
   'PredictionView.swift',

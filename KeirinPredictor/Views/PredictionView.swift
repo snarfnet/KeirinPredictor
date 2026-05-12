@@ -11,6 +11,7 @@ struct PredictionView: View {
     @State private var showResults = false
     @State private var cardOffsets: [CGFloat] = Array(repeating: 0, count: 9)
     @State private var showBannerAd = true
+    @State private var pulse = false
 
     private var venues: [String] {
         Array(dataLoader.venueStats.keys).sorted()
@@ -23,150 +24,172 @@ struct PredictionView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#0A0E27").ignoresSafeArea()
+                KeirinStageBackground()
 
                 ScrollView {
-                    VStack(spacing: 20) {
-                        headerBanner
-
+                    VStack(spacing: 18) {
+                        commandHeader
                         venueSection
-
                         playerInputSection
-
                         predictButton
+
+                        if isAnimating {
+                            analyzingPanel
+                        }
 
                         if showResults {
                             resultsSection
+                                .transition(.asymmetric(
+                                    insertion: .scale(scale: 0.94).combined(with: .opacity),
+                                    removal: .opacity
+                                ))
                         }
 
                         if showBannerAd {
                             BannerAdView()
                                 .frame(height: 50)
-                                .padding(.horizontal)
+                                .padding(.top, 2)
                         }
 
-                        Spacer(minLength: 40)
+                        Spacer(minLength: 32)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
                 }
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("KEIRIN PREDICTOR")
+                    Text("DATA LAB")
                         .font(.system(size: 16, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                        .foregroundColor(.white)
+                }
+            }
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                    pulse = true
                 }
             }
         }
     }
 
-    // MARK: - Header
-    private var headerBanner: some View {
-        HStack(spacing: 8) {
-            Image("HakaseAvatar")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .clipShape(Circle())
-            Text("鉄脚博士のAI予測")
-                .font(.system(size: 14, weight: .bold, design: .monospaced))
-                .foregroundColor(.white.opacity(0.8))
-            Spacer()
-            Text("\(dataLoader.playerStats.count)選手")
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
-        }
-        .padding(10)
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(8)
-    }
-
-    // MARK: - Venue selector
-    private var venueSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("競輪場", systemImage: "mappin.circle")
-                .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                .foregroundColor(Color(hex: "#FFD700"))
-
-            Menu {
-                ForEach(venues, id: \.self) { v in
-                    Button(v) { selectedVenue = v }
+    private var commandHeader: some View {
+        GlassPanel(cornerRadius: 24, borderColor: KeirinUI.cyan.opacity(0.28)) {
+            HStack(alignment: .center, spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(KeirinUI.cyan.opacity(pulse ? 0.42 : 0.14), lineWidth: 8)
+                        .frame(width: 72, height: 72)
+                    Circle()
+                        .fill(KeirinUI.red)
+                        .frame(width: 18, height: 18)
+                        .shadow(color: KeirinUI.red.opacity(0.8), radius: pulse ? 18 : 6)
+                    Image(systemName: "antenna.radiowaves.left.and.right")
+                        .font(.system(size: 26, weight: .black))
+                        .foregroundColor(.white)
                 }
-            } label: {
-                HStack {
-                    Text(selectedVenue.isEmpty ? "競輪場を選択..." : selectedVenue)
-                        .font(.system(size: 15, design: .monospaced))
-                        .foregroundColor(selectedVenue.isEmpty ? .white.opacity(0.4) : .white)
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                        .foregroundColor(Color(hex: "#FFD700"))
-                }
-                .padding(12)
-                .background(Color.white.opacity(0.07))
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color(hex: "#FFD700").opacity(0.3), lineWidth: 1)
-                )
-            }
 
-            if let info = dataLoader.venueStats[selectedVenue] {
-                HStack(spacing: 12) {
-                    Label("\(info.bank)m", systemImage: "arrow.triangle.2.circlepath")
-                    Text("|\(info.races)レース")
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("RACE ANALYZER")
+                        .font(.system(size: 11, weight: .black, design: .monospaced))
+                        .foregroundColor(KeirinUI.cyan)
+                    Text("出走表から勝ち筋を読む")
+                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                    Text("\(dataLoader.playerStats.count) 選手データ")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white.opacity(0.46))
                 }
-                .font(.system(size: 11, design: .monospaced))
-                .foregroundColor(.white.opacity(0.5))
-                .padding(.top, 2)
-            }
-        }
-    }
 
-    // MARK: - Player input
-    private var playerInputSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Label("出走選手 (最大9名)", systemImage: "person.3")
-                    .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
                 Spacer()
-                Stepper("", value: Binding(
-                    get: { playerNames.count },
-                    set: { newCount in
-                        let n = min(9, max(3, newCount))
-                        let current = playerNames.count
-                        if n > current {
-                            playerNames.append(contentsOf: Array(repeating: "", count: n - current))
-                        } else {
-                            playerNames = Array(playerNames.prefix(n))
-                        }
-                        wakuNumbers = Array(1...n)
-                    }
-                ), in: 3...9)
-                .labelsHidden()
-                .tint(Color(hex: "#FFD700"))
             }
+        }
+    }
 
-            ForEach(0..<playerNames.count, id: \.self) { i in
-                HStack(spacing: 8) {
-                    Text("\(i+1)")
-                        .font(.system(size: 13, weight: .bold, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
-                        .frame(width: 24)
+    private var venueSection: some View {
+        GlassPanel(cornerRadius: 18) {
+            VStack(alignment: .leading, spacing: 10) {
+                Label("競輪場", systemImage: "mappin.and.ellipse")
+                    .font(.system(size: 13, weight: .black, design: .rounded))
+                    .foregroundColor(KeirinUI.gold)
 
-                    PlayerAutocompleteField(
-                        text: $playerNames[i],
-                        players: Array(dataLoader.playerStats.keys),
-                        placeholder: "\(i+1)番 選手名"
+                Menu {
+                    ForEach(venues, id: \.self) { v in
+                        Button(v) { selectedVenue = v }
+                    }
+                } label: {
+                    HStack {
+                        Text(selectedVenue.isEmpty ? "競輪場を選択" : selectedVenue)
+                            .font(.system(size: 16, weight: .black, design: .rounded))
+                            .foregroundColor(selectedVenue.isEmpty ? .white.opacity(0.42) : .white)
+                        Spacer()
+                        Image(systemName: "chevron.up.chevron.down")
+                            .foregroundColor(KeirinUI.cyan)
+                    }
+                    .padding(13)
+                    .background(Color.black.opacity(0.22))
+                    .clipShape(RoundedRectangle(cornerRadius: 13, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .stroke(selectedVenue.isEmpty ? Color.white.opacity(0.10) : KeirinUI.cyan.opacity(0.45), lineWidth: 1)
                     )
                 }
+
+                if let info = dataLoader.venueStats[selectedVenue] {
+                    HStack(spacing: 8) {
+                        MetricPill(title: "BANK", value: "\(info.bank)m", color: KeirinUI.cyan)
+                        MetricPill(title: "DATA", value: "\(info.races)R", color: KeirinUI.gold)
+                    }
+                }
             }
         }
     }
 
-    // MARK: - Predict button
+    private var playerInputSection: some View {
+        GlassPanel(cornerRadius: 18) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Label("出走選手", systemImage: "rectangle.grid.3x2.fill")
+                        .font(.system(size: 13, weight: .black, design: .rounded))
+                        .foregroundColor(KeirinUI.gold)
+                    Spacer()
+                    Text("\(playerCount)/\(playerNames.count)")
+                        .font(.system(size: 13, weight: .black, design: .monospaced))
+                        .foregroundColor(playerCount >= 3 ? KeirinUI.green : KeirinUI.red)
+                    Stepper("", value: Binding(
+                        get: { playerNames.count },
+                        set: { newCount in
+                            let n = min(9, max(3, newCount))
+                            let current = playerNames.count
+                            if n > current {
+                                playerNames.append(contentsOf: Array(repeating: "", count: n - current))
+                            } else {
+                                playerNames = Array(playerNames.prefix(n))
+                            }
+                            wakuNumbers = Array(1...n)
+                        }
+                    ), in: 3...9)
+                    .labelsHidden()
+                    .tint(KeirinUI.gold)
+                }
+
+                VStack(spacing: 9) {
+                    ForEach(0..<playerNames.count, id: \.self) { i in
+                        HStack(spacing: 10) {
+                            LaneBadge(number: i + 1, size: 32)
+                            PlayerAutocompleteField(
+                                text: $playerNames[i],
+                                players: Array(dataLoader.playerStats.keys),
+                                placeholder: "\(i + 1)番 選手名"
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private var predictButton: some View {
         Button {
             runPrediction()
@@ -175,64 +198,113 @@ struct PredictionView: View {
                 if isAnimating {
                     ProgressView()
                         .tint(.black)
-                        .scaleEffect(0.8)
+                        .scaleEffect(0.9)
                 } else {
                     Image(systemName: "bolt.fill")
                 }
-                Text(isAnimating ? "分析中..." : "予測開始 / PREDICT")
-                    .font(.system(size: 16, weight: .black, design: .monospaced))
+                Text(isAnimating ? "解析中..." : "指数を計算")
+                    .font(.system(size: 17, weight: .black, design: .rounded))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
-            .background(
-                LinearGradient(
-                    colors: [Color(hex: "#FFD700"), Color(hex: "#FFA500")],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-            )
+            .padding(.vertical, 17)
+            .background(KeirinUI.actionGradient)
             .foregroundColor(.black)
-            .cornerRadius(12)
-            .shadow(color: Color(hex: "#FFD700").opacity(0.4), radius: 8, x: 0, y: 4)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .shadow(color: KeirinUI.red.opacity(isAnimating ? 0.15 : 0.45), radius: 18, x: 0, y: 10)
         }
         .disabled(selectedVenue.isEmpty || playerCount < 3 || isAnimating)
-        .opacity(selectedVenue.isEmpty || playerCount < 3 ? 0.5 : 1)
+        .opacity(selectedVenue.isEmpty || playerCount < 3 ? 0.45 : 1)
     }
 
-    // MARK: - Results
-    private var resultsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("PREDICTION RESULT")
-                    .font(.system(size: 14, weight: .black, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
-                Spacer()
-                Text(selectedVenue)
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.5))
-            }
+    private var analyzingPanel: some View {
+        GlassPanel(cornerRadius: 20, borderColor: KeirinUI.red.opacity(0.36)) {
+            VStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .stroke(KeirinUI.red.opacity(0.18), lineWidth: 12)
+                        .frame(width: 96, height: 96)
+                    Circle()
+                        .trim(from: 0, to: 0.72)
+                        .stroke(KeirinUI.gold, style: StrokeStyle(lineWidth: 12, lineCap: .round))
+                        .frame(width: 96, height: 96)
+                        .rotationEffect(.degrees(pulse ? 360 : 0))
+                        .animation(.linear(duration: 1.0).repeatForever(autoreverses: false), value: pulse)
+                    Text("RUN")
+                        .font(.system(size: 24, weight: .black, design: .monospaced))
+                        .foregroundColor(.white)
+                }
 
-            // Line party formations
+                Text("ラインと脚質を照合中")
+                    .font(.system(size: 15, weight: .black, design: .rounded))
+                    .foregroundColor(.white)
+            }
+            .frame(maxWidth: .infinity)
+        }
+    }
+
+    private var resultsSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            resultHero
+
             let districts = Dictionary(grouping: results.filter { !$0.district.isEmpty }, by: { $0.district })
             if districts.count > 1 {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 10) {
                         ForEach(districts.keys.sorted(), id: \.self) { dist in
                             LinePartyView(district: dist, members: districts[dist] ?? [])
                         }
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 2)
                 }
             }
 
             ForEach(Array(results.enumerated()), id: \.element.id) { (i, result) in
                 ResultCardView(result: result, index: i)
                     .offset(y: cardOffsets[safe: i] ?? 0)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
     }
 
-    // MARK: - Prediction logic
+    private var resultHero: some View {
+        let top = results.first
+
+        return GlassPanel(cornerRadius: 24, borderColor: KeirinUI.gold.opacity(0.42)) {
+            VStack(alignment: .leading, spacing: 13) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("INDEX RESULT")
+                            .font(.system(size: 11, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.gold)
+                        Text(top?.name ?? "RESULT")
+                            .font(.system(size: 28, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
+                    }
+                    Spacer()
+                    if let top = top {
+                        VStack(spacing: 3) {
+                            LaneBadge(number: top.waku, size: 44)
+                            Text("本命")
+                                .font(.system(size: 10, weight: .black, design: .rounded))
+                                .foregroundColor(KeirinUI.gold)
+                        }
+                    }
+                }
+
+                if let top = top {
+                    HStack(spacing: 10) {
+                        MetricPill(title: "WIN", value: "\(String(format: "%.1f", top.winProb))%", color: KeirinUI.gold)
+                        MetricPill(title: "SCORE", value: "\(String(format: "%.0f", top.score))", color: KeirinUI.red)
+                        MetricPill(title: "FORM", value: "\(String(format: "%.0f", top.formScore))", color: KeirinUI.cyan)
+                    }
+                    ProbabilityBar(value: top.winProb / 100, color: KeirinUI.gold)
+                }
+            }
+        }
+    }
+
     private func runPrediction() {
         let entries = playerNames.enumerated().compactMap { (i, name) -> RaceEntry? in
             guard !name.isEmpty else { return nil }
@@ -243,7 +315,6 @@ struct PredictionView: View {
         isAnimating = true
         showResults = false
 
-        // Animate cards shuffling
         for i in 0..<9 {
             cardOffsets[i] = CGFloat.random(in: -20...20)
         }
@@ -256,7 +327,7 @@ struct PredictionView: View {
                 venueStats: dataLoader.venueStats
             )
 
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
+            withAnimation(.spring(response: 0.62, dampingFraction: 0.72)) {
                 for i in 0..<9 { cardOffsets[i] = 0 }
                 showResults = true
                 isAnimating = false
@@ -265,196 +336,186 @@ struct PredictionView: View {
     }
 }
 
-// MARK: - Line Party View
 struct LinePartyView: View {
     let district: String
     let members: [PredictionResult]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: 7) {
             Text(district)
-                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                .foregroundColor(Color(hex: "#FFD700"))
-            HStack(spacing: 5) {
+                .font(.system(size: 12, weight: .black, design: .rounded))
+                .foregroundColor(KeirinUI.cyan)
+            HStack(spacing: 6) {
                 ForEach(members.sorted(by: { $0.predRank < $1.predRank })) { m in
-                    VStack(spacing: 2) {
-                        Text("\(m.waku)")
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundColor(.black)
-                            .frame(width: 26, height: 26)
-                            .background(wakuColor(m.waku))
-                            .clipShape(Circle())
+                    VStack(spacing: 4) {
+                        LaneBadge(number: m.waku, size: 28)
                         Text(String(m.name.prefix(2)))
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.7))
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundColor(.white.opacity(0.68))
                     }
                 }
             }
         }
-        .padding(10)
-        .background(Color.white.opacity(0.06))
-        .cornerRadius(8)
+        .padding(11)
+        .background(Color.white.opacity(0.055))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(KeirinUI.cyan.opacity(0.16), lineWidth: 1)
+        )
     }
 }
 
-// MARK: - Result Card
 struct ResultCardView: View {
     let result: PredictionResult
     let index: Int
 
-    @State private var glowOpacity: Double = 0.5
+    @State private var glowOpacity: Double = 0.25
 
     var body: some View {
         HStack(spacing: 12) {
-            // Rank badge
             ZStack {
-                Circle()
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(rankGradient)
-                    .frame(width: 44, height: 44)
-                    .shadow(color: rankShadow, radius: index == 0 ? 8 : 0)
-
-                Text("\(result.predRank)")
-                    .font(.system(size: 20, weight: .black, design: .monospaced))
-                    .foregroundColor(index == 0 ? .black : .white)
+                    .frame(width: 58, height: 70)
+                    .shadow(color: rankShadow, radius: index == 0 ? 18 : 6, x: 0, y: 8)
+                VStack(spacing: -2) {
+                    Text("\(result.predRank)")
+                        .font(.system(size: 26, weight: .black, design: .monospaced))
+                    Text(rankLabel)
+                        .font(.system(size: 8, weight: .black, design: .monospaced))
+                }
+                .foregroundColor(index == 0 ? .black : .white)
             }
 
-            // Player info
-            VStack(alignment: .leading, spacing: 4) {
-                HStack(spacing: 6) {
+            VStack(alignment: .leading, spacing: 7) {
+                HStack(spacing: 7) {
+                    LaneBadge(number: result.waku, size: 28)
                     Text(result.name)
-                        .font(.system(size: 17, weight: .bold))
+                        .font(.system(size: 17, weight: .black, design: .rounded))
                         .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                     if !result.classRank.isEmpty {
                         ClassBadge(classRank: result.classRank)
                     }
-                    if result.isDarkHorse {
-                        Text("DARK HORSE")
-                            .font(.system(size: 10, weight: .black, design: .monospaced))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 2)
-                            .background(Color.purple)
-                            .cornerRadius(4)
-                    }
                 }
-                HStack(spacing: 8) {
+
+                HStack(spacing: 7) {
                     if !result.district.isEmpty {
                         Text(result.district)
-                            .font(.system(size: 13))
-                            .foregroundColor(.white.opacity(0.5))
+                            .foregroundColor(.white.opacity(0.55))
                     }
                     if !result.style.isEmpty {
                         Text(result.style)
-                            .font(.system(size: 13))
                             .foregroundColor(styleColor(result.style))
                     }
-                    if let avg = result.recentAvg {
-                        Text("直近\(String(format: "%.1f", avg))着")
-                            .font(.system(size: 13))
-                            .foregroundColor(.white.opacity(0.5))
-                    }
-                    if result.formScore > 0 {
-                        HStack(spacing: 2) {
-                            Image(systemName: "flame.fill")
-                                .font(.system(size: 10))
-                            Text(String(format: "%.0f", result.formScore))
-                                .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        }
-                        .foregroundColor(result.formScore >= 7 ? .orange : .white.opacity(0.4))
+                    if result.isDarkHorse {
+                        Text("穴")
+                            .foregroundColor(.black)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(KeirinUI.cyan)
+                            .clipShape(Capsule())
                     }
                 }
+                .font(.system(size: 12, weight: .bold, design: .rounded))
+
+                ProbabilityBar(value: result.winProb / 100, color: index == 0 ? KeirinUI.gold : KeirinUI.cyan)
             }
 
             Spacer()
 
-            // Win prob
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(String(format: "%.1f", result.winProb))%")
                     .font(.system(size: 20, weight: .black, design: .monospaced))
-                    .foregroundColor(index == 0 ? Color(hex: "#FFD700") : .white)
-                Text("勝率\(String(format: "%.1f", result.winRate))%")
-                    .font(.system(size: 12))
-                    .foregroundColor(.white.opacity(0.4))
+                    .foregroundColor(index == 0 ? KeirinUI.gold : .white)
+                Text("WIN")
+                    .font(.system(size: 9, weight: .black, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.38))
             }
         }
-        .padding(14)
+        .padding(13)
         .background(cardBackground)
-        .cornerRadius(12)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(cardBorder, lineWidth: index == 0 ? 1.5 : 0.5)
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(cardBorder.opacity(glowOpacity), lineWidth: index == 0 ? 2 : 1)
         )
-        .overlay {
-            if result.isDarkHorse {
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.purple.opacity(glowOpacity), lineWidth: 2)
-                    .animation(.easeInOut(duration: 1).repeatForever(autoreverses: true), value: glowOpacity)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.95).repeatForever(autoreverses: true)) {
+                glowOpacity = index == 0 || result.isDarkHorse ? 1.0 : 0.35
             }
         }
-        .onAppear {
-            if result.isDarkHorse { glowOpacity = 1.0 }
-        }
+    }
+
+    private var rankLabel: String {
+        index == 0 ? "AXIS" : index == 1 ? "2ND" : index == 2 ? "3RD" : "RANK"
     }
 
     private var rankGradient: LinearGradient {
         switch index {
-        case 0: return LinearGradient(colors: [Color(hex: "#FFD700"), Color(hex: "#FFA500")], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case 1: return LinearGradient(colors: [Color(hex: "#C0C0C0"), Color(hex: "#A0A0A0")], startPoint: .topLeading, endPoint: .bottomTrailing)
-        case 2: return LinearGradient(colors: [Color(hex: "#CD7F32"), Color(hex: "#A0522D")], startPoint: .topLeading, endPoint: .bottomTrailing)
-        default: return LinearGradient(colors: [Color.white.opacity(0.15), Color.white.opacity(0.05)], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case 0: return LinearGradient(colors: [KeirinUI.gold, Color(hex: "#FF7A18")], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case 1: return LinearGradient(colors: [KeirinUI.cyan, Color(hex: "#216BFF")], startPoint: .topLeading, endPoint: .bottomTrailing)
+        case 2: return LinearGradient(colors: [KeirinUI.red, Color(hex: "#7A1CFF")], startPoint: .topLeading, endPoint: .bottomTrailing)
+        default: return LinearGradient(colors: [Color.white.opacity(0.16), Color.white.opacity(0.04)], startPoint: .topLeading, endPoint: .bottomTrailing)
         }
     }
 
     private var rankShadow: Color {
-        index == 0 ? Color(hex: "#FFD700").opacity(0.6) : .clear
+        switch index {
+        case 0: return KeirinUI.gold.opacity(0.45)
+        case 1: return KeirinUI.cyan.opacity(0.28)
+        case 2: return KeirinUI.red.opacity(0.26)
+        default: return .black.opacity(0.22)
+        }
     }
 
     private var cardBackground: some ShapeStyle {
         if index == 0 {
             return AnyShapeStyle(LinearGradient(
-                colors: [Color(hex: "#FFD700").opacity(0.12), Color(hex: "#0A0E27")],
+                colors: [KeirinUI.gold.opacity(0.16), KeirinUI.panel.opacity(0.94)],
                 startPoint: .leading,
                 endPoint: .trailing
             ))
         }
-        return AnyShapeStyle(Color.white.opacity(0.05))
+        return AnyShapeStyle(KeirinUI.panel.opacity(0.86))
     }
 
     private var cardBorder: Color {
+        if result.isDarkHorse { return KeirinUI.cyan }
         switch index {
-        case 0: return Color(hex: "#FFD700").opacity(0.6)
-        case 1: return Color(hex: "#C0C0C0").opacity(0.4)
-        case 2: return Color(hex: "#CD7F32").opacity(0.4)
-        default: return Color.white.opacity(0.1)
+        case 0: return KeirinUI.gold
+        case 1: return KeirinUI.cyan
+        case 2: return KeirinUI.red
+        default: return Color.white.opacity(0.18)
         }
     }
 }
 
-// MARK: - Class Badge
 struct ClassBadge: View {
     let classRank: String
 
     var body: some View {
         Text(classRank)
-            .font(.system(size: 11, weight: .black, design: .monospaced))
+            .font(.system(size: 10, weight: .black, design: .monospaced))
             .foregroundColor(.black)
             .padding(.horizontal, 6)
             .padding(.vertical, 3)
             .background(badgeColor)
-            .cornerRadius(4)
+            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
 
     private var badgeColor: Color {
         switch classRank {
-        case "S1", "S2": return Color(hex: "#FFD700")
-        case "A1": return Color(hex: "#C0C0C0")
+        case "S1", "S2": return KeirinUI.gold
+        case "A1": return KeirinUI.cyan
         case "A2": return Color(hex: "#CD7F32")
         default: return Color.gray
         }
     }
 }
 
-// MARK: - Player Autocomplete Field
 struct PlayerAutocompleteField: View {
     @Binding var text: String
     let players: [String]
@@ -467,14 +528,14 @@ struct PlayerAutocompleteField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextField(placeholder, text: $text)
-                .font(.system(size: 14, design: .monospaced))
+                .font(.system(size: 14, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
-                .padding(10)
-                .background(Color.white.opacity(0.07))
-                .cornerRadius(8)
+                .padding(12)
+                .background(Color.black.opacity(0.22))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color(hex: "#FFD700").opacity(isFocused ? 0.5 : 0.15), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .stroke(isFocused ? KeirinUI.cyan.opacity(0.62) : Color.white.opacity(0.10), lineWidth: 1)
                 )
                 .focused($isFocused)
                 .onChange(of: text) { _, newVal in
@@ -495,47 +556,46 @@ struct PlayerAutocompleteField: View {
                             isFocused = false
                         } label: {
                             Text(s)
-                                .font(.system(size: 13, design: .monospaced))
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
+                                .padding(.vertical, 9)
                         }
                         if s != suggestions.last {
                             Divider().background(Color.white.opacity(0.1))
                         }
                     }
                 }
-                .background(Color(hex: "#1A1E3A"))
-                .cornerRadius(8)
-                .shadow(color: .black.opacity(0.5), radius: 8)
+                .background(KeirinUI.panelBright)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .shadow(color: .black.opacity(0.55), radius: 10)
                 .zIndex(100)
             }
         }
     }
 }
 
-// MARK: - Helpers
 func wakuColor(_ waku: Int) -> Color {
     let colors: [Color] = [
         Color(hex: "#FFFFFF"),
-        Color(hex: "#000000"),
-        Color(hex: "#FF0000"),
-        Color(hex: "#0000FF"),
-        Color(hex: "#FFFF00"),
-        Color(hex: "#00AA00"),
-        Color(hex: "#FF6600"),
-        Color(hex: "#FF69B4"),
+        Color(hex: "#111111"),
+        Color(hex: "#E62020"),
+        Color(hex: "#1D56FF"),
+        Color(hex: "#FFE100"),
+        Color(hex: "#00A651"),
+        Color(hex: "#FF7A18"),
+        Color(hex: "#FF4FA3"),
     ]
-    return colors[safe: waku] ?? .gray
+    return colors[safe: max(0, min(waku - 1, colors.count - 1))] ?? .gray
 }
 
 func styleColor(_ style: String) -> Color {
     switch style {
-    case "逃": return Color(hex: "#FF4444")
+    case "逃": return KeirinUI.red
     case "捲": return Color(hex: "#FF8C00")
-    case "差": return Color(hex: "#4488FF")
-    case "追": return Color(hex: "#44CC88")
+    case "差": return KeirinUI.cyan
+    case "追": return KeirinUI.green
     default: return .white
     }
 }
