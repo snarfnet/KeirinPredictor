@@ -72,7 +72,7 @@ struct PlayerDatabaseView: View {
                             }
                         }
                         .padding(.horizontal)
-                        .padding(.bottom, 20)
+                        .padding(.bottom, KeirinUI.scrollBottomPadding)
                     }
                 }
             }
@@ -203,7 +203,7 @@ struct PlayerDetailView: View {
         ZStack {
             Color(hex: "#0A0E27").ignoresSafeArea()
 
-            ScrollView {
+            CompactAwareScroll {
                 VStack(spacing: 20) {
                     // Header
                     VStack(spacing: 8) {
@@ -285,9 +285,7 @@ struct PlayerDetailView: View {
                         }
                     }
 
-                    Spacer(minLength: 40)
                 }
-                .padding(.horizontal)
             }
         }
     }

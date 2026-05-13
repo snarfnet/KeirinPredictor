@@ -10,6 +10,7 @@ enum KeirinUI {
     static let cyan = Color(hex: "#13D8FF")
     static let green = Color(hex: "#49E37A")
     static let muted = Color.white.opacity(0.58)
+    static let scrollBottomPadding: CGFloat = 84
 
     static var actionGradient: LinearGradient {
         LinearGradient(
@@ -25,6 +26,27 @@ enum KeirinUI {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
+    }
+}
+
+struct CompactAwareScroll<Content: View>: View {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        GeometryReader { proxy in
+            let compact = proxy.size.width < 390
+
+            ScrollView {
+                content
+                    .padding(.horizontal, compact ? 12 : 16)
+                    .padding(.top, compact ? 8 : 12)
+                    .padding(.bottom, KeirinUI.scrollBottomPadding)
+            }
+        }
     }
 }
 
@@ -85,7 +107,7 @@ struct GlassPanel<Content: View>: View {
 
     var body: some View {
         content
-            .padding(14)
+            .padding(UIScreen.main.bounds.width < 390 ? 12 : 14)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(

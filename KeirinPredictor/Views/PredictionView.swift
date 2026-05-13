@@ -26,7 +26,7 @@ struct PredictionView: View {
             ZStack {
                 KeirinStageBackground()
 
-                ScrollView {
+                CompactAwareScroll {
                     VStack(spacing: 18) {
                         commandHeader
                         venueSection
@@ -51,10 +51,7 @@ struct PredictionView: View {
                                 .padding(.top, 2)
                         }
 
-                        Spacer(minLength: 32)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
                 }
             }
             .navigationTitle("")

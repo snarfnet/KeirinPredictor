@@ -8,14 +8,12 @@ struct TrackingView: View {
             ZStack {
                 KeirinStageBackground()
 
-                ScrollView {
+                CompactAwareScroll {
                     VStack(spacing: 16) {
                         performanceHeader
                         statsCards
                         recentHistory
-                        Spacer(minLength: 40)
                     }
-                    .padding(.horizontal)
                 }
             }
             .navigationTitle("")

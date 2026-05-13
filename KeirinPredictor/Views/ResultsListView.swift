@@ -29,7 +29,7 @@ struct ResultsListView: View {
                         .cornerRadius(8)
                     }
                 } else {
-                    ScrollView {
+                    CompactAwareScroll {
                         VStack(spacing: 16) {
                             resultsHeader
 
@@ -41,9 +41,7 @@ struct ResultsListView: View {
                                 .frame(height: 50)
                                 .padding(.horizontal)
 
-                            Spacer(minLength: 40)
                         }
-                        .padding(.horizontal)
                     }
                 }
             }

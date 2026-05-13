@@ -14,7 +14,7 @@ struct RaceListView: View {
                 if dataLoader.todayRaces.isEmpty {
                     emptyState
                 } else {
-                    ScrollView {
+                    CompactAwareScroll {
                         VStack(alignment: .leading, spacing: 18) {
                             heroHeader
 
@@ -39,10 +39,7 @@ struct RaceListView: View {
                                 .frame(height: 50)
                                 .padding(.top, 4)
 
-                            Spacer(minLength: 24)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 12)
                     }
                     .refreshable {
                         dataLoader.fetchRemoteTodayEntries()

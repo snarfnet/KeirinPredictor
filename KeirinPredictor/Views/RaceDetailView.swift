@@ -17,7 +17,7 @@ struct RaceDetailView: View {
         ZStack {
             KeirinStageBackground()
 
-            ScrollView {
+            CompactAwareScroll {
                 VStack(spacing: 16) {
                     raceHeader
 
@@ -35,10 +35,7 @@ struct RaceDetailView: View {
                         .frame(height: 50)
                         .padding(.top, 4)
 
-                    Spacer(minLength: 34)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
             }
         }
         .navigationTitle("\(race.venue) \(race.raceNo)R")

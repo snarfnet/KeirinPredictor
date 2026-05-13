@@ -128,7 +128,7 @@ struct VenueDetailView: View {
     let onBack: () -> Void
 
     var body: some View {
-        ScrollView {
+        CompactAwareScroll {
             VStack(spacing: 20) {
                 // Back button + header
                 HStack {
@@ -202,10 +202,7 @@ struct VenueDetailView: View {
                 .background(Color.white.opacity(0.05))
                 .cornerRadius(12)
 
-                Spacer(minLength: 40)
             }
-            .padding(.horizontal)
-            .padding(.top, 8)
         }
     }
 

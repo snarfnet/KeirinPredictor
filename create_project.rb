@@ -13,6 +13,8 @@ target.build_configurations.each do |config|
   config.build_settings['DEVELOPMENT_TEAM'] = TEAM_ID
   config.build_settings['SWIFT_VERSION'] = '5.0'
   config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '17.0'
+  config.build_settings['MARKETING_VERSION'] = ENV.fetch('APP_VERSION', '1.1')
+  config.build_settings['CURRENT_PROJECT_VERSION'] = ENV.fetch('BUILD_NUMBER', '1')
   config.build_settings['CODE_SIGN_STYLE'] = 'Automatic'
   config.build_settings['INFOPLIST_FILE'] = 'KeirinPredictor/Info.plist'
   config.build_settings['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'
