@@ -61,6 +61,8 @@ struct RaceDetailView: View {
                         Text("\(race.venue) \(race.raceNo)R")
                             .font(.system(size: 30, weight: .black, design: .rounded))
                             .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
                     }
                     Spacer()
                     Text("\(race.raceNo)")
@@ -69,7 +71,7 @@ struct RaceDetailView: View {
                         .shadow(color: KeirinUI.gold.opacity(0.35), radius: 14)
                 }
 
-                HStack(spacing: 9) {
+                MetricPillRow {
                     MetricPill(title: "RIDERS", value: "\(race.entries.count)", color: KeirinUI.gold)
                     if let bankInfo = dataLoader.venueStats[race.venue] {
                         MetricPill(title: "BANK", value: "\(bankInfo.bank)m", color: KeirinUI.cyan)
@@ -398,6 +400,8 @@ struct EntryRowView: View {
                     Text(entry.name)
                         .font(.system(size: 16, weight: .black, design: .rounded))
                         .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     if !entry.style.isEmpty {
                         Text(entry.style)
                             .font(.system(size: 12, weight: .black, design: .rounded))
@@ -412,6 +416,7 @@ struct EntryRowView: View {
                 }
                 ProbabilityBar(value: min(entry.score / 120, 1), color: KeirinUI.cyan)
             }
+            .layoutPriority(1)
 
             Spacer()
 

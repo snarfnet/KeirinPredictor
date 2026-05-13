@@ -130,9 +130,10 @@ struct RaceResultRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text("\(result.race_no)R")
-                    .font(.system(size: 16, weight: .black, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
+                    Text("\(result.race_no)R")
+                        .font(.system(size: 16, weight: .black, design: .monospaced))
+                        .foregroundColor(Color(hex: "#FFD700"))
+                        .fixedSize(horizontal: true, vertical: false)
                 Spacer()
             }
 
@@ -154,6 +155,9 @@ struct RaceResultRow: View {
                     Text(finisher.name)
                         .font(.system(size: 15, weight: i == 0 ? .bold : .regular))
                         .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .layoutPriority(1)
 
                     if !finisher.kimarite.isEmpty {
                         Text(finisher.kimarite)
@@ -174,9 +178,11 @@ struct RaceResultRow: View {
                             Text(pb.type)
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundColor(.white.opacity(0.5))
-                            Text(pb.combination)
-                                .font(.system(size: 11))
-                                .foregroundColor(.white.opacity(0.7))
+                        Text(pb.combination)
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.7))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                             Text("\(pb.payout)円")
                                 .font(.system(size: 13, weight: .bold, design: .monospaced))
                                 .foregroundColor(pb.payout >= 10000 ? .red : Color(hex: "#FFD700"))

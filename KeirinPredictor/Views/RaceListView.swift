@@ -112,7 +112,7 @@ struct RaceListView: View {
                     }
                 }
 
-                HStack(spacing: 10) {
+                MetricPillRow {
                     MetricPill(title: "VENUE", value: "\(availableVenues.count)", color: KeirinUI.cyan)
                     MetricPill(title: "HOME", value: homeVenue.isEmpty ? "未設定" : homeVenue, color: KeirinUI.gold)
                     MetricPill(title: "注目指数", value: "\(aiPicks.count)", color: KeirinUI.red)
@@ -339,6 +339,8 @@ struct VenueSectionView: View {
                     Text(venue)
                         .font(.system(size: 18, weight: .black, design: .rounded))
                         .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     if isHome {
                         Text("HOME")
                             .font(.system(size: 9, weight: .black, design: .monospaced))
@@ -380,15 +382,15 @@ struct RaceCardView: View {
     }
 
     var body: some View {
-        HStack(spacing: 13) {
+        HStack(spacing: 10) {
             ZStack {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(KeirinUI.actionGradient)
-                    .frame(width: 66, height: 72)
+                    .frame(width: 56, height: 64)
                     .shadow(color: KeirinUI.red.opacity(0.30), radius: 12, x: 0, y: 7)
                 VStack(spacing: -2) {
                     Text("\(race.raceNo)")
-                        .font(.system(size: 30, weight: .black, design: .monospaced))
+                        .font(.system(size: 27, weight: .black, design: .monospaced))
                     Text("RACE")
                         .font(.system(size: 9, weight: .black, design: .monospaced))
                 }
@@ -404,10 +406,12 @@ struct RaceCardView: View {
                                 Text(race.venue)
                                     .font(.system(size: 10, weight: .black, design: .rounded))
                                     .foregroundColor(KeirinUI.cyan)
+                                    .lineLimit(1)
                                 Text(top.name)
                                     .font(.system(size: 16, weight: .black, design: .rounded))
                                     .foregroundColor(.white)
                                     .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
                             }
                             Text("本命指数 \(String(format: "%.0f", top.score))")
                                 .font(.system(size: 10, weight: .bold, design: .monospaced))
@@ -441,6 +445,7 @@ struct RaceCardView: View {
 
                 ProbabilityBar(value: min(max(scoreGap / 20, 0.08), 1), color: scoreGap >= 8 ? KeirinUI.red : KeirinUI.cyan)
             }
+            .layoutPriority(1)
         }
         .padding(11)
         .background(

@@ -123,6 +123,8 @@ struct PlayerCardView: View {
                     Text(name)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     Text(stat.style)
                         .font(.system(size: 11))
                         .foregroundColor(styleColor(stat.style))
@@ -130,7 +132,10 @@ struct PlayerCardView: View {
                 Text("\(stat.district) \(stat.prefecture)")
                     .font(.system(size: 11))
                     .foregroundColor(.white.opacity(0.45))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
+            .layoutPriority(1)
 
             Spacer()
 

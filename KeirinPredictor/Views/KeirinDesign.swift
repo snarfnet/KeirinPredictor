@@ -151,6 +151,26 @@ struct MetricPill: View {
     }
 }
 
+struct MetricPillRow<Content: View>: View {
+    let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 9) {
+                content
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
+                content
+            }
+        }
+    }
+}
+
 struct ProbabilityBar: View {
     let value: Double
     var color: Color = KeirinUI.cyan
