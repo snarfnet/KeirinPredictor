@@ -86,7 +86,7 @@ struct RaceListView: View {
     private var heroHeader: some View {
         GlassPanel(cornerRadius: 22, borderColor: KeirinUI.cyan.opacity(0.28)) {
             VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .top) {
+                AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 10) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("TODAY'S RACES")
                             .font(.system(size: 11, weight: .black, design: .monospaced))
@@ -96,8 +96,6 @@ struct RaceListView: View {
                             .foregroundColor(.white)
                             .lineLimit(2)
                     }
-
-                    Spacer()
 
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("\(dataLoader.todayRaces.count)")
@@ -395,11 +393,11 @@ struct RaceCardView: View {
             }
 
             VStack(alignment: .leading, spacing: 9) {
-                HStack(spacing: 7) {
+                HStack(alignment: .top, spacing: 7) {
                     if let top = topEntries.first {
                         LaneBadge(number: top.umaban, size: 29)
                         VStack(alignment: .leading, spacing: 1) {
-                            HStack(spacing: 6) {
+                            VStack(alignment: .leading, spacing: 1) {
                                 Text(race.venue)
                                     .font(.system(size: 10, weight: .black, design: .rounded))
                                     .foregroundColor(KeirinUI.cyan)

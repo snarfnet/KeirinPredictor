@@ -42,9 +42,39 @@ struct CompactAwareScroll<Content: View>: View {
 
             ScrollView {
                 content
-                    .padding(.horizontal, compact ? 12 : 16)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .padding(.horizontal, compact ? 18 : 20)
                     .padding(.top, compact ? 8 : 12)
                     .padding(.bottom, KeirinUI.scrollBottomPadding)
+            }
+            .scrollClipDisabled()
+        }
+    }
+}
+
+struct AdaptiveStack<Content: View>: View {
+    var horizontalSpacing: CGFloat = 10
+    var verticalSpacing: CGFloat = 8
+    let content: Content
+
+    init(
+        horizontalSpacing: CGFloat = 10,
+        verticalSpacing: CGFloat = 8,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.horizontalSpacing = horizontalSpacing
+        self.verticalSpacing = verticalSpacing
+        self.content = content()
+    }
+
+    var body: some View {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: horizontalSpacing) {
+                content
+            }
+
+            VStack(alignment: .leading, spacing: verticalSpacing) {
+                content
             }
         }
     }
@@ -108,6 +138,7 @@ struct GlassPanel<Content: View>: View {
     var body: some View {
         content
             .padding(UIScreen.main.bounds.width < 390 ? 12 : 14)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .fill(

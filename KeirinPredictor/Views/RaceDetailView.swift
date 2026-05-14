@@ -50,7 +50,7 @@ struct RaceDetailView: View {
     private var raceHeader: some View {
         GlassPanel(cornerRadius: 24, borderColor: KeirinUI.gold.opacity(0.35)) {
             VStack(alignment: .leading, spacing: 14) {
-                HStack(alignment: .top) {
+                AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("RACE CONTROL")
                             .font(.system(size: 11, weight: .black, design: .monospaced))
@@ -61,7 +61,6 @@ struct RaceDetailView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
-                    Spacer()
                     Text("\(race.raceNo)")
                         .font(.system(size: 44, weight: .black, design: .monospaced))
                         .foregroundColor(KeirinUI.gold)
@@ -143,7 +142,7 @@ struct RaceDetailView: View {
 
     private var resultsSection: some View {
         VStack(alignment: .leading, spacing: 13) {
-            HStack {
+            AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("INDEX")
                         .font(.system(size: 11, weight: .black, design: .monospaced))
@@ -152,7 +151,6 @@ struct RaceDetailView: View {
                         .font(.system(size: 23, weight: .black, design: .rounded))
                         .foregroundColor(.white)
                 }
-                Spacer()
                 Button {
                     showResults = false
                     predictions = []
@@ -195,13 +193,12 @@ struct RaceDetailView: View {
     private var betSection: some View {
         GlassPanel(cornerRadius: 18, borderColor: KeirinUI.red.opacity(0.28)) {
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
+                AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
                     Image(systemName: "square.stack.3d.up.fill")
                         .foregroundColor(KeirinUI.gold)
                     Text("注目組み合わせ")
                         .font(.system(size: 18, weight: .black, design: .rounded))
                         .foregroundColor(.white)
-                    Spacer()
                     Text("\(filteredBets.count)")
                         .font(.system(size: 15, weight: .black, design: .monospaced))
                         .foregroundColor(KeirinUI.gold)

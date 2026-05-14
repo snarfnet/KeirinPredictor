@@ -32,14 +32,13 @@ struct VenueInfoView: View {
     }
 
     private var venueList: some View {
-        ScrollView {
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+        CompactAwareScroll {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 10)], spacing: 10) {
                 ForEach(sortedVenues, id: \.0) { (name, stats) in
                     VenueCardTile(name: name, stats: stats)
                         .onTapGesture { selectedVenue = name }
                 }
             }
-            .padding()
         }
     }
 }
@@ -148,7 +147,7 @@ struct VenueDetailView: View {
                     Text(name)
                         .font(.system(size: 28, weight: .black))
                         .foregroundColor(.white)
-                    HStack(spacing: 16) {
+                    AdaptiveStack(horizontalSpacing: 16, verticalSpacing: 6) {
                         Label("\(stats.bank)m バンク", systemImage: "arrow.triangle.2.circlepath")
                             .foregroundColor(bankColor(stats.bank))
                         Label("\(stats.races)レース", systemImage: "flag.checkered")

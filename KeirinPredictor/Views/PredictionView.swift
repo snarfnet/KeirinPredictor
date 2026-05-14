@@ -73,7 +73,7 @@ struct PredictionView: View {
 
     private var commandHeader: some View {
         GlassPanel(cornerRadius: 24, borderColor: KeirinUI.cyan.opacity(0.28)) {
-            HStack(alignment: .center, spacing: 14) {
+            AdaptiveStack(horizontalSpacing: 14, verticalSpacing: 12) {
                 ZStack {
                     Circle()
                         .stroke(KeirinUI.cyan.opacity(pulse ? 0.42 : 0.14), lineWidth: 8)
@@ -99,7 +99,6 @@ struct PredictionView: View {
                         .foregroundColor(.white.opacity(0.46))
                 }
 
-                Spacer()
             }
         }
     }

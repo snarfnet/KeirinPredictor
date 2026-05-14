@@ -30,7 +30,7 @@ struct TrackingView: View {
 
     private var performanceHeader: some View {
         GlassPanel(cornerRadius: 20, borderColor: KeirinUI.cyan.opacity(0.24)) {
-            HStack(spacing: 14) {
+            AdaptiveStack(horizontalSpacing: 14, verticalSpacing: 12) {
                 ZStack {
                     Circle()
                         .stroke(KeirinUI.cyan.opacity(0.25), lineWidth: 8)
@@ -51,7 +51,6 @@ struct TrackingView: View {
                         .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundColor(.white.opacity(0.58))
                 }
-                Spacer()
             }
         }
     }
@@ -94,7 +93,19 @@ struct TrackingView: View {
     }
 
     private var statsCards: some View {
-        HStack(spacing: 10) {
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 10) {
+                statCardsContent
+            }
+
+            VStack(spacing: 10) {
+                statCardsContent
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var statCardsContent: some View {
             StatCard(
                 label: "1着的中率",
                 value: String(format: "%.1f%%", tracker.hitRate),
@@ -113,7 +124,6 @@ struct TrackingView: View {
                 sub: "解析済み",
                 color: KeirinUI.cyan
             )
-        }
     }
 
     private var recentHistory: some View {
