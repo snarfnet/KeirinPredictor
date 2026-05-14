@@ -8,6 +8,7 @@ class DataLoader: ObservableObject {
     @Published var todayResults: [TodayRaceResult] = []
     @Published var todayOdds: [String: RaceOdds] = [:] // race_id -> RaceOdds
     @Published var todayDateString: String = ""
+    @Published var todayDataWarning: String? = nil
     @Published var todayResultsDateString: String = ""
     @Published var isResultsLoading = false
     @Published var resultsLoadError: String? = nil
@@ -87,12 +88,21 @@ class DataLoader: ObservableObject {
                 do {
                     let result = try JSONDecoder().decode(UpcomingRacesData.self, from: data)
                     if !result.races.isEmpty {
-                        // Show today or the nearest upcoming day
+                        // Show only today or a future race day. Never show stale previous-day races as today's races.
                         let todayStr = Self.todayString()
-                        let displayDay = result.days.first(where: { $0 >= todayStr }) ?? result.days.last ?? ""
+                        guard let displayDay = result.days.sorted().first(where: { $0 >= todayStr }) else {
+                            DispatchQueue.main.async {
+                                self.todayRaces = []
+                                self.todayDateString = self.formatDateString(todayStr)
+                                self.todayDataWarning = "今日の出走表はまだ配信されていません"
+                            }
+                            return
+                        }
+                        let racesForDay = result.races.filter { ($0.date ?? displayDay) == displayDay }
                         DispatchQueue.main.async {
-                            self.todayRaces = result.races
+                            self.todayRaces = racesForDay
                             self.todayDateString = self.formatDateString(displayDay)
+                            self.todayDataWarning = racesForDay.isEmpty ? "今日の出走表はまだ配信されていません" : nil
                         }
                         return
                     }
@@ -115,6 +125,15 @@ class DataLoader: ObservableObject {
                   httpResp.statusCode == 200 else { return }
             do {
                 let result = try JSONDecoder().decode(TodayRacesData.self, from: data)
+                let todayStr = Self.todayString()
+                guard result.date == todayStr else {
+                    DispatchQueue.main.async {
+                        self.todayRaces = []
+                        self.todayDateString = self.formatDateString(todayStr)
+                        self.todayDataWarning = "今日の出走表はまだ配信されていません"
+                    }
+                    return
+                }
                 if let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
                     let fileURL = cacheDir.appendingPathComponent("today_entries.json")
                     try? data.write(to: fileURL)
@@ -122,6 +141,7 @@ class DataLoader: ObservableObject {
                 DispatchQueue.main.async {
                     self.todayRaces = result.races
                     self.todayDateString = self.formatDateString(result.date)
+                    self.todayDataWarning = result.races.isEmpty ? "今日の出走表はまだ配信されていません" : nil
                 }
             } catch {
                 print("Remote today_entries decode error: \(error)")
