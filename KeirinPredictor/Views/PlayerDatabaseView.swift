@@ -5,7 +5,6 @@ struct PlayerDatabaseView: View {
     @State private var searchText = ""
     @State private var filterDistrict = ""
     @State private var filterStyle = ""
-    @State private var selectedPlayer: String? = nil
 
     private let districts = ["", "北日本", "関東", "南関東", "中部", "近畿", "中国", "四国", "九州"]
     private let styles = ["", "逃", "捲", "差", "追", "両"]
@@ -67,14 +66,19 @@ struct PlayerDatabaseView: View {
                     ScrollView {
                         LazyVStack(spacing: 8) {
                             ForEach(filteredPlayers, id: \.0) { (name, stat) in
-                                PlayerCardView(name: name, stat: stat)
-                                    .onTapGesture { selectedPlayer = name }
+                                NavigationLink(value: name) {
+                                    PlayerCardView(name: name, stat: stat)
+                                }
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.horizontal)
                         .padding(.bottom, KeirinUI.scrollBottomPadding)
                     }
                 }
+            }
+            .navigationDestination(for: String.self) { name in
+                PlayerDetailView(name: name, stat: dataLoader.playerStats[name])
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
@@ -85,19 +89,8 @@ struct PlayerDatabaseView: View {
                         .foregroundColor(Color(hex: "#FFD700"))
                 }
             }
-            .sheet(item: Binding(
-                get: { selectedPlayer.map { PlayerWrapper(name: $0) } },
-                set: { selectedPlayer = $0?.name }
-            )) { wrapper in
-                PlayerDetailView(name: wrapper.name, stat: dataLoader.playerStats[wrapper.name])
-            }
         }
     }
-}
-
-struct PlayerWrapper: Identifiable {
-    var id: String { name }
-    let name: String
 }
 
 // MARK: - Player Card
@@ -199,7 +192,7 @@ struct FilterChip: View {
     }
 }
 
-// MARK: - Player Detail Sheet
+// MARK: - Player Detail
 struct PlayerDetailView: View {
     let name: String
     let stat: PlayerStats?
@@ -293,6 +286,7 @@ struct PlayerDetailView: View {
                 }
             }
         }
+        .toolbar(.visible, for: .tabBar)
     }
 }
 
