@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var dataLoader: DataLoader
+    @EnvironmentObject var tracker: PredictionTracker
 
     var body: some View {
         TabView {
@@ -32,5 +33,11 @@ struct ContentView: View {
         }
         .accentColor(KeirinUI.gold)
         .preferredColorScheme(.dark)
+        .onAppear {
+            tracker.syncResults(dataLoader.todayResults)
+        }
+        .onReceive(dataLoader.$todayResults) { results in
+            tracker.syncResults(results)
+        }
     }
 }

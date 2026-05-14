@@ -49,6 +49,37 @@ class PredictionTracker: ObservableObject {
         save()
     }
 
+    func syncResults(_ results: [TodayRaceResult]) {
+        guard !results.isEmpty else { return }
+
+        var changed = false
+        for result in results {
+            guard let idx = records.firstIndex(where: { $0.raceId == result.race_id }) else { continue }
+            let finishers = result.finishers
+                .sorted { $0.rank < $1.rank }
+                .prefix(3)
+                .map { $0.umaban }
+            guard finishers.count >= 3 else { continue }
+
+            let old = records[idx]
+            if old.actualTop3 == finishers { continue }
+
+            records[idx] = PredictionRecord(
+                raceId: old.raceId, venue: old.venue, raceNo: old.raceNo, date: old.date,
+                predictedTop3: old.predictedTop3, actualTop3: Array(finishers),
+                betType: old.betType, betCombination: old.betCombination,
+                betAmount: old.betAmount, payout: matchedPayout(record: old, result: result),
+                playGrade: old.playGrade, axisWinEstimate: old.axisWinEstimate
+            )
+            changed = true
+        }
+
+        if changed {
+            recalculateBankrollFromRecords()
+            save()
+        }
+    }
+
     func setBudget(_ amount: Int) {
         bankroll.budget = amount
         save()
@@ -77,6 +108,30 @@ class PredictionTracker: ObservableObject {
 
     var actionHitRate: Double {
         actionPredictionCount > 0 ? Double(actionWinCount) / Double(actionPredictionCount) * 100 : 0
+    }
+
+    var targetHitRate: Double { 30 }
+
+    var actionTargetGap: Double { actionHitRate - targetHitRate }
+
+    var actionSampleLabel: String {
+        actionPredictionCount >= 30 ? "判定可能" : "あと\(max(0, 30 - actionPredictionCount))件"
+    }
+
+    var actionTuningAdvice: String {
+        if actionPredictionCount < 10 {
+            return "まずS/Aを10件ためる"
+        }
+        if actionHitRate >= 34 {
+            return "勝負範囲を少し広げてもいい"
+        }
+        if actionHitRate >= 30 {
+            return "今の絞り方を維持"
+        }
+        if actionHitRate >= 24 {
+            return "S中心に寄せる"
+        }
+        return "見送り基準を強める"
     }
 
     var hitRate: Double {
@@ -125,5 +180,23 @@ class PredictionTracker: ObservableObject {
            let decoded = try? JSONDecoder().decode(BankrollState.self, from: data) {
             bankroll = decoded
         }
+    }
+
+    private func matchedPayout(record: PredictionRecord, result: TodayRaceResult) -> Int? {
+        guard let betType = record.betType,
+              let betCombination = record.betCombination,
+              !betCombination.isEmpty else {
+            return record.payout
+        }
+
+        let key = betCombination.map { String($0) }.joined(separator: "-")
+        return result.paybacks.first { payback in
+            payback.type == betType && payback.combination == key
+        }?.payout
+    }
+
+    private func recalculateBankrollFromRecords() {
+        bankroll.spent = records.compactMap { $0.betAmount }.reduce(0, +)
+        bankroll.returned = records.compactMap { $0.payout }.reduce(0, +)
     }
 }

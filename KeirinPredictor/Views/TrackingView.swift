@@ -12,6 +12,7 @@ struct TrackingView: View {
                     VStack(spacing: 16) {
                         performanceHeader
                         statsCards
+                        calibrationCard
                         recentHistory
                     }
                 }
@@ -130,6 +131,46 @@ struct TrackingView: View {
                 sub: "解析済み",
                 color: KeirinUI.cyan
             )
+    }
+
+    private var calibrationCard: some View {
+        GlassPanel(cornerRadius: 18, borderColor: calibrationColor.opacity(0.32)) {
+            VStack(alignment: .leading, spacing: 12) {
+                AdaptiveStack(horizontalSpacing: 12, verticalSpacing: 10) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("30% WALL")
+                            .font(.system(size: 11, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.cyan)
+                        Text(tracker.actionTuningAdvice)
+                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                            .lineLimit(2)
+                    }
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text(String(format: "%+.1f", tracker.actionTargetGap))
+                            .font(.system(size: 27, weight: .black, design: .monospaced))
+                            .foregroundColor(calibrationColor)
+                        Text("30%との差")
+                            .font(.system(size: 10, weight: .black, design: .rounded))
+                            .foregroundColor(.white.opacity(0.44))
+                    }
+                }
+
+                ProbabilityBar(value: min(max(tracker.actionHitRate / 30, 0), 1), color: calibrationColor)
+
+                MetricPillRow {
+                    MetricPill(title: "勝負数", value: "\(tracker.actionPredictionCount)", color: KeirinUI.gold)
+                    MetricPill(title: "状態", value: tracker.actionSampleLabel, color: KeirinUI.cyan)
+                    MetricPill(title: "目標", value: "30%", color: KeirinUI.green)
+                }
+            }
+        }
+    }
+
+    private var calibrationColor: Color {
+        if tracker.actionHitRate >= 30 { return KeirinUI.green }
+        if tracker.actionPredictionCount < 10 { return KeirinUI.cyan }
+        return KeirinUI.red
     }
 
     private var recentHistory: some View {
