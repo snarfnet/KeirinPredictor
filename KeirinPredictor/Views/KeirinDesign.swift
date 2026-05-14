@@ -39,15 +39,17 @@ struct CompactAwareScroll<Content: View>: View {
     var body: some View {
         GeometryReader { proxy in
             let compact = proxy.size.width < 390
+            let sidePadding: CGFloat = compact ? 10 : 14
+            let contentWidth = max(0, proxy.size.width - sidePadding * 2)
 
             ScrollView {
                 content
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .padding(.horizontal, compact ? 18 : 20)
+                    .frame(width: contentWidth, alignment: .topLeading)
+                    .padding(.horizontal, sidePadding)
                     .padding(.top, compact ? 8 : 12)
                     .padding(.bottom, KeirinUI.scrollBottomPadding)
             }
-            .scrollClipDisabled()
+            .frame(width: proxy.size.width, alignment: .topLeading)
         }
     }
 }
@@ -76,47 +78,56 @@ struct AdaptiveStack<Content: View>: View {
             VStack(alignment: .leading, spacing: verticalSpacing) {
                 content
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
 struct KeirinStageBackground: View {
     var body: some View {
-        ZStack {
-            KeirinUI.ink.ignoresSafeArea()
+        GeometryReader { proxy in
+            let width = max(proxy.size.width, 1)
+            let height = max(proxy.size.height, 1)
 
-            LinearGradient(
-                colors: [
-                    Color(hex: "#101827"),
-                    Color(hex: "#05070D"),
-                    Color(hex: "#120A0C")
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            ZStack {
+                KeirinUI.ink
 
-            VStack(spacing: 22) {
-                ForEach(0..<18, id: \.self) { _ in
-                    Rectangle()
-                        .fill(Color.white.opacity(0.035))
-                        .frame(height: 1)
+                LinearGradient(
+                    colors: [
+                        Color(hex: "#101827"),
+                        Color(hex: "#05070D"),
+                        Color(hex: "#120A0C")
+                    ],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+
+                VStack(spacing: 22) {
+                    ForEach(0..<18, id: \.self) { _ in
+                        Rectangle()
+                            .fill(Color.white.opacity(0.035))
+                            .frame(height: 1)
+                    }
                 }
+                .rotationEffect(.degrees(-8))
+                .scaleEffect(1.35)
+
+                Circle()
+                    .stroke(KeirinUI.cyan.opacity(0.11), lineWidth: 32)
+                    .frame(width: min(520, width * 1.35), height: min(300, width * 0.78))
+                    .offset(x: width * 0.28, y: -height * 0.22)
+
+                Circle()
+                    .stroke(KeirinUI.red.opacity(0.10), lineWidth: 24)
+                    .frame(width: min(420, width * 1.12), height: min(250, width * 0.67))
+                    .offset(x: -width * 0.35, y: height * 0.56)
             }
-            .rotationEffect(.degrees(-8))
-            .scaleEffect(1.35)
-            .ignoresSafeArea()
-
-            Circle()
-                .stroke(KeirinUI.cyan.opacity(0.11), lineWidth: 32)
-                .frame(width: 520, height: 300)
-                .offset(x: 120, y: -180)
-
-            Circle()
-                .stroke(KeirinUI.red.opacity(0.10), lineWidth: 24)
-                .frame(width: 420, height: 250)
-                .offset(x: -160, y: 520)
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .clipped()
         }
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
     }
 }
 
@@ -137,7 +148,7 @@ struct GlassPanel<Content: View>: View {
 
     var body: some View {
         content
-            .padding(UIScreen.main.bounds.width < 390 ? 12 : 14)
+            .padding(UIScreen.main.bounds.width < 390 ? 10 : 12)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -191,11 +202,13 @@ struct MetricPill: View {
             Text(title)
                 .font(.system(size: 9, weight: .bold, design: .monospaced))
                 .foregroundColor(.white.opacity(0.42))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
             Text(value)
                 .font(.system(size: 13, weight: .black, design: .monospaced))
                 .foregroundColor(color)
                 .lineLimit(1)
-                .minimumScaleFactor(0.72)
+                .minimumScaleFactor(0.6)
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 7)
@@ -217,10 +230,21 @@ struct MetricPillRow<Content: View>: View {
                 content
             }
 
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 88), spacing: 7)],
+                alignment: .leading,
+                spacing: 7
+            ) {
+                content
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             VStack(alignment: .leading, spacing: 8) {
                 content
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

@@ -94,14 +94,11 @@ struct TrackingView: View {
     }
 
     private var statsCards: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: 10) {
-                statCardsContent
-            }
-
-            VStack(spacing: 10) {
-                statCardsContent
-            }
+        LazyVGrid(
+            columns: [GridItem(.adaptive(minimum: 118), spacing: 10)],
+            spacing: 10
+        ) {
+            statCardsContent
         }
     }
 
@@ -210,14 +207,20 @@ struct StatCard: View {
     var body: some View {
         VStack(spacing: 4) {
             Text(value)
-                .font(.system(size: 20, weight: .black, design: .monospaced))
+                .font(.system(size: 18, weight: .black, design: .monospaced))
                 .foregroundColor(color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.68)
             Text(label)
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundColor(.white.opacity(0.5))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
             Text(sub)
                 .font(.system(size: 10, design: .monospaced))
                 .foregroundColor(.white.opacity(0.3))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)

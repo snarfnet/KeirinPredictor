@@ -72,10 +72,14 @@ struct ResultsListView: View {
             Text(dataLoader.todayDateString)
                 .font(.system(size: 16, weight: .bold, design: .monospaced))
                 .foregroundColor(.white.opacity(0.8))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
             Spacer()
             Text("\(dataLoader.todayResults.count)レース確定")
                 .font(.system(size: 14, design: .monospaced))
                 .foregroundColor(Color(hex: "#FFD700").opacity(0.7))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
         .padding(12)
         .background(Color.white.opacity(0.05))
@@ -155,12 +159,15 @@ struct RaceResultRow: View {
                         .foregroundColor(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
+                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                         .layoutPriority(1)
 
                     if !finisher.kimarite.isEmpty {
                         Text(finisher.kimarite)
                             .font(.system(size: 12))
                             .foregroundColor(styleColor(finisher.kimarite))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
                     }
 
                     Spacer()

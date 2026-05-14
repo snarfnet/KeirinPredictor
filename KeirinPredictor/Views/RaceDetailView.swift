@@ -420,8 +420,11 @@ struct BetCardView: View {
                         .font(.system(size: 11, weight: .black, design: .rounded))
                         .foregroundColor(KeirinUI.cyan.opacity(0.78))
                         .lineLimit(1)
+                        .minimumScaleFactor(0.72)
                 }
             }
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(1)
 
             Spacer()
 
@@ -429,17 +432,21 @@ struct BetCardView: View {
                 Text("\(String(format: "%.1f", bet.probability))%")
                     .font(.system(size: 17, weight: .black, design: .monospaced))
                     .foregroundColor(bet.confidence == "S" ? KeirinUI.gold : .white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
                 if let ev = bet.expectedValue {
                         Text("指数 \(String(format: "%.1f", ev))")
                         .font(.system(size: 12, weight: .black, design: .monospaced))
                         .foregroundColor(ev > 1.0 ? KeirinUI.green : KeirinUI.red)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.65)
                 }
                 Text("\(bet.stakeUnits)u")
                     .font(.system(size: 11, weight: .black, design: .monospaced))
                     .foregroundColor(.white.opacity(0.42))
             }
         }
-        .padding(12)
+        .padding(10)
         .background(bet.confidence == "S" ? KeirinUI.gold.opacity(0.12) : Color.white.opacity(0.045))
         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         .overlay(
@@ -528,6 +535,7 @@ struct EntryRowView: View {
                 }
                 ProbabilityBar(value: min(entry.score / 120, 1), color: KeirinUI.cyan)
             }
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .layoutPriority(1)
 
             Spacer()
@@ -536,12 +544,18 @@ struct EntryRowView: View {
                 Text("\(String(format: "%.1f", entry.score))")
                     .font(.system(size: 16, weight: .black, design: .monospaced))
                     .foregroundColor(KeirinUI.gold)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
                 Text("WIN \(String(format: "%.0f", entry.winRate))%")
                     .font(.system(size: 10, weight: .black, design: .monospaced))
                     .foregroundColor(.white.opacity(0.42))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
                 Text("3着 \(String(format: "%.0f", entry.top3Rate))%")
                     .font(.system(size: 10, weight: .black, design: .monospaced))
                     .foregroundColor(.white.opacity(0.42))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
             }
         }
         .padding(12)

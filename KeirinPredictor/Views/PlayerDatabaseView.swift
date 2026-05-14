@@ -135,6 +135,7 @@ struct PlayerCardView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .layoutPriority(1)
 
             Spacer()
@@ -143,9 +144,13 @@ struct PlayerCardView: View {
                 Text("勝率 \(String(format: "%.1f", stat.winRate * 100))%")
                     .font(.system(size: 12, weight: .bold, design: .monospaced))
                     .foregroundColor(Color(hex: "#FFD700"))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
                 Text("\(stat.races)走")
                     .font(.system(size: 11, design: .monospaced))
                     .foregroundColor(.white.opacity(0.5))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
             }
         }
         .padding(10)
@@ -226,7 +231,7 @@ struct PlayerDetailView: View {
 
                     if let s = stat {
                         // Race stats
-                        HStack(spacing: 12) {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 72), spacing: 8)], spacing: 8) {
                             StatBox(label: "出走", value: "\(s.races)")
                             StatBox(label: "勝利", value: "\(s.wins)")
                             StatBox(label: "勝率", value: "\(String(format: "%.1f", s.winRate * 100))%")

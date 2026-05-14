@@ -440,6 +440,7 @@ struct RaceCardView: View {
 
                 ProbabilityBar(value: min(max(scoreGap / 20, 0.08), 1), color: scoreGap >= 8 ? KeirinUI.red : KeirinUI.cyan)
             }
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             .layoutPriority(1)
         }
         .padding(11)
@@ -478,10 +479,16 @@ struct AISenseiSection: View {
                         Text("鉄脚博士の注目指数")
                             .font(.system(size: 12, weight: .black, design: .monospaced))
                             .foregroundColor(KeirinUI.red)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                         Text("今日の狙い目")
                             .font(.system(size: 22, weight: .black, design: .rounded))
                             .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
                     }
+                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                    .layoutPriority(1)
                     Spacer()
                     Image(systemName: "waveform.path.ecg.rectangle.fill")
                         .font(.system(size: 30, weight: .black))
@@ -520,6 +527,8 @@ struct AISenseiPickCard: View {
                 Text(race.venue)
                     .font(.system(size: 16, weight: .black, design: .rounded))
                     .foregroundColor(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
                 Text("\(race.raceNo)R")
                     .font(.system(size: 18, weight: .black, design: .monospaced))
                     .foregroundColor(KeirinUI.gold)
@@ -532,6 +541,8 @@ struct AISenseiPickCard: View {
                 Text("信頼 \(String(format: "%.0f", min(topScoreGap * 7, 99)))")
                     .font(.system(size: 11, weight: .black, design: .monospaced))
                     .foregroundColor(.black)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 5)
                     .background(KeirinUI.gold)

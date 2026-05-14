@@ -290,7 +290,7 @@ struct PredictionView: View {
                 }
 
                 if let top = top {
-                    HStack(spacing: 10) {
+                    MetricPillRow {
                         MetricPill(title: "WIN", value: "\(String(format: "%.1f", top.winProb))%", color: KeirinUI.gold)
                         MetricPill(title: "SCORE", value: "\(String(format: "%.0f", top.score))", color: KeirinUI.red)
                         MetricPill(title: "FORM", value: "\(String(format: "%.0f", top.formScore))", color: KeirinUI.cyan)
@@ -427,7 +427,6 @@ struct ResultCardView: View {
                     }
                     .font(.system(size: 12, weight: .bold, design: .rounded))
                 }
-                .scrollClipDisabled()
 
                 if !result.signals.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -437,11 +436,12 @@ struct ResultCardView: View {
                             }
                         }
                     }
-                    .scrollClipDisabled()
                 }
 
                 ProbabilityBar(value: result.winProb / 100, color: index == 0 ? KeirinUI.gold : KeirinUI.cyan)
             }
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            .layoutPriority(1)
 
             Spacer()
 
@@ -449,12 +449,14 @@ struct ResultCardView: View {
                 Text("\(String(format: "%.1f", result.winProb))%")
                     .font(.system(size: 20, weight: .black, design: .monospaced))
                     .foregroundColor(index == 0 ? KeirinUI.gold : .white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
                 Text("WIN")
                     .font(.system(size: 9, weight: .black, design: .monospaced))
                     .foregroundColor(.white.opacity(0.38))
             }
         }
-        .padding(13)
+        .padding(11)
         .background(cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay(
