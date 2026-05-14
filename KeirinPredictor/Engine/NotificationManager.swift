@@ -28,18 +28,25 @@ class NotificationManager {
 
     /// Check today's races for high-EV opportunities and notify
     func scanForHighEV(races: [TodayRace], playerStats: [String: PlayerStats],
-                       venueStats: [String: VenueStats], odds: [String: RaceOdds]) {
+                       venueStats: [String: VenueStats], lineMatrix: [String: LineEntry],
+                       odds: [String: RaceOdds]) {
         for race in races {
             guard let raceOdds = odds[race.race_id] else { continue }
 
             let entries = race.entries.map { RaceEntry(name: $0.name, waku: $0.umaban) }
             var entryScores: [String: Double] = [:]
-            for e in race.entries { entryScores[e.name] = e.score }
+            var entryMetrics: [String: RaceEntryMetrics] = [:]
+            for e in race.entries {
+                entryScores[e.name] = e.score
+                entryMetrics[e.name] = e.predictionMetrics
+            }
 
             let predictions = PredictionEngine.predict(
                 entries: entries, venue: race.venue,
                 playerStats: playerStats, venueStats: venueStats,
-                entryScores: entryScores
+                entryScores: entryScores,
+                entryMetrics: entryMetrics,
+                lineMatrix: lineMatrix
             )
             let bets = PredictionEngine.generateBets(predictions: predictions, odds: raceOdds.trifecta)
 

@@ -320,7 +320,8 @@ struct PredictionView: View {
                 entries: entries,
                 venue: selectedVenue,
                 playerStats: dataLoader.playerStats,
-                venueStats: dataLoader.venueStats
+                venueStats: dataLoader.venueStats,
+                lineMatrix: dataLoader.lineMatrix
             )
 
             withAnimation(.spring(response: 0.62, dampingFraction: 0.72)) {
@@ -397,25 +398,47 @@ struct ResultCardView: View {
                     }
                 }
 
-                HStack(spacing: 7) {
-                    if !result.district.isEmpty {
-                        Text(result.district)
-                            .foregroundColor(.white.opacity(0.55))
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 7) {
+                        if !result.district.isEmpty {
+                            Text(result.district)
+                                .foregroundColor(.white.opacity(0.55))
+                        }
+                        if !result.style.isEmpty {
+                            Text(result.style)
+                                .foregroundColor(styleColor(result.style))
+                        }
+                        if result.isDarkHorse {
+                            Text("穴")
+                                .foregroundColor(.black)
+                                .padding(.horizontal, 6)
+                                .padding(.vertical, 2)
+                                .background(KeirinUI.cyan)
+                                .clipShape(Capsule())
+                        }
+                        if !result.lineRole.isEmpty {
+                            Text(result.lineRole)
+                                .foregroundColor(KeirinUI.gold)
+                        }
+                        if result.riskLabel != "標準" {
+                            Text(result.riskLabel)
+                                .foregroundColor(result.riskLabel == "穴注意" ? KeirinUI.cyan : KeirinUI.gold)
+                        }
                     }
-                    if !result.style.isEmpty {
-                        Text(result.style)
-                            .foregroundColor(styleColor(result.style))
-                    }
-                    if result.isDarkHorse {
-                        Text("穴")
-                            .foregroundColor(.black)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(KeirinUI.cyan)
-                            .clipShape(Capsule())
-                    }
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
                 }
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .scrollClipDisabled()
+
+                if !result.signals.isEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 6) {
+                            ForEach(result.signals) { signal in
+                                PredictionSignalChip(signal: signal)
+                            }
+                        }
+                    }
+                    .scrollClipDisabled()
+                }
 
                 ProbabilityBar(value: result.winProb / 100, color: index == 0 ? KeirinUI.gold : KeirinUI.cyan)
             }
@@ -485,6 +508,37 @@ struct ResultCardView: View {
         case 1: return KeirinUI.cyan
         case 2: return KeirinUI.red
         default: return Color.white.opacity(0.18)
+        }
+    }
+}
+
+struct PredictionSignalChip: View {
+    let signal: PredictionSignal
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(signal.title)
+                .foregroundColor(.white.opacity(0.48))
+            Text(signal.value)
+                .foregroundColor(signalColor)
+        }
+        .font(.system(size: 10, weight: .black, design: .rounded))
+        .padding(.horizontal, 7)
+        .padding(.vertical, 4)
+        .background(signalColor.opacity(0.12))
+        .clipShape(Capsule())
+        .overlay(
+            Capsule()
+                .stroke(signalColor.opacity(0.22), lineWidth: 1)
+        )
+    }
+
+    private var signalColor: Color {
+        switch signal.tone {
+        case "gold": return KeirinUI.gold
+        case "green": return KeirinUI.green
+        case "red": return KeirinUI.red
+        default: return KeirinUI.cyan
         }
     }
 }

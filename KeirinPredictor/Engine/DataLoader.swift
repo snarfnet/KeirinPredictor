@@ -146,6 +146,7 @@ class DataLoader: ObservableObject {
                         races: self.todayRaces,
                         playerStats: self.playerStats,
                         venueStats: self.venueStats,
+                        lineMatrix: self.lineMatrix,
                         odds: oddsMap
                     )
                 }

@@ -115,6 +115,19 @@ struct TodayRaceEntry: Codable, Identifiable {
     let comment: String
 
     var winRate: Double { win_rate }
+    var top2Rate: Double { top2_rate }
+    var top3Rate: Double { top3_rate }
+    var predictionMetrics: RaceEntryMetrics {
+        RaceEntryMetrics(
+            score: score,
+            style: style,
+            winRate: win_rate,
+            top2Rate: top2_rate,
+            top3Rate: top3_rate,
+            gear: gear,
+            comment: comment
+        )
+    }
 }
 
 // MARK: - Today's Race Results (from today_results.json)
@@ -167,6 +180,35 @@ struct RaceEntry: Identifiable {
     var waku: Int
 }
 
+struct RaceEntryMetrics {
+    let score: Double
+    let style: String
+    let winRate: Double
+    let top2Rate: Double
+    let top3Rate: Double
+    let gear: String
+    let comment: String
+}
+
+struct PredictionSignal: Identifiable {
+    let id = UUID()
+    let title: String
+    let value: String
+    let tone: String
+}
+
+struct RaceIntelligence {
+    let headline: String
+    let shapeLabel: String
+    let confidenceLabel: String
+    let paceLabel: String
+    let chaosScore: Double
+    let axisName: String
+    let dangerName: String?
+    let lineBias: String
+    let notes: [String]
+}
+
 // MARK: - Prediction Result
 struct PredictionResult: Identifiable {
     let id = UUID()
@@ -183,6 +225,48 @@ struct PredictionResult: Identifiable {
     let formScore: Double
     let classRank: String
     let isDarkHorse: Bool
+    let signals: [PredictionSignal]
+    let riskLabel: String
+    let lineRole: String
+    let upsetScore: Double
+
+    init(
+        name: String,
+        waku: Int,
+        score: Double,
+        winProb: Double,
+        predRank: Int,
+        district: String,
+        style: String,
+        winRate: Double,
+        top3Rate: Double,
+        recentAvg: Double?,
+        formScore: Double,
+        classRank: String,
+        isDarkHorse: Bool,
+        signals: [PredictionSignal] = [],
+        riskLabel: String = "標準",
+        lineRole: String = "",
+        upsetScore: Double = 0
+    ) {
+        self.name = name
+        self.waku = waku
+        self.score = score
+        self.winProb = winProb
+        self.predRank = predRank
+        self.district = district
+        self.style = style
+        self.winRate = winRate
+        self.top3Rate = top3Rate
+        self.recentAvg = recentAvg
+        self.formScore = formScore
+        self.classRank = classRank
+        self.isDarkHorse = isDarkHorse
+        self.signals = signals
+        self.riskLabel = riskLabel
+        self.lineRole = lineRole
+        self.upsetScore = upsetScore
+    }
 }
 
 // MARK: - Prediction Tracking
@@ -231,6 +315,28 @@ struct BetRecommendation: Identifiable {
     let probability: Double
     let confidence: String  // S, A, B, C
     let expectedValue: Double? // odds × probability (nil if no odds)
+    let stakeUnits: Int
+    let rationale: String
+
+    init(
+        type: String,
+        combination: [Int],
+        names: [String],
+        probability: Double,
+        confidence: String,
+        expectedValue: Double?,
+        stakeUnits: Int = 1,
+        rationale: String = ""
+    ) {
+        self.type = type
+        self.combination = combination
+        self.names = names
+        self.probability = probability
+        self.confidence = confidence
+        self.expectedValue = expectedValue
+        self.stakeUnits = stakeUnits
+        self.rationale = rationale
+    }
 }
 
 // MARK: - Class rank display

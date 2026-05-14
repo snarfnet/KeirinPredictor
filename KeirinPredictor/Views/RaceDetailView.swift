@@ -7,6 +7,7 @@ struct RaceDetailView: View {
 
     @State private var predictions: [PredictionResult] = []
     @State private var bets: [BetRecommendation] = []
+    @State private var raceAnalysis: RaceIntelligence?
     @State private var isAnimating = false
     @State private var showResults = false
     @State private var pulse = false
@@ -154,6 +155,8 @@ struct RaceDetailView: View {
                 Button {
                     showResults = false
                     predictions = []
+                    bets = []
+                    raceAnalysis = nil
                 } label: {
                     Image(systemName: "arrow.counterclockwise")
                         .font(.system(size: 15, weight: .black))
@@ -162,6 +165,10 @@ struct RaceDetailView: View {
                         .background(Color.white.opacity(0.07))
                         .clipShape(Circle())
                 }
+            }
+
+            if let raceAnalysis = raceAnalysis {
+                RaceIntelligenceCard(analysis: raceAnalysis)
             }
 
             let lineFormations = PredictionEngine.analyzeLines(
@@ -242,8 +249,10 @@ struct RaceDetailView: View {
             RaceEntry(name: e.name, waku: e.umaban)
         }
         var entryScores: [String: Double] = [:]
+        var entryMetrics: [String: RaceEntryMetrics] = [:]
         for e in race.entries {
             entryScores[e.name] = e.score
+            entryMetrics[e.name] = e.predictionMetrics
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
@@ -252,7 +261,18 @@ struct RaceDetailView: View {
                 venue: race.venue,
                 playerStats: dataLoader.playerStats,
                 venueStats: dataLoader.venueStats,
-                entryScores: entryScores
+                entryScores: entryScores,
+                entryMetrics: entryMetrics,
+                lineMatrix: dataLoader.lineMatrix
+            )
+            raceAnalysis = PredictionEngine.analyzeRace(
+                predictions: predictions,
+                entries: entries,
+                venue: race.venue,
+                playerStats: dataLoader.playerStats,
+                venueStats: dataLoader.venueStats,
+                entryMetrics: entryMetrics,
+                lineMatrix: dataLoader.lineMatrix
             )
             let raceOdds = dataLoader.todayOdds[race.race_id]?.trifecta ?? [:]
             bets = PredictionEngine.generateBets(predictions: predictions, odds: raceOdds)
@@ -268,6 +288,66 @@ struct RaceDetailView: View {
                 showResults = true
             }
         }
+    }
+}
+
+struct RaceIntelligenceCard: View {
+    let analysis: RaceIntelligence
+
+    var body: some View {
+        GlassPanel(cornerRadius: 20, borderColor: chaosColor.opacity(0.34)) {
+            VStack(alignment: .leading, spacing: 12) {
+                AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("RACE READING")
+                            .font(.system(size: 11, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.cyan)
+                        Text(analysis.headline)
+                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .foregroundColor(.white)
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.82)
+                    }
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("\(String(format: "%.0f", analysis.chaosScore))")
+                            .font(.system(size: 30, weight: .black, design: .monospaced))
+                            .foregroundColor(chaosColor)
+                        Text("荒れ指数")
+                            .font(.system(size: 10, weight: .black, design: .rounded))
+                            .foregroundColor(.white.opacity(0.45))
+                    }
+                }
+
+                MetricPillRow {
+                    MetricPill(title: "展開", value: analysis.shapeLabel, color: chaosColor)
+                    MetricPill(title: "信頼", value: analysis.confidenceLabel, color: KeirinUI.gold)
+                    MetricPill(title: "ペース", value: analysis.paceLabel, color: KeirinUI.cyan)
+                }
+
+                ProbabilityBar(value: analysis.chaosScore / 100, color: chaosColor)
+
+                VStack(alignment: .leading, spacing: 7) {
+                    ForEach(analysis.notes, id: \.self) { note in
+                        HStack(alignment: .top, spacing: 7) {
+                            Circle()
+                                .fill(KeirinUI.gold)
+                                .frame(width: 5, height: 5)
+                                .padding(.top, 6)
+                            Text(note)
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundColor(.white.opacity(0.64))
+                                .lineLimit(2)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var chaosColor: Color {
+        if analysis.chaosScore >= 68 { return KeirinUI.red }
+        if analysis.chaosScore >= 45 { return KeirinUI.gold }
+        return KeirinUI.green
     }
 }
 
@@ -306,6 +386,13 @@ struct BetCardView: View {
                 }
                 .font(.system(size: 12, weight: .bold, design: .rounded))
                 .foregroundColor(.white.opacity(0.55))
+
+                if !bet.rationale.isEmpty {
+                    Text(bet.rationale)
+                        .font(.system(size: 11, weight: .black, design: .rounded))
+                        .foregroundColor(KeirinUI.cyan.opacity(0.78))
+                        .lineLimit(1)
+                }
             }
 
             Spacer()
@@ -319,6 +406,9 @@ struct BetCardView: View {
                         .font(.system(size: 12, weight: .black, design: .monospaced))
                         .foregroundColor(ev > 1.0 ? KeirinUI.green : KeirinUI.red)
                 }
+                Text("\(bet.stakeUnits)u")
+                    .font(.system(size: 11, weight: .black, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.42))
             }
         }
         .padding(12)
@@ -362,13 +452,13 @@ struct LineFormationCard: View {
             }
             ForEach(Array(line.members.enumerated()), id: \.offset) { (_, member) in
                 HStack(spacing: 6) {
-                    LaneBadge(number: member.1, size: 25)
-                    Text(String(member.0.prefix(3)))
+                    LaneBadge(number: member.waku, size: 25)
+                    Text(String(member.name.prefix(3)))
                         .font(.system(size: 12, weight: .black, design: .rounded))
                         .foregroundColor(.white)
-                    Text(member.2)
+                    Text(member.role)
                         .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .foregroundColor(member.2 == "先行" ? KeirinUI.red : .white.opacity(0.46))
+                        .foregroundColor(member.role == "先行" ? KeirinUI.red : .white.opacity(0.46))
                 }
             }
         }
@@ -419,6 +509,9 @@ struct EntryRowView: View {
                     .font(.system(size: 16, weight: .black, design: .monospaced))
                     .foregroundColor(KeirinUI.gold)
                 Text("WIN \(String(format: "%.0f", entry.winRate))%")
+                    .font(.system(size: 10, weight: .black, design: .monospaced))
+                    .foregroundColor(.white.opacity(0.42))
+                Text("3着 \(String(format: "%.0f", entry.top3Rate))%")
                     .font(.system(size: 10, weight: .black, design: .monospaced))
                     .foregroundColor(.white.opacity(0.42))
             }
