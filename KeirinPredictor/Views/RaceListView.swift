@@ -95,6 +95,11 @@ struct RaceListView: View {
                             .font(.system(size: 24, weight: .black, design: .rounded))
                             .foregroundColor(.white)
                             .lineLimit(2)
+                        Text(dataLoader.todayDateString.isEmpty ? "データ日を確認中" : "データ日 \(dataLoader.todayDateString)")
+                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .foregroundColor(KeirinUI.gold.opacity(0.86))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.72)
                     }
 
                     VStack(alignment: .trailing, spacing: 2) {
@@ -108,9 +113,11 @@ struct RaceListView: View {
                 }
 
                 MetricPillRow {
+                    MetricPill(title: "DATE", value: compactDateLabel, color: KeirinUI.green)
                     MetricPill(title: "VENUE", value: "\(availableVenues.count)", color: KeirinUI.cyan)
                     MetricPill(title: "HOME", value: homeVenue.isEmpty ? "未設定" : homeVenue, color: KeirinUI.gold)
                     MetricPill(title: "注目指数", value: "\(aiPicks.count)", color: KeirinUI.red)
+                    MetricPill(title: "BUILD", value: appBuildNumber, color: KeirinUI.cyan)
                 }
             }
         }
@@ -118,6 +125,15 @@ struct RaceListView: View {
 
     private var availableVenues: [String] {
         Array(dataLoader.venueStats.keys).sorted()
+    }
+
+    private var compactDateLabel: String {
+        let raw = dataLoader.todayRaces.first?.dateString ?? todayString()
+        return formatShortDate(raw)
+    }
+
+    private var appBuildNumber: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-"
     }
 
     private var aiPicks: [TodayRace] {
@@ -178,6 +194,7 @@ struct RaceListView: View {
             if date == todayStr { label = "今日" }
             else if date == tomorrowStr { label = "明日" }
             else { label = formatShortDate(date) }
+            let dateLabel = formatFullDate(date)
 
             let hv = homeVenue
             let venueGroups = Dictionary(grouping: races, by: { $0.venue })
@@ -188,7 +205,7 @@ struct RaceListView: View {
                     return a.venue < b.venue
                 }
 
-            return DayGroup(date: date, label: label, totalRaces: races.count, venues: venueGroups)
+            return DayGroup(date: date, label: label, dateLabel: dateLabel, totalRaces: races.count, venues: venueGroups)
         }.sorted { $0.date < $1.date }
     }
 
@@ -212,11 +229,36 @@ struct RaceListView: View {
               let d = Int(yyyymmdd.suffix(2)) else { return yyyymmdd }
         return "\(m)/\(d)"
     }
+
+    private func formatFullDate(_ yyyymmdd: String) -> String {
+        guard yyyymmdd.count == 8,
+              let y = Int(yyyymmdd.prefix(4)),
+              let m = Int(yyyymmdd.dropFirst(4).prefix(2)),
+              let d = Int(yyyymmdd.suffix(2)) else { return yyyymmdd }
+
+        var components = DateComponents()
+        components.calendar = Calendar(identifier: .gregorian)
+        components.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        components.year = y
+        components.month = m
+        components.day = d
+
+        guard let date = components.date else {
+            return "\(y)年\(m)月\(d)日"
+        }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "yyyy年M月d日（E）"
+        return formatter.string(from: date)
+    }
 }
 
 struct DayGroup {
     let date: String
     let label: String
+    let dateLabel: String
     let totalRaces: Int
     let venues: [VenueGroup]
 }
@@ -233,9 +275,16 @@ struct DaySectionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text(group.label)
-                    .font(.system(size: 23, weight: .black, design: .rounded))
-                    .foregroundColor(group.label == "今日" ? KeirinUI.gold : .white)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(group.label)
+                        .font(.system(size: 23, weight: .black, design: .rounded))
+                        .foregroundColor(group.label == "今日" ? KeirinUI.gold : .white)
+                    Text(group.dateLabel)
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.54))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                }
 
                 Text("\(group.totalRaces)R")
                     .font(.system(size: 12, weight: .black, design: .monospaced))

@@ -8,6 +8,9 @@ class DataLoader: ObservableObject {
     @Published var todayResults: [TodayRaceResult] = []
     @Published var todayOdds: [String: RaceOdds] = [:] // race_id -> RaceOdds
     @Published var todayDateString: String = ""
+    @Published var todayResultsDateString: String = ""
+    @Published var isResultsLoading = false
+    @Published var resultsLoadError: String? = nil
     @Published var isLoaded = false
 
     static let shared = DataLoader()
@@ -157,13 +160,32 @@ class DataLoader: ObservableObject {
     }
 
     func fetchRemoteTodayResults() {
-        guard let url = URL(string: "\(Self.remoteBaseURL)/today_results.json") else { return }
+        DispatchQueue.main.async {
+            self.isResultsLoading = true
+            self.resultsLoadError = nil
+        }
+
+        guard let url = URL(string: "\(Self.remoteBaseURL)/today_results.json") else {
+            DispatchQueue.main.async {
+                self.isResultsLoading = false
+                self.resultsLoadError = "結果データのURLを確認できませんでした"
+            }
+            return
+        }
+
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
-                  httpResp.statusCode == 200 else { return }
+                  httpResp.statusCode == 200 else {
+                DispatchQueue.main.async {
+                    self.isResultsLoading = false
+                    self.resultsLoadError = "結果データに接続できませんでした"
+                }
+                return
+            }
+
             do {
                 let result = try JSONDecoder().decode(TodayResultsData.self, from: data)
                 if let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
@@ -172,9 +194,16 @@ class DataLoader: ObservableObject {
                 }
                 DispatchQueue.main.async {
                     self.todayResults = result.results
+                    self.todayResultsDateString = self.formatDateString(result.date)
+                    self.isResultsLoading = false
+                    self.resultsLoadError = nil
                 }
             } catch {
                 print("Remote today_results decode error: \(error)")
+                DispatchQueue.main.async {
+                    self.isResultsLoading = false
+                    self.resultsLoadError = "結果データを読み込めませんでした"
+                }
             }
         }.resume()
     }
@@ -200,7 +229,22 @@ class DataLoader: ObservableObject {
               let d = Int(yyyymmdd.suffix(2)) else {
             return yyyymmdd
         }
-        return "\(y)年\(m)月\(d)日"
+        var components = DateComponents()
+        components.calendar = Calendar(identifier: .gregorian)
+        components.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        components.year = y
+        components.month = m
+        components.day = d
+
+        guard let date = components.date else {
+            return "\(y)年\(m)月\(d)日"
+        }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "yyyy年M月d日（E）"
+        return formatter.string(from: date)
     }
 
     private static func todayString() -> String {
