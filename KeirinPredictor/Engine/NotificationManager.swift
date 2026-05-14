@@ -48,13 +48,23 @@ class NotificationManager {
                 entryMetrics: entryMetrics,
                 lineMatrix: lineMatrix
             )
+            let analysis = PredictionEngine.analyzeRace(
+                predictions: predictions,
+                entries: entries,
+                venue: race.venue,
+                playerStats: playerStats,
+                venueStats: venueStats,
+                entryMetrics: entryMetrics,
+                lineMatrix: lineMatrix
+            )
+            guard analysis.playGrade != "見" else { continue }
             let bets = PredictionEngine.generateBets(predictions: predictions, odds: raceOdds.trifecta)
 
             // Find high-EV bets (EV > 1.5)
             let highEV = bets.filter { ($0.expectedValue ?? 0) > 1.5 }
             if let best = highEV.first {
                 let combo = best.combination.map { "\($0)" }.joined(separator: "-")
-                let msg = "\(best.type) \(combo) EV\(String(format: "%.1f", best.expectedValue ?? 0)) 期待値が高い買い目です"
+                let msg = "\(analysis.playGrade)勝負 \(best.type) \(combo) EV\(String(format: "%.1f", best.expectedValue ?? 0)) 軸目安\(String(format: "%.0f", analysis.axisWinEstimate))%"
                 notifyHighEV(raceId: race.race_id, venue: race.venue, raceNo: race.raceNo, message: msg)
             }
         }

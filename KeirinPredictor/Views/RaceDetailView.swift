@@ -265,7 +265,7 @@ struct RaceDetailView: View {
                 entryMetrics: entryMetrics,
                 lineMatrix: dataLoader.lineMatrix
             )
-            raceAnalysis = PredictionEngine.analyzeRace(
+            let analysis = PredictionEngine.analyzeRace(
                 predictions: predictions,
                 entries: entries,
                 venue: race.venue,
@@ -274,13 +274,16 @@ struct RaceDetailView: View {
                 entryMetrics: entryMetrics,
                 lineMatrix: dataLoader.lineMatrix
             )
+            raceAnalysis = analysis
             let raceOdds = dataLoader.todayOdds[race.race_id]?.trifecta ?? [:]
             bets = PredictionEngine.generateBets(predictions: predictions, odds: raceOdds)
             let top3Waku = predictions.prefix(3).map { $0.waku }
             tracker.savePrediction(
                 raceId: race.race_id, venue: race.venue,
                 raceNo: race.raceNo, date: race.dateString,
-                predictedTop3: top3Waku
+                predictedTop3: top3Waku,
+                playGrade: analysis.playGrade,
+                axisWinEstimate: analysis.axisWinEstimate
             )
 
             withAnimation(.spring(response: 0.54, dampingFraction: 0.76)) {
@@ -295,7 +298,7 @@ struct RaceIntelligenceCard: View {
     let analysis: RaceIntelligence
 
     var body: some View {
-        GlassPanel(cornerRadius: 20, borderColor: chaosColor.opacity(0.34)) {
+        GlassPanel(cornerRadius: 20, borderColor: playColor.opacity(0.38)) {
             VStack(alignment: .leading, spacing: 12) {
                 AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
                     VStack(alignment: .leading, spacing: 4) {
@@ -308,13 +311,9 @@ struct RaceIntelligenceCard: View {
                             .lineLimit(2)
                             .minimumScaleFactor(0.82)
                     }
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("\(String(format: "%.0f", analysis.chaosScore))")
-                            .font(.system(size: 30, weight: .black, design: .monospaced))
-                            .foregroundColor(chaosColor)
-                        Text("荒れ指数")
-                            .font(.system(size: 10, weight: .black, design: .rounded))
-                            .foregroundColor(.white.opacity(0.45))
+                    HStack(spacing: 8) {
+                        scoreBlock(title: "勝負", value: analysis.playGrade, color: playColor)
+                        scoreBlock(title: "荒れ", value: String(format: "%.0f", analysis.chaosScore), color: chaosColor)
                     }
                 }
 
@@ -322,9 +321,15 @@ struct RaceIntelligenceCard: View {
                     MetricPill(title: "展開", value: analysis.shapeLabel, color: chaosColor)
                     MetricPill(title: "信頼", value: analysis.confidenceLabel, color: KeirinUI.gold)
                     MetricPill(title: "ペース", value: analysis.paceLabel, color: KeirinUI.cyan)
+                    MetricPill(title: "軸目安", value: "\(String(format: "%.0f", analysis.axisWinEstimate))%", color: playColor)
                 }
 
                 ProbabilityBar(value: analysis.chaosScore / 100, color: chaosColor)
+
+                Text(analysis.playAdvice)
+                    .font(.system(size: 13, weight: .black, design: .rounded))
+                    .foregroundColor(playColor)
+                    .lineLimit(2)
 
                 VStack(alignment: .leading, spacing: 7) {
                     ForEach(analysis.notes, id: \.self) { note in
@@ -344,10 +349,33 @@ struct RaceIntelligenceCard: View {
         }
     }
 
+    private func scoreBlock(title: String, value: String, color: Color) -> some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.system(size: 28, weight: .black, design: .monospaced))
+                .foregroundColor(color)
+                .minimumScaleFactor(0.7)
+            Text(title)
+                .font(.system(size: 10, weight: .black, design: .rounded))
+                .foregroundColor(.white.opacity(0.45))
+        }
+        .frame(minWidth: 45)
+    }
+
     private var chaosColor: Color {
         if analysis.chaosScore >= 68 { return KeirinUI.red }
         if analysis.chaosScore >= 45 { return KeirinUI.gold }
         return KeirinUI.green
+    }
+
+    private var playColor: Color {
+        switch analysis.playGrade {
+        case "S": return KeirinUI.gold
+        case "A": return KeirinUI.green
+        case "B": return KeirinUI.cyan
+        case "C": return Color(hex: "#CD7F32")
+        default: return KeirinUI.red
+        }
     }
 }
 

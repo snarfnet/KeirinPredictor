@@ -107,6 +107,12 @@ struct TrackingView: View {
     @ViewBuilder
     private var statCardsContent: some View {
             StatCard(
+                label: "勝負1着",
+                value: String(format: "%.1f%%", tracker.actionHitRate),
+                sub: "\(tracker.actionWinCount)/\(tracker.actionPredictionCount)",
+                color: tracker.actionHitRate >= 30 ? .green : KeirinUI.gold
+            )
+            StatCard(
                 label: "1着的中率",
                 value: String(format: "%.1f%%", tracker.hitRate),
                 sub: "\(tracker.winCount)/\(tracker.totalPredictions)",
@@ -220,6 +226,11 @@ struct RecordRow: View {
                 Text("予: \(record.predictedTop3.map { "\($0)" }.joined(separator: "-"))")
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundColor(.white.opacity(0.5))
+                if let grade = record.playGrade {
+                    Text("勝負 \(grade) / 軸目安 \(String(format: "%.0f", record.axisWinEstimate ?? 0))%")
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundColor(grade == "S" || grade == "A" ? KeirinUI.green : .white.opacity(0.38))
+                }
             }
 
             Spacer()

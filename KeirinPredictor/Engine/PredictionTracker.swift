@@ -15,12 +15,14 @@ class PredictionTracker: ObservableObject {
 
     func savePrediction(raceId: String, venue: String, raceNo: Int, date: String,
                         predictedTop3: [Int], betType: String? = nil,
-                        betCombination: [Int]? = nil, betAmount: Int? = nil) {
+                        betCombination: [Int]? = nil, betAmount: Int? = nil,
+                        playGrade: String? = nil, axisWinEstimate: Double? = nil) {
         let record = PredictionRecord(
             raceId: raceId, venue: venue, raceNo: raceNo, date: date,
             predictedTop3: predictedTop3, actualTop3: [],
             betType: betType, betCombination: betCombination,
-            betAmount: betAmount, payout: nil
+            betAmount: betAmount, payout: nil,
+            playGrade: playGrade, axisWinEstimate: axisWinEstimate
         )
         records.removeAll { $0.raceId == raceId }
         records.append(record)
@@ -38,7 +40,8 @@ class PredictionTracker: ObservableObject {
             raceId: old.raceId, venue: old.venue, raceNo: old.raceNo, date: old.date,
             predictedTop3: old.predictedTop3, actualTop3: actualTop3,
             betType: old.betType, betCombination: old.betCombination,
-            betAmount: old.betAmount, payout: payout
+            betAmount: old.betAmount, payout: payout,
+            playGrade: old.playGrade, axisWinEstimate: old.axisWinEstimate
         )
         if let p = payout {
             bankroll.returned += p
@@ -63,6 +66,18 @@ class PredictionTracker: ObservableObject {
     var winCount: Int { records.filter { $0.isHit }.count }
 
     var top3HitCount: Int { records.filter { $0.isTop3Hit }.count }
+
+    var actionPredictions: [PredictionRecord] {
+        records.filter { !$0.actualTop3.isEmpty && $0.isActionRace }
+    }
+
+    var actionPredictionCount: Int { actionPredictions.count }
+
+    var actionWinCount: Int { actionPredictions.filter { $0.isHit }.count }
+
+    var actionHitRate: Double {
+        actionPredictionCount > 0 ? Double(actionWinCount) / Double(actionPredictionCount) * 100 : 0
+    }
 
     var hitRate: Double {
         totalPredictions > 0 ? Double(winCount) / Double(totalPredictions) * 100 : 0

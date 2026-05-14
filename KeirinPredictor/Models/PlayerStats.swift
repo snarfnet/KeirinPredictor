@@ -203,6 +203,9 @@ struct RaceIntelligence {
     let confidenceLabel: String
     let paceLabel: String
     let chaosScore: Double
+    let axisWinEstimate: Double
+    let playGrade: String
+    let playAdvice: String
     let axisName: String
     let dangerName: String?
     let lineBias: String
@@ -282,10 +285,15 @@ struct PredictionRecord: Codable, Identifiable {
     let betCombination: [Int]?
     let betAmount: Int?
     let payout: Int?
+    let playGrade: String?
+    let axisWinEstimate: Double?
 
     var isHit: Bool {
         guard !actualTop3.isEmpty, !predictedTop3.isEmpty else { return false }
         return predictedTop3[0] == actualTop3[0]  // 1着的中
+    }
+    var isActionRace: Bool {
+        ["S", "A"].contains(playGrade ?? "")
     }
     var isTop3Hit: Bool {
         guard actualTop3.count >= 3, predictedTop3.count >= 3 else { return false }

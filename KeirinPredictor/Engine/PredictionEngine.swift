@@ -363,6 +363,9 @@ struct PredictionEngine {
                 confidenceLabel: "低",
                 paceLabel: "不明",
                 chaosScore: 0,
+                axisWinEstimate: 0,
+                playGrade: "見",
+                playAdvice: "データ待ち",
                 axisName: "",
                 dangerName: nil,
                 lineBias: "ライン不明",
@@ -419,6 +422,22 @@ struct PredictionEngine {
             paceLabel = "標準"
         }
 
+        let axisWinEstimate = estimateAxisHitRate(
+            axis: axis,
+            topGap: topGap,
+            chaosScore: chaos,
+            closePack: closePack,
+            darkHorseCount: darkHorseCount,
+            lines: lines
+        )
+        let playPlan = racePlayPlan(
+            axisWinEstimate: axisWinEstimate,
+            topGap: topGap,
+            chaosScore: chaos,
+            closePack: closePack,
+            darkHorseCount: darkHorseCount
+        )
+
         let lineBias: String
         if let strongest = lines.first {
             let secondStrength = lines.dropFirst().first?.strength ?? 0
@@ -444,6 +463,7 @@ struct PredictionEngine {
 
         var notes: [String] = []
         notes.append("軸と2番手の指数差 \(String(format: "%.1f", topGap))")
+        notes.append("本命1着の目安 \(String(format: "%.0f", axisWinEstimate))%")
         notes.append("\(bank)mバンク、ペースは\(paceLabel)")
         if closePack >= 4 { notes.append("上位\(closePack)人が接近") }
         if darkHorseCount > 0 { notes.append("穴サイン \(darkHorseCount)人") }
@@ -455,6 +475,9 @@ struct PredictionEngine {
             confidenceLabel: confidenceLabel,
             paceLabel: paceLabel,
             chaosScore: round(chaos * 10) / 10,
+            axisWinEstimate: round(axisWinEstimate * 10) / 10,
+            playGrade: playPlan.grade,
+            playAdvice: playPlan.advice,
             axisName: axis.name,
             dangerName: danger?.name,
             lineBias: lineBias,
@@ -774,6 +797,51 @@ struct PredictionEngine {
         if let entry = lineMatrix[direct], entry.t >= 50 { return entry.r }
         if let entry = lineMatrix[reverse], entry.t >= 50 { return entry.r }
         return nil
+    }
+
+    private static func estimateAxisHitRate(
+        axis: PredictionResult,
+        topGap: Double,
+        chaosScore: Double,
+        closePack: Int,
+        darkHorseCount: Int,
+        lines: [LineFormation]
+    ) -> Double {
+        var estimate = axis.winProb
+        estimate += topGap * 1.15
+        estimate -= chaosScore * 0.12
+        estimate -= Double(max(0, closePack - 2)) * 1.7
+        estimate -= Double(darkHorseCount) * 1.8
+        if axis.riskLabel == "軸候補" { estimate += 3.5 }
+        if axis.lineRole == "番手" { estimate += 1.8 }
+        if let strongest = lines.first,
+           strongest.members.contains(where: { $0.name == axis.name }),
+           strongest.strength >= (lines.dropFirst().first?.strength ?? 0) + 14 {
+            estimate += 2.5
+        }
+        return clamp(estimate, lower: 6, upper: 58)
+    }
+
+    private static func racePlayPlan(
+        axisWinEstimate: Double,
+        topGap: Double,
+        chaosScore: Double,
+        closePack: Int,
+        darkHorseCount: Int
+    ) -> (grade: String, advice: String) {
+        if chaosScore >= 72 || (topGap < 4 && closePack >= 4) {
+            return ("見", "混戦。30%狙いから外す")
+        }
+        if axisWinEstimate >= 34, topGap >= 10, chaosScore <= 50, darkHorseCount <= 1 {
+            return ("S", "30%超え候補。軸から絞る")
+        }
+        if axisWinEstimate >= 30, topGap >= 7, chaosScore <= 58 {
+            return ("A", "勝負可。点数を増やしすぎない")
+        }
+        if axisWinEstimate >= 26, chaosScore <= 64 {
+            return ("B", "薄め。押さえ中心")
+        }
+        return ("C", "見送り寄り。妙味待ち")
     }
 
     private static func confidence(probability: Double, expectedValue: Double?, base: String) -> String {
