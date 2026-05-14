@@ -8,7 +8,7 @@ struct ContentView: View {
         TabView {
             RaceListView()
                 .tabItem {
-                    Label("予測", systemImage: "bolt.horizontal.fill")
+                    Label("予想", systemImage: "bolt.horizontal.fill")
                 }
 
             ResultsListView()

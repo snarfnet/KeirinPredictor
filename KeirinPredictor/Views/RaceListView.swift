@@ -16,6 +16,7 @@ struct RaceListView: View {
                 } else {
                     CompactAwareScroll {
                         VStack(alignment: .leading, spacing: 18) {
+                            launchBanner
                             heroHeader
 
                             if !aiPicks.isEmpty {
@@ -53,7 +54,7 @@ struct RaceListView: View {
                     HStack(spacing: 7) {
                         Image(systemName: "bolt.horizontal.circle.fill")
                             .foregroundColor(KeirinUI.red)
-                        Text("KEIRIN PREDICTOR")
+                        Text("競輪鉄脚ラボ")
                             .font(.system(size: 16, weight: .black, design: .monospaced))
                             .foregroundColor(.white)
                     }
@@ -81,6 +82,85 @@ struct RaceListView: View {
                 }
             }
         }
+    }
+
+    private var launchBanner: some View {
+        ZStack(alignment: .bottomLeading) {
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(hex: "#1A0A0A"),
+                            Color(hex: "#08131F"),
+                            Color(hex: "#101722")
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay(alignment: .topTrailing) {
+                    ZStack {
+                        Circle()
+                            .stroke(KeirinUI.gold.opacity(0.38), lineWidth: 13)
+                            .frame(width: 138, height: 138)
+                        Circle()
+                            .stroke(KeirinUI.cyan.opacity(0.32), lineWidth: 5)
+                            .frame(width: 96, height: 96)
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 46, weight: .black))
+                            .foregroundStyle(KeirinUI.actionGradient)
+                    }
+                    .offset(x: 30, y: -22)
+                }
+                .overlay(alignment: .bottomTrailing) {
+                    VStack(alignment: .trailing, spacing: 2) {
+                        Text("BUILD")
+                            .font(.system(size: 9, weight: .black, design: .monospaced))
+                            .foregroundColor(.white.opacity(0.42))
+                        Text(appBuildNumber)
+                            .font(.system(size: 34, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.gold)
+                    }
+                    .padding(14)
+                }
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("DESIGN BUILD 60")
+                    .font(.system(size: 11, weight: .black, design: .monospaced))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 5)
+                    .background(KeirinUI.gold)
+                    .clipShape(Capsule())
+
+                Text("競輪鉄脚ラボ")
+                    .font(.system(size: 34, weight: .black, design: .rounded))
+                    .foregroundColor(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.68)
+
+                Text("今日のデータを見て、勝負レースだけを研ぎ出す")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundColor(.white.opacity(0.68))
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.72)
+            }
+            .padding(16)
+            .padding(.trailing, 74)
+        }
+        .frame(maxWidth: .infinity, minHeight: 168, alignment: .leading)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(
+                    LinearGradient(
+                        colors: [KeirinUI.gold.opacity(0.75), KeirinUI.cyan.opacity(0.35), KeirinUI.red.opacity(0.35)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.3
+                )
+        )
+        .shadow(color: KeirinUI.gold.opacity(0.18), radius: 22, x: 0, y: 10)
     }
 
     private var heroHeader: some View {
