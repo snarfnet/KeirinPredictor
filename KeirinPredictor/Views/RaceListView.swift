@@ -147,25 +147,42 @@ struct RaceListView: View {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-"
     }
 
-    private var aiPicks: [TodayRace] {
+    private var aiPicks: [FocusRacePick] {
         let todayStr = todayString()
         let todayRaces = dataLoader.todayRaces.filter {
             let d = $0.dateString.isEmpty ? todayStr : $0.dateString
             return d == todayStr
         }
 
-        let scored = todayRaces.compactMap { race -> (TodayRace, Double)? in
+        let scored = todayRaces.compactMap { race -> FocusRacePick? in
             let sorted = race.entries.sorted { $0.score > $1.score }
             guard sorted.count >= 3 else { return nil }
             let gap = sorted[0].score - sorted[2].score
             guard gap >= 5 else { return nil }
-            return (race, gap)
+            let top = sorted[0]
+            let secondGap = sorted[0].score - sorted[1].score
+            var reasons: [String] = [
+                "上位3名の指数差 \(String(format: "%.1f", gap))",
+                "軸候補 \(top.umaban)番 \(top.name)"
+            ]
+            if top.top3Rate > 0 {
+                reasons.append("3着内率 \(String(format: "%.1f", top.top3Rate))%")
+            } else if top.top2Rate > 0 {
+                reasons.append("連対率 \(String(format: "%.1f", top.top2Rate))%")
+            }
+            if secondGap >= 6 {
+                reasons.append("2番手との差 \(String(format: "%.1f", secondGap))")
+            }
+            return FocusRacePick(race: race, score: gap, reasons: reasons)
         }
 
         return scored
-            .sorted { $0.1 > $1.1 }
-            .prefix(3)
-            .map { $0.0 }
+            .sorted { lhs, rhs in
+                if lhs.score == rhs.score {
+                    return lhs.race.raceNo < rhs.race.raceNo
+                }
+                return lhs.score > rhs.score
+            }
     }
 
     private var emptyState: some View {
@@ -295,6 +312,13 @@ struct DayGroup {
 struct VenueGroup {
     let venue: String
     let races: [TodayRace]
+}
+
+struct FocusRacePick: Identifiable {
+    var id: String { race.race_id }
+    let race: TodayRace
+    let score: Double
+    let reasons: [String]
 }
 
 struct DaySectionView: View {
@@ -582,7 +606,7 @@ struct RaceCardView: View {
 }
 
 struct FocusRaceStrip: View {
-    let picks: [TodayRace]
+    let picks: [FocusRacePick]
     let venueStats: [String: VenueStats]
     let playerStats: [String: PlayerStats]
 
@@ -602,14 +626,12 @@ struct FocusRaceStrip: View {
                     .clipShape(Capsule())
             }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 10) {
-                    ForEach(picks) { race in
-                        NavigationLink(value: race.race_id) {
-                            FocusRaceCard(race: race, venueStats: venueStats)
-                        }
-                        .buttonStyle(.plain)
+            VStack(spacing: 8) {
+                ForEach(picks) { pick in
+                    NavigationLink(value: pick.race.race_id) {
+                        FocusRaceCard(pick: pick, venueStats: venueStats)
                     }
+                    .buttonStyle(.plain)
                 }
             }
         }
@@ -624,53 +646,95 @@ struct FocusRaceStrip: View {
 }
 
 struct FocusRaceCard: View {
-    let race: TodayRace
+    let pick: FocusRacePick
     let venueStats: [String: VenueStats]
+
+    private var race: TodayRace { pick.race }
 
     private var sortedEntries: [TodayRaceEntry] {
         race.entries.sorted { $0.score > $1.score }
     }
 
-    private var topScoreGap: Double {
-        guard sortedEntries.count >= 3 else { return 0 }
-        return sortedEntries[0].score - sortedEntries[2].score
+    private var topEntry: TodayRaceEntry? {
+        sortedEntries.first
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 9) {
-            HStack {
-                Text(race.venue)
-                    .font(.system(size: 15, weight: .black, design: .rounded))
-                    .foregroundColor(Color(hex: "#151515"))
-                Text("\(race.raceNo)R")
-                    .font(.system(size: 14, weight: .black, design: .monospaced))
-                    .foregroundColor(Color(hex: "#B68000"))
+        HStack(alignment: .top, spacing: 10) {
+            VStack(spacing: -1) {
+                Text("\(race.raceNo)")
+                    .font(.system(size: 24, weight: .black, design: .monospaced))
+                Text("R")
+                    .font(.system(size: 9, weight: .black, design: .monospaced))
             }
+            .foregroundColor(.white)
+            .frame(width: 46, height: 52)
+            .background(KeirinUI.red)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
-            HStack(spacing: 7) {
-                ForEach(Array(sortedEntries.prefix(3).enumerated()), id: \.offset) { index, entry in
-                    VStack(spacing: 4) {
-                        LaneBadge(number: entry.umaban, size: index == 0 ? 30 : 25)
-                        Text(entry.name)
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top, spacing: 7) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(race.venue)
+                            .font(.system(size: 15, weight: .black, design: .rounded))
                             .foregroundColor(Color(hex: "#151515"))
                             .lineLimit(1)
-                            .minimumScaleFactor(0.7)
+                            .minimumScaleFactor(0.75)
+                        if let topEntry {
+                            Text("軸 \(topEntry.umaban)番 \(topEntry.name)")
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .foregroundColor(Color(hex: "#5D5344"))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.72)
+                        }
                     }
-                    .frame(width: 48)
+
+                    Spacer(minLength: 6)
+
+                    Text("信頼 \(String(format: "%.0f", min(pick.score * 7, 99)))")
+                        .font(.system(size: 10, weight: .black, design: .monospaced))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 5)
+                        .background(Color(hex: "#111111"))
+                        .clipShape(Capsule())
+                }
+
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(pick.reasons.prefix(4), id: \.self) { reason in
+                        HStack(alignment: .top, spacing: 5) {
+                            Circle()
+                                .fill(Color(hex: "#B68000"))
+                                .frame(width: 4, height: 4)
+                                .padding(.top, 6)
+                            Text(reason)
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .foregroundColor(Color(hex: "#5D5344"))
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+
+                HStack(spacing: 6) {
+                    ForEach(Array(sortedEntries.prefix(3).enumerated()), id: \.offset) { index, entry in
+                        HStack(spacing: 4) {
+                            LaneBadge(number: entry.umaban, size: 20)
+                            Text(index == 0 ? "軸" : "\(index + 1)")
+                                .font(.system(size: 9, weight: .black, design: .rounded))
+                                .foregroundColor(index == 0 ? Color(hex: "#B68000") : Color(hex: "#81786D"))
+                        }
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .black))
+                        .foregroundColor(Color(hex: "#1E5BFF"))
                 }
             }
-
-            Text("信頼 \(String(format: "%.0f", min(topScoreGap * 7, 99)))")
-                .font(.system(size: 11, weight: .black, design: .monospaced))
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(Color(hex: "#111111"))
-                .clipShape(Capsule())
+            .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
-        .frame(width: 176, alignment: .leading)
-        .padding(11)
+        .padding(10)
         .background(Color(hex: "#F7F6F1"))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(

@@ -39,13 +39,16 @@ struct CompactAwareScroll<Content: View>: View {
     var body: some View {
         GeometryReader { proxy in
             let compact = proxy.size.width < 390
-            let sidePadding: CGFloat = compact ? 10 : 14
-            let contentWidth = max(0, proxy.size.width - sidePadding * 2)
+            let sidePadding: CGFloat = compact ? 18 : 20
+            let leftInset = proxy.safeAreaInsets.leading + sidePadding
+            let rightInset = proxy.safeAreaInsets.trailing + sidePadding
+            let contentWidth = max(0, proxy.size.width - leftInset - rightInset)
 
             ScrollView {
                 content
                     .frame(width: contentWidth, alignment: .topLeading)
-                    .padding(.horizontal, sidePadding)
+                    .padding(.leading, leftInset)
+                    .padding(.trailing, rightInset)
                     .padding(.top, compact ? 8 : 12)
                     .padding(.bottom, KeirinUI.scrollBottomPadding)
             }
