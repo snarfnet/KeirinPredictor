@@ -9,7 +9,7 @@ struct RaceListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#F7F6F1").ignoresSafeArea()
+                KeirinUI.lightBackground.ignoresSafeArea()
 
                 if dataLoader.todayRaces.isEmpty {
                     emptyState
@@ -31,16 +31,15 @@ struct RaceListView: View {
                             ForEach(dayGroups, id: \.date) { group in
                                 DaySectionView(group: group, homeVenue: homeVenue)
                             }
-
-                            BannerAdView()
-                                .frame(height: 50)
-                                .padding(.top, 4)
                         }
                     }
                     .refreshable {
                         dataLoader.fetchRemoteTodayEntries()
                     }
                 }
+            }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                FixedTopAdView()
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
@@ -63,6 +62,8 @@ struct RaceListView: View {
                     }
                 }
             }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
             .navigationDestination(for: String.self) { raceId in
                 if let race = dataLoader.todayRaces.first(where: { $0.race_id == raceId }) {
@@ -139,8 +140,10 @@ struct RaceListView: View {
     }
 
     private var compactDateLabel: String {
-        let raw = dataLoader.todayRaces.first?.dateString ?? todayString()
-        return formatShortDate(raw)
+        if let first = dayGroups.first {
+            return first.label == "今日" ? formatShortDate(first.date) : "\(first.label) \(formatShortDate(first.date))"
+        }
+        return formatShortDate(todayString())
     }
 
     private var appBuildNumber: String {
@@ -149,12 +152,12 @@ struct RaceListView: View {
 
     private var aiPicks: [FocusRacePick] {
         let todayStr = todayString()
-        let todayRaces = dataLoader.todayRaces.filter {
+        let visibleRaces = dataLoader.todayRaces.filter {
             let d = $0.dateString.isEmpty ? todayStr : $0.dateString
-            return d == todayStr
+            return d >= todayStr
         }
 
-        let scored = todayRaces.compactMap { race -> FocusRacePick? in
+        let scored = visibleRaces.compactMap { race -> FocusRacePick? in
             let sorted = race.entries.sorted { $0.score > $1.score }
             guard sorted.count >= 3 else { return nil }
             let gap = sorted[0].score - sorted[2].score
@@ -217,7 +220,7 @@ struct RaceListView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(hex: "#F7F6F1").ignoresSafeArea())
+        .background(KeirinUI.lightBackground.ignoresSafeArea())
     }
 
     private var dayGroups: [DayGroup] {
@@ -613,7 +616,7 @@ struct FocusRaceStrip: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("今日の勝負候補")
+                Text("今日以降の勝負候補")
                     .font(.system(size: 18, weight: .black, design: .rounded))
                     .foregroundColor(Color(hex: "#151515"))
                 Spacer()

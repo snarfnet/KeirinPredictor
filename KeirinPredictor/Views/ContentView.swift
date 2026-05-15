@@ -32,7 +32,6 @@ struct ContentView: View {
                 }
         }
         .accentColor(KeirinUI.gold)
-        .preferredColorScheme(.dark)
         .onAppear {
             tracker.syncResults(dataLoader.todayResults)
         }

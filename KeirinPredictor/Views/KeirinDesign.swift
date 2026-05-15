@@ -10,7 +10,8 @@ enum KeirinUI {
     static let cyan = Color(hex: "#13D8FF")
     static let green = Color(hex: "#49E37A")
     static let muted = Color.white.opacity(0.58)
-    static let scrollBottomPadding: CGFloat = 84
+    static let scrollBottomPadding: CGFloat = 24
+    static let lightBackground = Color(hex: "#F7F6F1")
 
     static var actionGradient: LinearGradient {
         LinearGradient(
@@ -49,11 +50,26 @@ struct CompactAwareScroll<Content: View>: View {
                     .frame(width: contentWidth, alignment: .topLeading)
                     .padding(.leading, leftInset)
                     .padding(.trailing, rightInset)
-                    .padding(.top, compact ? 8 : 12)
+                    .padding(.top, compact ? 14 : 18)
                     .padding(.bottom, KeirinUI.scrollBottomPadding)
             }
             .frame(width: proxy.size.width, alignment: .topLeading)
         }
+    }
+}
+
+struct FixedTopAdView: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            BannerAdView()
+                .frame(height: 50)
+                .frame(maxWidth: .infinity)
+                .background(.white)
+            Rectangle()
+                .fill(Color.black.opacity(0.08))
+                .frame(height: 1)
+        }
+        .background(.white)
     }
 }
 

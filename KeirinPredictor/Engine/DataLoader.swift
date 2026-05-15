@@ -90,7 +90,8 @@ class DataLoader: ObservableObject {
                     if !result.races.isEmpty {
                         // Show only today or a future race day. Never show stale previous-day races as today's races.
                         let todayStr = Self.todayString()
-                        guard let displayDay = result.days.sorted().first(where: { $0 >= todayStr }) else {
+                        let displayDays = result.days.sorted().filter { $0 >= todayStr }
+                        guard let displayDay = displayDays.first else {
                             DispatchQueue.main.async {
                                 self.todayRaces = []
                                 self.todayDateString = self.formatDateString(todayStr)
@@ -98,11 +99,14 @@ class DataLoader: ObservableObject {
                             }
                             return
                         }
-                        let racesForDay = result.races.filter { ($0.date ?? displayDay) == displayDay }
+                        let racesForDays = result.races.filter { race in
+                            let raceDay = race.date ?? displayDay
+                            return displayDays.contains(raceDay)
+                        }
                         DispatchQueue.main.async {
-                            self.todayRaces = racesForDay
+                            self.todayRaces = racesForDays
                             self.todayDateString = self.formatDateString(displayDay)
-                            self.todayDataWarning = racesForDay.isEmpty ? "今日の出走表はまだ配信されていません" : nil
+                            self.todayDataWarning = racesForDays.isEmpty ? "今日以降の出走表はまだ配信されていません" : nil
                         }
                         return
                     }

@@ -6,18 +6,17 @@ struct ResultsListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinStageBackground()
+                KeirinUI.lightBackground.ignoresSafeArea()
 
                 CompactAwareScroll {
                     VStack(alignment: .leading, spacing: 16) {
                         resultsHeader
                         resultsContent
-
-                        BannerAdView()
-                            .frame(height: 50)
-                            .padding(.top, 4)
                     }
                 }
+            }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                FixedTopAdView()
             }
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
@@ -36,6 +35,9 @@ struct ResultsListView: View {
                     }
                 }
             }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
             .onAppear {
                 if dataLoader.todayResults.isEmpty && !dataLoader.isResultsLoading {
                     dataLoader.fetchRemoteTodayResults()

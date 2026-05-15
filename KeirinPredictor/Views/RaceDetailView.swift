@@ -16,7 +16,7 @@ struct RaceDetailView: View {
 
     var body: some View {
         ZStack {
-            KeirinStageBackground()
+            KeirinUI.lightBackground.ignoresSafeArea()
 
             CompactAwareScroll {
                 VStack(spacing: 16) {
@@ -31,16 +31,17 @@ struct RaceDetailView: View {
                         entryListSection
                         predictButton
                     }
-
-                    BannerAdView()
-                        .frame(height: 50)
-                        .padding(.top, 4)
-
                 }
             }
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            FixedTopAdView()
+        }
         .navigationTitle("\(race.venue) \(race.raceNo)R")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
+        .toolbarColorScheme(.light, for: .navigationBar)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
                 pulse = true

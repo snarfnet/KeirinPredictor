@@ -24,7 +24,7 @@ struct PredictionView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinStageBackground()
+                KeirinUI.lightBackground.ignoresSafeArea()
 
                 CompactAwareScroll {
                     VStack(spacing: 18) {
@@ -45,13 +45,12 @@ struct PredictionView: View {
                                 ))
                         }
 
-                        if showBannerAd {
-                            BannerAdView()
-                                .frame(height: 50)
-                                .padding(.top, 2)
-                        }
-
                     }
+                }
+            }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                if showBannerAd {
+                    FixedTopAdView()
                 }
             }
             .navigationTitle("")
@@ -60,9 +59,12 @@ struct PredictionView: View {
                 ToolbarItem(placement: .principal) {
                     Text("DATA LAB")
                         .font(.system(size: 16, weight: .black, design: .monospaced))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#151515"))
                 }
             }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
             .onAppear {
                 withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
                     pulse = true
