@@ -206,6 +206,8 @@ struct RaceIntelligence {
     let axisWinEstimate: Double
     let playGrade: String
     let playAdvice: String
+    let actionLabel: String
+    let actionReason: String
     let axisName: String
     let dangerName: String?
     let lineBias: String

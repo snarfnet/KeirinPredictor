@@ -366,6 +366,8 @@ struct PredictionEngine {
                 axisWinEstimate: 0,
                 playGrade: "見",
                 playAdvice: "データ待ち",
+                actionLabel: "見送り",
+                actionReason: "出走データ待ち",
                 axisName: "",
                 dangerName: nil,
                 lineBias: "ライン不明",
@@ -478,6 +480,8 @@ struct PredictionEngine {
             axisWinEstimate: round(axisWinEstimate * 10) / 10,
             playGrade: playPlan.grade,
             playAdvice: playPlan.advice,
+            actionLabel: playPlan.actionLabel,
+            actionReason: playPlan.actionReason,
             axisName: axis.name,
             dangerName: danger?.name,
             lineBias: lineBias,
@@ -828,20 +832,23 @@ struct PredictionEngine {
         chaosScore: Double,
         closePack: Int,
         darkHorseCount: Int
-    ) -> (grade: String, advice: String) {
+    ) -> (grade: String, advice: String, actionLabel: String, actionReason: String) {
         if chaosScore >= 72 || (topGap < 4 && closePack >= 4) {
-            return ("見", "混戦。30%狙いから外す")
+            return ("見", "混戦。30%狙いから外す", "見送り", "荒れやすいので買わない")
         }
-        if axisWinEstimate >= 34, topGap >= 10, chaosScore <= 50, darkHorseCount <= 1 {
-            return ("S", "30%超え候補。軸から絞る")
+        if axisWinEstimate >= 36, topGap >= 11, chaosScore <= 48, closePack <= 3, darkHorseCount <= 1 {
+            return ("S", "30%超え候補。軸から絞る", "買う", "軸が抜けていて荒れ指数も低い")
         }
-        if axisWinEstimate >= 30, topGap >= 7, chaosScore <= 58 {
-            return ("A", "勝負可。点数を増やしすぎない")
+        if axisWinEstimate >= 32, topGap >= 8, chaosScore <= 55, closePack <= 3, darkHorseCount <= 1 {
+            return ("A", "勝負可。点数を増やしすぎない", "買う", "軸候補と2番手以下の差がある")
         }
-        if axisWinEstimate >= 26, chaosScore <= 64 {
-            return ("B", "薄め。押さえ中心")
+        if axisWinEstimate >= 28, topGap >= 7, chaosScore <= 60 {
+            return ("B", "薄め。押さえ中心", "見送り", "悪くないが50%狙いでは薄い")
         }
-        return ("C", "見送り寄り。妙味待ち")
+        if axisWinEstimate >= 25, chaosScore <= 66 {
+            return ("C", "見送り寄り。妙味待ち", "見送り", "軸の勝ち切りが足りない")
+        }
+        return ("C", "見送り寄り。妙味待ち", "見送り", "買う条件に届かない")
     }
 
     private static func confidence(probability: Double, expectedValue: Double?, base: String) -> String {

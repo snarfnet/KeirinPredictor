@@ -109,7 +109,7 @@ struct RaceListView: View {
                 .clipShape(Capsule())
 
                 Text("競輪鉄脚ラボ")
-                    .font(.system(size: 34, weight: .black, design: .rounded))
+                    .font(.system(size: 38, weight: .black, design: .rounded))
                     .foregroundColor(Color(hex: "#111111"))
                     .lineLimit(1)
                     .minimumScaleFactor(0.68)
@@ -122,7 +122,7 @@ struct RaceListView: View {
                 MetricPillRow {
                     LightMetricPill(title: "開催場", value: "\(availableVenues.count)", tone: Color(hex: "#1E5BFF"))
                     LightMetricPill(title: "レース", value: "\(dataLoader.todayRaces.count)", tone: Color(hex: "#C79314"))
-                    LightMetricPill(title: "勝負候補", value: "\(aiPicks.count)", tone: KeirinUI.red)
+                    LightMetricPill(title: "買う候補", value: "\(aiPicks.count)", tone: KeirinUI.red)
                 }
             }
             .padding(.horizontal, 14)
@@ -163,12 +163,14 @@ struct RaceListView: View {
         let scored = visibleRaces.compactMap { race -> FocusRacePick? in
             let sorted = race.entries.sorted { $0.score > $1.score }
             guard sorted.count >= 3 else { return nil }
-            let gap = sorted[0].score - sorted[2].score
-            guard gap >= 5 else { return nil }
             let top = sorted[0]
             let secondGap = sorted[0].score - sorted[1].score
+            let top3Gap = sorted[0].score - sorted[2].score
+            let decision = homePlayDecision(top: top, secondGap: secondGap, top3Gap: top3Gap)
+            guard decision.actionLabel == "買う" else { return nil }
             var reasons: [String] = [
-                "上位3名の指数差 \(String(format: "%.1f", gap))",
+                decision.reason,
+                "上位3名の指数差 \(String(format: "%.1f", top3Gap))",
                 "軸候補 \(top.umaban)番 \(top.name)"
             ]
             if top.top3Rate > 0 {
@@ -179,7 +181,14 @@ struct RaceListView: View {
             if secondGap >= 6 {
                 reasons.append("2番手との差 \(String(format: "%.1f", secondGap))")
             }
-            return FocusRacePick(race: race, score: gap, reasons: reasons)
+            return FocusRacePick(
+                race: race,
+                score: top3Gap,
+                actionLabel: decision.actionLabel,
+                actionReason: decision.reason,
+                grade: decision.grade,
+                reasons: reasons
+            )
         }
 
         return scored
@@ -189,6 +198,23 @@ struct RaceListView: View {
                 }
                 return lhs.score > rhs.score
             }
+    }
+
+    private func homePlayDecision(
+        top: TodayRaceEntry,
+        secondGap: Double,
+        top3Gap: Double
+    ) -> (actionLabel: String, reason: String, grade: String) {
+        let hasRate = top.top3Rate > 0
+        let top3RatePass = !hasRate || top.top3Rate >= 35
+
+        if top3Gap >= 12, secondGap >= 7, top.score >= 96, top3RatePass {
+            return ("買う", "軸がはっきりしているS候補", "S")
+        }
+        if top3Gap >= 8, secondGap >= 5, top.score >= 90, top3RatePass {
+            return ("買う", "買う条件を満たしたA候補", "A")
+        }
+        return ("見送り", "50%狙いでは買わない", "見")
     }
 
     private var emptyState: some View {
@@ -392,15 +418,15 @@ struct LiveHitRateCard: View {
             HStack(alignment: .top, spacing: 10) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("鉄脚先生")
-                        .font(.system(size: 13, weight: .black, design: .rounded))
+                        .font(.system(size: 15, weight: .black, design: .rounded))
                         .foregroundColor(Color(hex: "#B68000"))
                     Text("ただ今の的中率")
-                        .font(.system(size: 19, weight: .black, design: .rounded))
+                        .font(.system(size: 22, weight: .black, design: .rounded))
                         .foregroundColor(Color(hex: "#111111"))
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
                     Text(statusText)
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundColor(Color(hex: "#6E665A"))
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
@@ -409,7 +435,7 @@ struct LiveHitRateCard: View {
                 Spacer(minLength: 8)
 
                 Text(rateText)
-                    .font(.system(size: 48, weight: .black, design: .rounded))
+                    .font(.system(size: 54, weight: .black, design: .rounded))
                     .foregroundColor(rateColor)
                     .lineLimit(1)
                     .minimumScaleFactor(0.55)
@@ -453,10 +479,10 @@ struct HitRateMiniPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.system(size: 9, weight: .black, design: .rounded))
+                .font(.system(size: 10, weight: .black, design: .rounded))
                 .foregroundColor(Color(hex: "#766D61"))
             Text(value)
-                .font(.system(size: 13, weight: .black, design: .monospaced))
+                .font(.system(size: 15, weight: .black, design: .monospaced))
                 .foregroundColor(tone)
                 .lineLimit(1)
                 .minimumScaleFactor(0.62)
@@ -486,6 +512,9 @@ struct FocusRacePick: Identifiable {
     var id: String { race.race_id }
     let race: TodayRace
     let score: Double
+    let actionLabel: String
+    let actionReason: String
+    let grade: String
     let reasons: [String]
 }
 
@@ -498,10 +527,10 @@ struct DaySectionView: View {
             HStack(alignment: .lastTextBaseline) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(group.label)
-                        .font(.system(size: 22, weight: .black, design: .rounded))
+                        .font(.system(size: 25, weight: .black, design: .rounded))
                         .foregroundColor(Color(hex: "#151515"))
                     Text(group.dateLabel)
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
                         .foregroundColor(Color(hex: "#81786D"))
                 }
 
@@ -537,10 +566,10 @@ struct LightMetricPill: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.system(size: 9, weight: .black, design: .rounded))
+                .font(.system(size: 10, weight: .black, design: .rounded))
                 .foregroundColor(Color(hex: "#766D61"))
             Text(value)
-                .font(.system(size: 14, weight: .black, design: .monospaced))
+                .font(.system(size: 16, weight: .black, design: .monospaced))
                 .foregroundColor(tone)
                 .lineLimit(1)
                 .minimumScaleFactor(0.65)
@@ -641,10 +670,10 @@ struct VenueSectionView: View {
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(venue)
-                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .font(.system(size: 21, weight: .black, design: .rounded))
                             .foregroundColor(Color(hex: "#151515"))
                         Text(isExpanded ? "タップで閉じる" : "タップでレース表示")
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .font(.system(size: 13, weight: .bold, design: .rounded))
                             .foregroundColor(Color(hex: "#81786D"))
                     }
 
@@ -707,6 +736,18 @@ struct RaceCardView: View {
         return topEntries[0].score - topEntries[1].score
     }
 
+    private var top3Gap: Double {
+        guard topEntries.count >= 3 else { return 0 }
+        return topEntries[0].score - topEntries[2].score
+    }
+
+    private var playAction: String {
+        guard topEntries.count >= 3 else { return "待ち" }
+        let top = topEntries[0]
+        let ratePass = top.top3Rate <= 0 || top.top3Rate >= 35
+        return top3Gap >= 8 && scoreGap >= 5 && top.score >= 90 && ratePass ? "買う" : "見送り"
+    }
+
     var body: some View {
         HStack(spacing: 10) {
             VStack(spacing: -1) {
@@ -731,7 +772,7 @@ struct RaceCardView: View {
                     if let top = topEntries.first {
                         LaneBadge(number: top.umaban, size: 26)
                         Text(top.name)
-                            .font(.system(size: 16, weight: .black, design: .rounded))
+                            .font(.system(size: 18, weight: .black, design: .rounded))
                             .foregroundColor(Color(hex: "#151515"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
@@ -752,12 +793,12 @@ struct RaceCardView: View {
                         }
                     }
                     Spacer()
-                    Text(scoreGap >= 8 ? "勝負" : "混戦")
-                        .font(.system(size: 10, weight: .black, design: .rounded))
-                        .foregroundColor(scoreGap >= 8 ? .white : Color(hex: "#1E5BFF"))
+                    Text(playAction)
+                        .font(.system(size: 12, weight: .black, design: .rounded))
+                        .foregroundColor(playAction == "買う" ? .white : Color(hex: "#1E5BFF"))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(scoreGap >= 8 ? KeirinUI.red : Color(hex: "#E7EEFF"))
+                        .background(playAction == "買う" ? KeirinUI.red : Color(hex: "#E7EEFF"))
                         .clipShape(Capsule())
                 }
             }
@@ -781,8 +822,8 @@ struct FocusRaceStrip: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("今日以降の勝負候補")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
+                Text("今日以降の買う候補")
+                    .font(.system(size: 21, weight: .black, design: .rounded))
                     .foregroundColor(Color(hex: "#151515"))
                 Spacer()
                 Text("\(picks.count)")
@@ -831,7 +872,7 @@ struct FocusRaceCard: View {
         HStack(alignment: .top, spacing: 10) {
             VStack(spacing: -1) {
                 Text("\(race.raceNo)")
-                    .font(.system(size: 24, weight: .black, design: .monospaced))
+                    .font(.system(size: 26, weight: .black, design: .monospaced))
                 Text("R")
                     .font(.system(size: 9, weight: .black, design: .monospaced))
             }
@@ -844,13 +885,13 @@ struct FocusRaceCard: View {
                 HStack(alignment: .top, spacing: 7) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(race.venue)
-                            .font(.system(size: 15, weight: .black, design: .rounded))
+                            .font(.system(size: 18, weight: .black, design: .rounded))
                             .foregroundColor(Color(hex: "#151515"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         if let topEntry {
                             Text("軸 \(topEntry.umaban)番 \(topEntry.name)")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .font(.system(size: 14, weight: .bold, design: .rounded))
                                 .foregroundColor(Color(hex: "#5D5344"))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.72)
@@ -859,14 +900,24 @@ struct FocusRaceCard: View {
 
                     Spacer(minLength: 6)
 
-                    Text("信頼 \(String(format: "%.0f", min(pick.score * 7, 99)))")
-                        .font(.system(size: 10, weight: .black, design: .monospaced))
-                        .foregroundColor(.white)
-                        .lineLimit(1)
-                        .padding(.horizontal, 7)
-                        .padding(.vertical, 5)
-                        .background(Color(hex: "#111111"))
-                        .clipShape(Capsule())
+                    VStack(spacing: 2) {
+                        Text(pick.actionLabel)
+                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                        Text(pick.grade)
+                            .font(.system(size: 10, weight: .black, design: .monospaced))
+                    }
+                    .foregroundColor(.white)
+                    .frame(width: 58, height: 44)
+                    .background(KeirinUI.red)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(Color.white.opacity(0.55), lineWidth: 1)
+                    )
+                    .accessibilityLabel("\(pick.actionLabel) \(pick.grade)")
+
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -877,7 +928,7 @@ struct FocusRaceCard: View {
                                 .frame(width: 4, height: 4)
                                 .padding(.top, 6)
                             Text(reason)
-                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
                                 .foregroundColor(Color(hex: "#5D5344"))
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)

@@ -301,13 +301,45 @@ struct RaceIntelligenceCard: View {
     var body: some View {
         GlassPanel(cornerRadius: 20, borderColor: playColor.opacity(0.38)) {
             VStack(alignment: .leading, spacing: 12) {
+                HStack(alignment: .center, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("鉄脚先生の判定")
+                            .font(.system(size: 14, weight: .black, design: .rounded))
+                            .foregroundColor(.black.opacity(0.72))
+                        Text(analysis.actionReason)
+                            .font(.system(size: 15, weight: .black, design: .rounded))
+                            .foregroundColor(.black.opacity(0.68))
+                            .lineLimit(2)
+                            .minimumScaleFactor(0.82)
+                    }
+
+                    Spacer(minLength: 8)
+
+                    Text(analysis.actionLabel)
+                        .font(.system(size: 34, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.62)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(actionColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+                .padding(12)
+                .background(Color.white.opacity(0.94))
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(actionColor.opacity(0.35), lineWidth: 1)
+                )
+
                 AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("RACE READING")
                             .font(.system(size: 11, weight: .black, design: .monospaced))
                             .foregroundColor(KeirinUI.cyan)
                         Text(analysis.headline)
-                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .font(.system(size: 21, weight: .black, design: .rounded))
                             .foregroundColor(.white)
                             .lineLimit(2)
                             .minimumScaleFactor(0.82)
@@ -328,7 +360,7 @@ struct RaceIntelligenceCard: View {
                 ProbabilityBar(value: analysis.chaosScore / 100, color: chaosColor)
 
                 Text(analysis.playAdvice)
-                    .font(.system(size: 13, weight: .black, design: .rounded))
+                    .font(.system(size: 15, weight: .black, design: .rounded))
                     .foregroundColor(playColor)
                     .lineLimit(2)
 
@@ -340,7 +372,7 @@ struct RaceIntelligenceCard: View {
                                 .frame(width: 5, height: 5)
                                 .padding(.top, 6)
                             Text(note)
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
+                                .font(.system(size: 14, weight: .bold, design: .rounded))
                                 .foregroundColor(.white.opacity(0.64))
                                 .lineLimit(2)
                         }
@@ -353,7 +385,7 @@ struct RaceIntelligenceCard: View {
     private func scoreBlock(title: String, value: String, color: Color) -> some View {
         VStack(spacing: 2) {
             Text(value)
-                .font(.system(size: 28, weight: .black, design: .monospaced))
+                .font(.system(size: 31, weight: .black, design: .monospaced))
                 .foregroundColor(color)
                 .minimumScaleFactor(0.7)
             Text(title)
@@ -377,6 +409,10 @@ struct RaceIntelligenceCard: View {
         case "C": return Color(hex: "#CD7F32")
         default: return KeirinUI.red
         }
+    }
+
+    private var actionColor: Color {
+        analysis.actionLabel == "買う" ? KeirinUI.green : KeirinUI.red
     }
 }
 
