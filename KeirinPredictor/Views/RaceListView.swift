@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RaceListView: View {
     @EnvironmentObject var dataLoader: DataLoader
+    @EnvironmentObject var tracker: PredictionTracker
     @AppStorage("homeVenue") private var homeVenue: String = ""
     @State private var showVenuePicker = false
     @State private var appeared = false
@@ -16,6 +17,11 @@ struct RaceListView: View {
                 } else {
                     CompactAwareScroll {
                         VStack(alignment: .leading, spacing: 14) {
+                            LiveHitRateCard(
+                                tracker: tracker,
+                                races: dataLoader.todayRaces,
+                                results: dataLoader.todayResults
+                            )
                             heroHeader
 
                             if !aiPicks.isEmpty {
@@ -74,6 +80,7 @@ struct RaceListView: View {
                 HomeVenuePickerView(homeVenue: $homeVenue, venues: availableVenues)
             }
             .onAppear {
+                tracker.syncResults(dataLoader.todayResults)
                 withAnimation(.spring(response: 0.55, dampingFraction: 0.86)) {
                     appeared = true
                 }
@@ -82,20 +89,14 @@ struct RaceListView: View {
     }
 
     private var heroHeader: some View {
-        ZStack(alignment: .bottomLeading) {
+        VStack(alignment: .leading, spacing: 10) {
             Image("HeroVisual")
                 .resizable()
-                .scaledToFill()
-                .frame(maxWidth: .infinity, minHeight: 238, maxHeight: 260)
-                .clipped()
+                .scaledToFit()
+                .frame(maxWidth: .infinity)
+                .background(Color(hex: "#FBFAF7"))
 
-            LinearGradient(
-                colors: [.white.opacity(0.0), .white.opacity(0.92)],
-                startPoint: .center,
-                endPoint: .bottom
-            )
-
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 9) {
                 HStack(spacing: 7) {
                     Text("BUILD \(appBuildNumber)")
                     Text(compactDateLabel)
@@ -124,9 +125,11 @@ struct RaceListView: View {
                     LightMetricPill(title: "勝負候補", value: "\(aiPicks.count)", tone: KeirinUI.red)
                 }
             }
-            .padding(14)
+            .padding(.horizontal, 14)
+            .padding(.bottom, 14)
         }
-        .frame(maxWidth: .infinity, minHeight: 238, maxHeight: 260)
+        .frame(maxWidth: .infinity)
+        .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -301,6 +304,168 @@ struct RaceListView: View {
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
         formatter.dateFormat = "yyyy年M月d日（E）"
         return formatter.string(from: date)
+    }
+}
+
+struct LiveHitRateCard: View {
+    @ObservedObject var tracker: PredictionTracker
+    let races: [TodayRace]
+    let results: [TodayRaceResult]
+
+    private struct LiveMatch {
+        let predicted: [Int]
+        let actual: [Int]
+    }
+
+    private var liveMatches: [LiveMatch] {
+        results.compactMap { result in
+            guard let race = races.first(where: { $0.race_id == result.race_id }) else { return nil }
+            let predicted = race.entries
+                .sorted { $0.score > $1.score }
+                .prefix(3)
+                .map { $0.umaban }
+            let actual = result.finishers
+                .sorted { $0.rank < $1.rank }
+                .prefix(3)
+                .map { $0.umaban }
+            guard predicted.count >= 3, actual.count >= 3 else { return nil }
+            return LiveMatch(predicted: Array(predicted), actual: Array(actual))
+        }
+    }
+
+    private var liveWinCount: Int {
+        liveMatches.filter { $0.predicted.first == $0.actual.first }.count
+    }
+
+    private var liveTop3Count: Int {
+        liveMatches.filter { Set($0.predicted) == Set($0.actual) }.count
+    }
+
+    private var liveCount: Int {
+        liveMatches.count
+    }
+
+    private var usesActionRate: Bool {
+        liveCount == 0 && tracker.actionPredictionCount > 0
+    }
+
+    private var rate: Double {
+        if liveCount > 0 {
+            return Double(liveWinCount) / Double(liveCount) * 100
+        }
+        return usesActionRate ? tracker.actionHitRate : tracker.hitRate
+    }
+
+    private var hitCount: Int {
+        if liveCount > 0 { return liveWinCount }
+        return usesActionRate ? tracker.actionWinCount : tracker.winCount
+    }
+
+    private var totalCount: Int {
+        if liveCount > 0 { return liveCount }
+        return usesActionRate ? tracker.actionPredictionCount : tracker.totalPredictions
+    }
+
+    private var top3Rate: Double {
+        if liveCount > 0 {
+            return Double(liveTop3Count) / Double(liveCount) * 100
+        }
+        return tracker.top3HitRate
+    }
+
+    private var rateText: String {
+        totalCount > 0 ? String(format: "%.1f%%", rate) : "--.-%"
+    }
+
+    private var statusText: String {
+        if totalCount == 0 {
+            return "結果が出た予測から集計します"
+        }
+        if liveCount > 0 {
+            return "今日の結果と自動予測を照合"
+        }
+        return usesActionRate ? "勝負S/Aの1着的中" : "全予測の1着的中"
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 10) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("鉄脚先生")
+                        .font(.system(size: 13, weight: .black, design: .rounded))
+                        .foregroundColor(Color(hex: "#B68000"))
+                    Text("ただ今の的中率")
+                        .font(.system(size: 19, weight: .black, design: .rounded))
+                        .foregroundColor(Color(hex: "#111111"))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                    Text(statusText)
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundColor(Color(hex: "#6E665A"))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                }
+
+                Spacer(minLength: 8)
+
+                Text(rateText)
+                    .font(.system(size: 48, weight: .black, design: .rounded))
+                    .foregroundColor(rateColor)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.55)
+            }
+
+            HStack(spacing: 8) {
+                HitRateMiniPill(title: "的中", value: "\(hitCount)/\(totalCount)", tone: rateColor)
+                HitRateMiniPill(title: "3連対", value: String(format: "%.1f%%", top3Rate), tone: Color(hex: "#1E5BFF"))
+                HitRateMiniPill(title: "30%壁", value: String(format: "%+.1f", rate - 30), tone: rate >= 30 ? KeirinUI.green : KeirinUI.red)
+            }
+        }
+        .padding(14)
+        .background(
+            LinearGradient(
+                colors: [.white, Color(hex: "#FFF8E7")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color(hex: "#E2C46F").opacity(0.46), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 7)
+    }
+
+    private var rateColor: Color {
+        if totalCount == 0 { return Color(hex: "#81786D") }
+        if rate >= 30 { return KeirinUI.green }
+        if rate >= 20 { return Color(hex: "#C79314") }
+        return KeirinUI.red
+    }
+}
+
+struct HitRateMiniPill: View {
+    let title: String
+    let value: String
+    let tone: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title)
+                .font(.system(size: 9, weight: .black, design: .rounded))
+                .foregroundColor(Color(hex: "#766D61"))
+            Text(value)
+                .font(.system(size: 13, weight: .black, design: .monospaced))
+                .foregroundColor(tone)
+                .lineLimit(1)
+                .minimumScaleFactor(0.62)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 9)
+        .padding(.vertical, 7)
+        .background(Color(hex: "#F7F6F1"))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
