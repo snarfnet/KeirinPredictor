@@ -119,6 +119,12 @@ struct RaceListView: View {
                     .foregroundColor(Color(hex: "#5D5344"))
                     .lineLimit(1)
 
+                DataStatusRow(
+                    title: dataLoader.dataStatusTitle,
+                    detail: dataLoader.dataStatusDetail,
+                    updated: dataLoader.dataLastUpdatedText
+                )
+
                 MetricPillRow {
                     LightMetricPill(title: "開催場", value: "\(availableVenues.count)", tone: Color(hex: "#1E5BFF"))
                     LightMetricPill(title: "レース", value: "\(dataLoader.todayRaces.count)", tone: Color(hex: "#C79314"))
@@ -591,6 +597,60 @@ struct LightMetricPill: View {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .stroke(Color.black.opacity(0.08), lineWidth: 1)
         )
+    }
+}
+
+struct DataStatusRow: View {
+    let title: String
+    let detail: String
+    let updated: String
+
+    private var tone: Color {
+        if title.contains("失敗") || title.contains("エラー") { return KeirinUI.red }
+        if title.contains("前回") { return Color(hex: "#C79314") }
+        if title.contains("取得済み") { return KeirinUI.green }
+        return Color(hex: "#1E5BFF")
+    }
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Circle()
+                .fill(tone)
+                .frame(width: 9, height: 9)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 13, weight: .black, design: .rounded))
+                    .foregroundColor(Color(hex: "#151515"))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.76)
+                Text(updated.isEmpty ? detail : "\(detail) ・ \(updated)")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundColor(Color(hex: "#6E665A"))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+
+            Spacer(minLength: 6)
+
+            Image(systemName: iconName)
+                .font(.system(size: 15, weight: .black))
+                .foregroundColor(tone)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(Color(hex: "#F7F6F1"))
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(tone.opacity(0.22), lineWidth: 1)
+        )
+    }
+
+    private var iconName: String {
+        if title.contains("失敗") || title.contains("エラー") { return "exclamationmark.triangle.fill" }
+        if title.contains("前回") { return "clock.arrow.circlepath" }
+        return "checkmark.seal.fill"
     }
 }
 

@@ -13,12 +13,14 @@ class DataLoader: ObservableObject {
     @Published var todayResultsDateString: String = ""
     @Published var isResultsLoading = false
     @Published var resultsLoadError: String? = nil
+    @Published var dataStatusTitle: String = "データ確認中"
+    @Published var dataStatusDetail: String = "最新データを確認しています"
+    @Published var dataLastUpdatedText: String = ""
     @Published var isLoaded = false
 
     static let shared = DataLoader()
 
     private static let remoteBaseURL = "https://snarfnet.github.io/keirin-data"
-
     private init() {}
 
     func load() {
@@ -78,11 +80,15 @@ class DataLoader: ObservableObject {
     }
 
     func fetchRemoteTodayEntries() {
+        DispatchQueue.main.async {
+            self.dataStatusTitle = "出走表を更新中"
+            self.dataStatusDetail = "最新の出走表を確認しています"
+        }
         // First try upcoming_entries.json (multi-day)
         guard let upcomingURL = URL(string: "\(Self.remoteBaseURL)/upcoming_entries.json") else { return }
         var request = URLRequest(url: upcomingURL)
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        performDataRequest(request) { data, response, error in
             if let data = data,
                let httpResp = response as? HTTPURLResponse,
                httpResp.statusCode == 200 {
@@ -110,6 +116,13 @@ class DataLoader: ObservableObject {
                             self.todayRaces = racesForDays
                             self.todayDateString = self.formatDateString(displayDay)
                             self.todayDataWarning = racesForDays.isEmpty ? "今日以降の出走表はまだ配信されていません" : nil
+                            self.dataStatusTitle = "出走表 取得済み"
+                            self.dataStatusDetail = "\(racesForDays.count)レースを表示中"
+                            self.dataLastUpdatedText = self.formatRefreshTime(Date())
+                        }
+                        let todayRacesOnly = result.races.filter { ($0.date ?? displayDay) == todayStr && !$0.entries.isEmpty }
+                        if !todayRacesOnly.isEmpty {
+                            self.cacheTodayEntries(TodayRacesData(date: todayStr, races: todayRacesOnly))
                         }
                         return
                     }
@@ -119,17 +132,28 @@ class DataLoader: ObservableObject {
             }
             // Fallback to today_entries.json
             self.fetchTodayEntriesFallback()
-        }.resume()
+        }
     }
 
     private func fetchTodayEntriesFallback() {
         guard let url = URL(string: "\(Self.remoteBaseURL)/today_entries.json") else { return }
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        performDataRequest(request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
-                  httpResp.statusCode == 200 else { return }
+                  httpResp.statusCode == 200 else {
+                DispatchQueue.main.async {
+                    if self.applyCachedTodayEntries() {
+                        self.dataStatusTitle = "前回データを表示"
+                        self.dataStatusDetail = "通信に失敗したため前回成功分を使っています"
+                    } else {
+                        self.dataStatusTitle = "出走表 取得失敗"
+                        self.dataStatusDetail = "時間を置いて再取得してください"
+                    }
+                }
+                return
+            }
             do {
                 let result = try JSONDecoder().decode(TodayRacesData.self, from: data)
                 let todayStr = Self.todayString()
@@ -138,29 +162,36 @@ class DataLoader: ObservableObject {
                         self.todayRaces = []
                         self.todayDateString = self.formatDateString(todayStr)
                         self.todayDataWarning = "今日の出走表はまだ配信されていません"
+                        self.dataStatusTitle = "本日分は未配信"
+                        self.dataStatusDetail = "前日データは表示していません"
                     }
                     return
                 }
-                if let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
-                    let fileURL = cacheDir.appendingPathComponent("today_entries.json")
-                    try? data.write(to: fileURL)
-                }
+                self.cacheTodayEntries(result)
                 DispatchQueue.main.async {
                     self.todayRaces = result.races
                     self.todayDateString = self.formatDateString(result.date)
                     self.todayDataWarning = result.races.isEmpty ? "今日の出走表はまだ配信されていません" : nil
+                    self.dataStatusTitle = "出走表 取得済み"
+                    self.dataStatusDetail = "\(result.races.count)レースを表示中"
+                    self.dataLastUpdatedText = self.formatRefreshTime(Date())
                 }
             } catch {
                 print("Remote today_entries decode error: \(error)")
+                DispatchQueue.main.async {
+                    _ = self.applyCachedTodayEntries()
+                    self.dataStatusTitle = "前回データを表示"
+                    self.dataStatusDetail = "読み込み失敗のため前回成功分を使っています"
+                }
             }
-        }.resume()
+        }
     }
 
     func fetchRemoteTodayOdds() {
         guard let url = URL(string: "\(Self.remoteBaseURL)/today_odds.json") else { return }
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        performDataRequest(request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
                   httpResp.statusCode == 200 else { return }
@@ -183,7 +214,7 @@ class DataLoader: ObservableObject {
             } catch {
                 print("Remote today_odds decode error: \(error)")
             }
-        }.resume()
+        }
     }
 
     func fetchRemoteTodayResults() {
@@ -202,13 +233,19 @@ class DataLoader: ObservableObject {
 
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        performDataRequest(request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
                   httpResp.statusCode == 200 else {
                 DispatchQueue.main.async {
+                    if self.applyCachedTodayResults() {
+                        self.resultsLoadError = nil
+                        self.dataStatusTitle = "前回結果を表示"
+                        self.dataStatusDetail = "結果データは前回成功分です"
+                    } else {
+                        self.resultsLoadError = "結果データに接続できませんでした"
+                    }
                     self.isResultsLoading = false
-                    self.resultsLoadError = "結果データに接続できませんでした"
                 }
                 return
             }
@@ -231,18 +268,19 @@ class DataLoader: ObservableObject {
             } catch {
                 print("Remote today_results decode error: \(error)")
                 DispatchQueue.main.async {
+                    _ = self.applyCachedTodayResults()
                     self.isResultsLoading = false
                     self.resultsLoadError = "結果データを読み込めませんでした"
                 }
             }
-        }.resume()
+        }
     }
 
     private func fetchRemoteEntriesForResultDate(_ dateString: String) {
         guard let url = URL(string: "\(Self.remoteBaseURL)/entries_\(dateString).json") else { return }
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        performDataRequest(request) { data, response, error in
             guard let data = data,
                   let httpResp = response as? HTTPURLResponse,
                   httpResp.statusCode == 200 else { return }
@@ -254,7 +292,63 @@ class DataLoader: ObservableObject {
             } catch {
                 print("Remote entries_\(dateString) decode error: \(error)")
             }
+        }
+    }
+
+    private func performDataRequest(
+        _ request: URLRequest,
+        attempts: Int = 2,
+        completion: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) {
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            let succeeded = error == nil && (200..<300).contains(statusCode) && data != nil
+            if succeeded || attempts <= 1 {
+                completion(data, response, error)
+                return
+            }
+
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 3) {
+                self.performDataRequest(request, attempts: attempts - 1, completion: completion)
+            }
         }.resume()
+    }
+
+    private func cacheTodayEntries(_ result: TodayRacesData) {
+        guard !result.races.isEmpty,
+              let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first,
+              let data = try? JSONEncoder().encode(result) else { return }
+        let fileURL = cacheDir.appendingPathComponent("today_entries.json")
+        try? data.write(to: fileURL)
+    }
+
+    @discardableResult
+    private func applyCachedTodayEntries() -> Bool {
+        guard let cached = loadCachedTodayEntries(), !cached.races.isEmpty else { return false }
+        todayRaces = cached.races
+        todayDateString = formatDateString(cached.date)
+        todayDataWarning = nil
+        return true
+    }
+
+    @discardableResult
+    private func applyCachedTodayResults() -> Bool {
+        guard let cached = loadCachedTodayResults(), !cached.results.isEmpty else { return false }
+        todayResults = cached.results
+        todayResultsDateString = formatDateString(cached.date)
+        return true
+    }
+
+    private func loadCachedTodayResults() -> TodayResultsData? {
+        guard let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else { return nil }
+        let fileURL = cacheDir.appendingPathComponent("today_results.json")
+        guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
+        do {
+            let data = try Data(contentsOf: fileURL)
+            return try JSONDecoder().decode(TodayResultsData.self, from: data)
+        } catch {
+            return nil
+        }
     }
 
     private func loadJSON<T: Decodable>(name: String, type: T.Type) -> T? {
@@ -293,6 +387,14 @@ class DataLoader: ObservableObject {
         formatter.locale = Locale(identifier: "ja_JP")
         formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
         formatter.dateFormat = "yyyy年M月d日（E）"
+        return formatter.string(from: date)
+    }
+
+    private func formatRefreshTime(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "M/d HH:mm"
         return formatter.string(from: date)
     }
 
