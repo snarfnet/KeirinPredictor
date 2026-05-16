@@ -19,7 +19,7 @@ struct RaceListView: View {
                         VStack(alignment: .leading, spacing: 14) {
                             LiveHitRateCard(
                                 tracker: tracker,
-                                races: dataLoader.todayRaces,
+                                races: hitRateSourceRaces,
                                 results: dataLoader.todayResults
                             )
                             heroHeader
@@ -140,6 +140,15 @@ struct RaceListView: View {
 
     private var availableVenues: [String] {
         Array(Set(dataLoader.todayRaces.map(\.venue))).sorted()
+    }
+
+    private var hitRateSourceRaces: [TodayRace] {
+        var seen = Set<String>()
+        return (dataLoader.todayRaces + dataLoader.resultRaces).filter { race in
+            if seen.contains(race.race_id) { return false }
+            seen.insert(race.race_id)
+            return true
+        }
     }
 
     private var compactDateLabel: String {

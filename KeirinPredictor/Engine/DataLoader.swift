@@ -5,6 +5,7 @@ class DataLoader: ObservableObject {
     @Published var venueStats: [String: VenueStats] = [:]
     @Published var lineMatrix: [String: LineEntry] = [:]
     @Published var todayRaces: [TodayRace] = []
+    @Published var resultRaces: [TodayRace] = []
     @Published var todayResults: [TodayRaceResult] = []
     @Published var todayOdds: [String: RaceOdds] = [:] // race_id -> RaceOdds
     @Published var todayDateString: String = ""
@@ -101,7 +102,9 @@ class DataLoader: ObservableObject {
                         }
                         let racesForDays = result.races.filter { race in
                             let raceDay = race.date ?? displayDay
-                            return displayDays.contains(raceDay)
+                            let hasEntries = !race.entries.isEmpty
+                            let isFutureSchedule = raceDay > todayStr
+                            return displayDays.contains(raceDay) && (hasEntries || isFutureSchedule)
                         }
                         DispatchQueue.main.async {
                             self.todayRaces = racesForDays
@@ -222,12 +225,34 @@ class DataLoader: ObservableObject {
                     self.isResultsLoading = false
                     self.resultsLoadError = nil
                 }
+                if !result.results.isEmpty {
+                    self.fetchRemoteEntriesForResultDate(result.date)
+                }
             } catch {
                 print("Remote today_results decode error: \(error)")
                 DispatchQueue.main.async {
                     self.isResultsLoading = false
                     self.resultsLoadError = "結果データを読み込めませんでした"
                 }
+            }
+        }.resume()
+    }
+
+    private func fetchRemoteEntriesForResultDate(_ dateString: String) {
+        guard let url = URL(string: "\(Self.remoteBaseURL)/entries_\(dateString).json") else { return }
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data,
+                  let httpResp = response as? HTTPURLResponse,
+                  httpResp.statusCode == 200 else { return }
+            do {
+                let result = try JSONDecoder().decode(TodayRacesData.self, from: data)
+                DispatchQueue.main.async {
+                    self.resultRaces = result.races
+                }
+            } catch {
+                print("Remote entries_\(dateString) decode error: \(error)")
             }
         }.resume()
     }
