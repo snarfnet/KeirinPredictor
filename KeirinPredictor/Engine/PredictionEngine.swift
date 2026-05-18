@@ -346,6 +346,43 @@ struct PredictionEngine {
     }
 
     // MARK: - Race Intelligence
+    static func analyzeTodayRace(
+        _ race: TodayRace,
+        playerStats: [String: PlayerStats],
+        venueStats: [String: VenueStats],
+        lineMatrix: [String: LineEntry] = [:]
+    ) -> RaceIntelligence {
+        let entries = race.entries.map { entry in
+            RaceEntry(name: entry.name, waku: entry.umaban)
+        }
+        var entryScores: [String: Double] = [:]
+        var entryMetrics: [String: RaceEntryMetrics] = [:]
+        for entry in race.entries {
+            entryScores[entry.name] = entry.score
+            entryMetrics[entry.name] = entry.predictionMetrics
+        }
+
+        let predictions = predict(
+            entries: entries,
+            venue: race.venue,
+            playerStats: playerStats,
+            venueStats: venueStats,
+            entryScores: entryScores,
+            entryMetrics: entryMetrics,
+            lineMatrix: lineMatrix
+        )
+
+        return analyzeRace(
+            predictions: predictions,
+            entries: entries,
+            venue: race.venue,
+            playerStats: playerStats,
+            venueStats: venueStats,
+            entryMetrics: entryMetrics,
+            lineMatrix: lineMatrix
+        )
+    }
+
     static func analyzeRace(
         predictions: [PredictionResult],
         entries: [RaceEntry],

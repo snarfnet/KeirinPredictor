@@ -128,7 +128,7 @@ struct RaceListView: View {
                 MetricPillRow {
                     LightMetricPill(title: "開催場", value: "\(availableVenues.count)", tone: Color(hex: "#1E5BFF"))
                     LightMetricPill(title: "レース", value: "\(dataLoader.todayRaces.count)", tone: Color(hex: "#C79314"))
-                    LightMetricPill(title: "買う候補", value: "\(aiPicks.count)", tone: KeirinUI.red)
+                    LightMetricPill(title: "一押し", value: "\(aiPicks.count)", tone: KeirinUI.red)
                 }
             }
             .padding(.horizontal, 14)
@@ -172,64 +172,74 @@ struct RaceListView: View {
         let todayStr = todayString()
         let visibleRaces = dataLoader.todayRaces.filter {
             let d = $0.dateString.isEmpty ? todayStr : $0.dateString
-            return d >= todayStr
+            return d == todayStr
         }
 
-        let scored = visibleRaces.compactMap { race -> FocusRacePick? in
-            let sorted = race.entries.sorted { $0.score > $1.score }
-            guard sorted.count >= 3 else { return nil }
-            let top = sorted[0]
-            let secondGap = sorted[0].score - sorted[1].score
-            let top3Gap = sorted[0].score - sorted[2].score
-            let decision = homePlayDecision(top: top, secondGap: secondGap, top3Gap: top3Gap)
-            guard decision.actionLabel == "買う" else { return nil }
-            var reasons: [String] = [
-                decision.reason,
-                "上位3名の指数差 \(String(format: "%.1f", top3Gap))",
-                "軸候補 \(top.umaban)番 \(top.name)"
-            ]
-            if top.top3Rate > 0 {
-                reasons.append("3着内率 \(String(format: "%.1f", top.top3Rate))%")
-            } else if top.top2Rate > 0 {
-                reasons.append("連対率 \(String(format: "%.1f", top.top2Rate))%")
-            }
-            if secondGap >= 6 {
-                reasons.append("2番手との差 \(String(format: "%.1f", secondGap))")
-            }
-            return FocusRacePick(
+        let analyzed = visibleRaces.compactMap { race -> (race: TodayRace, analysis: RaceIntelligence, quality: Double, isBuy: Bool)? in
+            guard race.entries.count >= 3 else { return nil }
+            let analysis = PredictionEngine.analyzeTodayRace(
+                race,
+                playerStats: dataLoader.playerStats,
+                venueStats: dataLoader.venueStats,
+                lineMatrix: dataLoader.lineMatrix
+            )
+            return (
                 race: race,
-                score: top3Gap,
-                actionLabel: decision.actionLabel,
-                actionReason: decision.reason,
-                grade: decision.grade,
+                analysis: analysis,
+                quality: dailyPickQuality(analysis),
+                isBuy: analysis.actionLabel == "買う"
+            )
+        }
+        .sorted { lhs, rhs in
+            if lhs.isBuy != rhs.isBuy { return lhs.isBuy }
+            if lhs.quality == rhs.quality { return lhs.race.raceNo < rhs.race.raceNo }
+            return lhs.quality > rhs.quality
+        }
+
+        let targetCount = min(5, analyzed.count)
+        let buyCandidates = analyzed.filter { $0.isBuy }
+        let backupCandidates = analyzed.filter { !$0.isBuy }
+        let selected = buyCandidates.count >= targetCount
+            ? buyCandidates
+            : buyCandidates + Array(backupCandidates.prefix(targetCount - buyCandidates.count))
+
+        return selected.map { item in
+            let analysis = item.analysis
+            let label = item.isBuy ? "勝負" : (analysis.axisWinEstimate >= 30 ? "注目" : "押さえ")
+            let reason = item.isBuy ? analysis.actionReason : "勝負条件まであと少し。指数上位から候補に追加"
+            var reasons: [String] = [
+                reason,
+                "本命1着の目安 \(String(format: "%.0f", analysis.axisWinEstimate))%",
+                "軸候補 \(analysis.axisName)"
+            ]
+            reasons.append(contentsOf: analysis.notes.prefix(3))
+
+            return FocusRacePick(
+                race: item.race,
+                score: item.quality,
+                actionLabel: label,
+                actionReason: reason,
+                grade: item.isBuy ? analysis.playGrade : "候",
                 reasons: reasons
             )
         }
-
-        return scored
-            .sorted { lhs, rhs in
-                if lhs.score == rhs.score {
-                    return lhs.race.raceNo < rhs.race.raceNo
-                }
-                return lhs.score > rhs.score
-            }
+        .sorted { lhs, rhs in
+            if lhs.score == rhs.score { return lhs.race.raceNo < rhs.race.raceNo }
+            return lhs.score > rhs.score
+        }
     }
 
-    private func homePlayDecision(
-        top: TodayRaceEntry,
-        secondGap: Double,
-        top3Gap: Double
-    ) -> (actionLabel: String, reason: String, grade: String) {
-        let hasRate = top.top3Rate > 0
-        let top3RatePass = !hasRate || top.top3Rate >= 35
-
-        if top3Gap >= 12, secondGap >= 7, top.score >= 96, top3RatePass {
-            return ("買う", "軸がはっきりしているS候補", "S")
+    private func dailyPickQuality(_ analysis: RaceIntelligence) -> Double {
+        let gradeBonus: Double
+        switch analysis.playGrade {
+        case "S": gradeBonus = 24
+        case "A": gradeBonus = 16
+        case "B": gradeBonus = 8
+        default: gradeBonus = 0
         }
-        if top3Gap >= 8, secondGap >= 5, top.score >= 90, top3RatePass {
-            return ("買う", "買う条件を満たしたA候補", "A")
-        }
-        return ("見送り", "50%狙いでは買わない", "見")
+        let buyBonus = analysis.actionLabel == "買う" ? 40.0 : 0.0
+        let chaosPenalty = max(0, analysis.chaosScore - 55) * 1.4
+        return analysis.axisWinEstimate * 2.0 + gradeBonus + buyBonus - chaosPenalty
     }
 
     private var emptyState: some View {
@@ -814,7 +824,7 @@ struct RaceCardView: View {
         guard topEntries.count >= 3 else { return "待ち" }
         let top = topEntries[0]
         let ratePass = top.top3Rate <= 0 || top.top3Rate >= 35
-        return top3Gap >= 8 && scoreGap >= 5 && top.score >= 90 && ratePass ? "買う" : "見送り"
+        return top3Gap >= 8 && scoreGap >= 5 && top.score >= 90 && ratePass ? "注目" : "確認"
     }
 
     var body: some View {
@@ -864,10 +874,10 @@ struct RaceCardView: View {
                     Spacer()
                     Text(playAction)
                         .font(.system(size: 12, weight: .black, design: .rounded))
-                        .foregroundColor(playAction == "買う" ? .white : Color(hex: "#1E5BFF"))
+                        .foregroundColor(playAction == "注目" ? .white : Color(hex: "#1E5BFF"))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(playAction == "買う" ? KeirinUI.red : Color(hex: "#E7EEFF"))
+                        .background(playAction == "注目" ? KeirinUI.red : Color(hex: "#E7EEFF"))
                         .clipShape(Capsule())
                 }
             }
@@ -891,7 +901,7 @@ struct FocusRaceStrip: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("今日以降の買う候補")
+                Text("今日の一押し！")
                     .font(.system(size: 21, weight: .black, design: .rounded))
                     .foregroundColor(Color(hex: "#151515"))
                 Spacer()
