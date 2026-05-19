@@ -90,11 +90,11 @@ struct RaceListView: View {
 
     private var heroHeader: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Image("HeroVisual")
+            Image("HeroVisualV2")
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
-                .background(Color(hex: "#FBFAF7"))
+                .background(.white)
 
             VStack(alignment: .leading, spacing: 9) {
                 HStack(spacing: 7) {
@@ -951,12 +951,14 @@ struct FocusRaceCard: View {
         HStack(alignment: .top, spacing: 10) {
             VStack(spacing: -1) {
                 Text("\(race.raceNo)")
-                    .font(.system(size: 26, weight: .black, design: .monospaced))
+                    .font(.system(size: 34, weight: .black, design: .monospaced))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
                 Text("R")
-                    .font(.system(size: 9, weight: .black, design: .monospaced))
+                    .font(.system(size: 11, weight: .black, design: .monospaced))
             }
             .foregroundColor(.white)
-            .frame(width: 46, height: 52)
+            .frame(width: 58, height: 64)
             .background(KeirinUI.red)
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
@@ -1017,11 +1019,12 @@ struct FocusRaceCard: View {
 
                 HStack(spacing: 6) {
                     ForEach(Array(sortedEntries.prefix(3).enumerated()), id: \.offset) { index, entry in
-                        HStack(spacing: 4) {
-                            LaneBadge(number: entry.umaban, size: 20)
+                        HStack(spacing: 5) {
+                            LaneBadge(number: entry.umaban, size: 24)
                             Text(index == 0 ? "軸" : "\(index + 1)")
-                                .font(.system(size: 9, weight: .black, design: .rounded))
+                                .font(.system(size: 14, weight: .black, design: .rounded))
                                 .foregroundColor(index == 0 ? Color(hex: "#B68000") : Color(hex: "#81786D"))
+                                .frame(minWidth: 18, minHeight: 24)
                         }
                     }
                     Spacer()
