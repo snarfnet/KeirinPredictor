@@ -539,6 +539,33 @@ struct DayGroup {
 struct VenueGroup {
     let venue: String
     let races: [TodayRace]
+
+    var scheduleLabel: String {
+        if races.contains(where: { $0.scheduleLabel == "ミッドナイト" }) { return "ミッドナイト" }
+        if races.contains(where: { $0.scheduleLabel == "ナイター" }) { return "ナイター" }
+        if races.contains(where: { $0.scheduleLabel == "デイ" }) { return "デイ" }
+        return ""
+    }
+
+    var scheduleTone: String {
+        switch scheduleLabel {
+        case "ミッドナイト": return "midnight"
+        case "ナイター": return "night"
+        case "デイ": return "day"
+        default: return ""
+        }
+    }
+}
+
+struct RaceScheduleGroup: Identifiable {
+    let id: String
+    let label: String
+    let tone: String
+    let venues: [VenueGroup]
+
+    var totalRaces: Int {
+        venues.reduce(0) { $0 + $1.races.count }
+    }
 }
 
 struct FocusRacePick: Identifiable {
@@ -554,6 +581,26 @@ struct FocusRacePick: Identifiable {
 struct DaySectionView: View {
     let group: DayGroup
     var homeVenue: String = ""
+
+    private var scheduleGroups: [RaceScheduleGroup] {
+        let order = [
+            ("ミッドナイト", "midnight"),
+            ("ナイター", "night"),
+            ("デイ", "day"),
+            ("", "")
+        ]
+
+        return order.compactMap { label, tone in
+            let venues = group.venues.filter { $0.scheduleLabel == label }
+            guard !venues.isEmpty else { return nil }
+            return RaceScheduleGroup(
+                id: label.isEmpty ? "other" : label,
+                label: label.isEmpty ? "時間未定" : label,
+                tone: tone,
+                venues: venues
+            )
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -578,13 +625,27 @@ struct DaySectionView: View {
                     .clipShape(Capsule())
             }
 
-            VStack(spacing: 8) {
-                ForEach(group.venues, id: \.venue) { venueGroup in
-                    VenueSectionView(
-                        venue: venueGroup.venue,
-                        races: venueGroup.races,
-                        isHome: venueGroup.venue == homeVenue
-                    )
+            VStack(spacing: 10) {
+                ForEach(scheduleGroups) { scheduleGroup in
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 8) {
+                            ScheduleBadge(label: scheduleGroup.label, time: "", tone: scheduleGroup.tone)
+                            Text("\(scheduleGroup.venues.count)場 \(scheduleGroup.totalRaces)R")
+                                .font(.system(size: 12, weight: .black, design: .rounded))
+                                .foregroundColor(Color(hex: "#5D5344"))
+                            Spacer()
+                        }
+
+                        VStack(spacing: 8) {
+                            ForEach(scheduleGroup.venues, id: \.venue) { venueGroup in
+                                VenueSectionView(
+                                    venue: venueGroup.venue,
+                                    races: venueGroup.races,
+                                    isHome: venueGroup.venue == homeVenue
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
