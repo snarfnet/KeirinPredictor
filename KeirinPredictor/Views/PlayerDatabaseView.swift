@@ -25,20 +25,25 @@ struct PlayerDatabaseView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#0A0E27").ignoresSafeArea()
+                KeirinUI.lightBackground.ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     // Search bar
                     HStack {
                         Image(systemName: "magnifyingglass")
-                            .foregroundColor(Color(hex: "#FFD700").opacity(0.6))
+                            .foregroundColor(KeirinUI.red)
                         TextField("選手名を検索...", text: $searchText)
-                            .font(.system(size: 14, design: .monospaced))
-                            .foregroundColor(.white)
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .foregroundColor(Color(hex: "#111111"))
                     }
-                    .padding(10)
-                    .background(Color.white.opacity(0.07))
-                    .cornerRadius(10)
+                    .padding(12)
+                    .background(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(Color.black.opacity(0.10), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 6)
                     .padding(.horizontal)
                     .padding(.top, 8)
 
@@ -55,8 +60,8 @@ struct PlayerDatabaseView: View {
                     // Count
                     HStack {
                         Text("\(filteredPlayers.count)選手表示")
-                            .font(.system(size: 11, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.4))
+                            .font(.system(size: 12, weight: .black, design: .rounded))
+                            .foregroundColor(Color(hex: "#5D5344"))
                         Spacer()
                     }
                     .padding(.horizontal)
@@ -84,11 +89,14 @@ struct PlayerDatabaseView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("PLAYER DATABASE")
-                        .font(.system(size: 16, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                    Text("選手")
+                        .font(.system(size: 17, weight: .black, design: .rounded))
+                        .foregroundColor(Color(hex: "#111111"))
                 }
             }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
         }
     }
 }
@@ -115,7 +123,7 @@ struct PlayerCardView: View {
                 HStack(spacing: 6) {
                     Text(name)
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     Text(stat.style)
@@ -124,7 +132,7 @@ struct PlayerCardView: View {
                 }
                 Text("\(stat.district) \(stat.prefecture)")
                     .font(.system(size: 11))
-                    .foregroundColor(.white.opacity(0.45))
+                    .foregroundColor(Color(hex: "#5D5344"))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
@@ -136,22 +144,28 @@ struct PlayerCardView: View {
             VStack(alignment: .trailing, spacing: 3) {
                 Text("勝率 \(String(format: "%.1f", stat.winRate * 100))%")
                     .font(.system(size: 12, weight: .bold, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
+                    .foregroundColor(Color(hex: "#B68000"))
                     .lineLimit(1)
                     .minimumScaleFactor(0.65)
                 Text("\(stat.races)走")
                     .font(.system(size: 11, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(Color(hex: "#5D5344"))
                     .lineLimit(1)
                     .minimumScaleFactor(0.65)
             }
         }
         .padding(10)
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(10)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(classColor)
+                .frame(width: 4)
+                .padding(.vertical, 8)
+        }
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(classColor.opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
         )
     }
 
@@ -179,15 +193,19 @@ struct FilterChip: View {
             HStack(spacing: 4) {
                 Text(selected.isEmpty ? title : selected)
                     .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                    .foregroundColor(selected.isEmpty ? .white.opacity(0.6) : .black)
+                    .foregroundColor(selected.isEmpty ? Color(hex: "#111111").opacity(0.66) : .white)
                 Image(systemName: "chevron.down")
                     .font(.system(size: 10))
-                    .foregroundColor(selected.isEmpty ? .white.opacity(0.6) : .black)
+                    .foregroundColor(selected.isEmpty ? Color(hex: "#111111").opacity(0.66) : .white)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
-            .background(selected.isEmpty ? Color.white.opacity(0.08) : Color(hex: "#FFD700"))
-            .cornerRadius(20)
+            .background(selected.isEmpty ? .white : Color(hex: "#111111"))
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(selected.isEmpty ? Color.black.opacity(0.10) : KeirinUI.gold.opacity(0.34), lineWidth: 1)
+            )
         }
     }
 }
@@ -199,28 +217,29 @@ struct PlayerDetailView: View {
 
     var body: some View {
         ZStack {
-            Color(hex: "#0A0E27").ignoresSafeArea()
+            KeirinUI.lightBackground.ignoresSafeArea()
 
             CompactAwareScroll {
                 VStack(spacing: 20) {
                     // Header
-                    VStack(spacing: 8) {
+                    RacingPanel(accent: KeirinUI.red) {
+                        VStack(alignment: .leading, spacing: 8) {
                         Text(name)
                             .font(.system(size: 24, weight: .black))
-                            .foregroundColor(.white)
+                                .foregroundColor(Color(hex: "#111111"))
                         if let s = stat {
                             HStack(spacing: 8) {
                                 ClassBadge(classRank: s.classRank)
                                 Text(s.district)
                                     .font(.system(size: 13))
-                                    .foregroundColor(.white.opacity(0.6))
+                                        .foregroundColor(Color(hex: "#5D5344"))
                                 Text(s.style)
                                     .font(.system(size: 13))
                                     .foregroundColor(styleColor(s.style))
                             }
                         }
+                        }
                     }
-                    .padding(.top, 24)
 
                     if let s = stat {
                         // Race stats
@@ -233,10 +252,11 @@ struct PlayerDetailView: View {
 
                         // Recent ranks
                         if !s.recentRanks.isEmpty {
+                            RacingPanel(accent: KeirinUI.gold) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("直近着順")
                                     .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                                    .foregroundColor(Color(hex: "#FFD700"))
+                                        .foregroundColor(Color(hex: "#B68000"))
                                 HStack(spacing: 6) {
                                     ForEach(Array(s.recentRanks.prefix(10).enumerated()), id: \.offset) { _, rank in
                                         ZStack {
@@ -250,36 +270,32 @@ struct PlayerDetailView: View {
                                     }
                                 }
                             }
-                            .padding()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(12)
+                            }
                         }
 
                         // Venue stats top 5
                         if !s.venueStats.isEmpty {
+                            RacingPanel(accent: KeirinUI.red) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("競輪場別成績 TOP5")
                                     .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                                    .foregroundColor(Color(hex: "#FFD700"))
+                                        .foregroundColor(KeirinUI.red)
                                 ForEach(s.venueStats.sorted { $0.value.winRate > $1.value.winRate }.prefix(5), id: \.key) { (venue, vr) in
                                     HStack {
                                         Text(venue)
                                             .font(.system(size: 13))
-                                            .foregroundColor(.white)
+                                                .foregroundColor(Color(hex: "#111111"))
                                         Spacer()
                                         Text("\(vr.wins)/\(vr.races)")
                                             .font(.system(size: 12, design: .monospaced))
-                                            .foregroundColor(.white.opacity(0.6))
+                                                .foregroundColor(Color(hex: "#5D5344"))
                                         Text("\(String(format: "%.1f", vr.winRate * 100))%")
                                             .font(.system(size: 13, weight: .bold, design: .monospaced))
-                                            .foregroundColor(Color(hex: "#FFD700"))
+                                                .foregroundColor(Color(hex: "#B68000"))
                                     }
                                 }
                             }
-                            .padding()
-                            .background(Color.white.opacity(0.05))
-                            .cornerRadius(12)
+                            }
                         }
                     }
 
@@ -298,15 +314,19 @@ struct StatBox: View {
         VStack(spacing: 4) {
             Text(value)
                 .font(.system(size: 16, weight: .black, design: .monospaced))
-                .foregroundColor(.white)
+                .foregroundColor(Color(hex: "#111111"))
             Text(label)
                 .font(.system(size: 10))
-                .foregroundColor(.white.opacity(0.4))
+                .foregroundColor(Color(hex: "#5D5344"))
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(8)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
+        )
     }
 }
 

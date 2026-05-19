@@ -282,6 +282,59 @@ struct RacingPrimaryButtonLabel: View {
     }
 }
 
+struct RacingMetricBox: View {
+    let title: String
+    let value: String
+    var color: Color = KeirinUI.red
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.system(size: 10, weight: .black, design: .rounded))
+                .foregroundColor(Color(hex: "#111111").opacity(0.58))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(value)
+                .font(.system(size: 18, weight: .black, design: .monospaced))
+                .foregroundColor(color)
+                .lineLimit(1)
+                .minimumScaleFactor(0.62)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 9)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(color)
+                .frame(height: 3)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
+        )
+    }
+}
+
+struct RacingIconButtonLabel: View {
+    let icon: String
+    var color: Color = Color(hex: "#111111")
+
+    var body: some View {
+        Image(systemName: icon)
+            .font(.system(size: 14, weight: .black))
+            .foregroundColor(.white)
+            .frame(width: 34, height: 34)
+            .background(color)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .stroke(KeirinUI.gold.opacity(0.32), lineWidth: 1)
+            )
+    }
+}
+
 struct LaneBadge: View {
     let number: Int
     var size: CGFloat = 30

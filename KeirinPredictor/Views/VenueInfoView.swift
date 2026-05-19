@@ -11,7 +11,7 @@ struct VenueInfoView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#0A0E27").ignoresSafeArea()
+                KeirinUI.lightBackground.ignoresSafeArea()
 
                 if let venue = selectedVenue, let stats = dataLoader.venueStats[venue] {
                     VenueDetailView(name: venue, stats: stats, onBack: { selectedVenue = nil })
@@ -23,11 +23,14 @@ struct VenueInfoView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("VENUE INFO")
-                        .font(.system(size: 16, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                    Text("競輪場")
+                        .font(.system(size: 17, weight: .black, design: .rounded))
+                        .foregroundColor(Color(hex: "#111111"))
                 }
             }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
         }
     }
 
@@ -51,7 +54,7 @@ struct VenueCardTile: View {
         VStack(alignment: .leading, spacing: 6) {
             Text(name)
                 .font(.system(size: 15, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(Color(hex: "#111111"))
             HStack {
                 Image(systemName: "arrow.triangle.2.circlepath")
                     .font(.system(size: 10))
@@ -65,12 +68,18 @@ struct VenueCardTile: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(12)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(bankColor(stats.bank))
+                .frame(height: 3)
+        }
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(bankColor(stats.bank).opacity(0.3), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
         )
+        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 6)
     }
 }
 
@@ -104,7 +113,7 @@ struct KimariteMiniBars: View {
                     .frame(height: 5)
                     Text("\(Int(val * 100))%")
                         .font(.system(size: 9, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(Color(hex: "#5D5344"))
                         .frame(width: 28, alignment: .trailing)
                 }
             }
@@ -136,70 +145,74 @@ struct VenueDetailView: View {
                             Image(systemName: "chevron.left")
                             Text("戻る")
                         }
-                        .font(.system(size: 13, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                        .font(.system(size: 13, weight: .black, design: .rounded))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 11)
+                        .padding(.vertical, 8)
+                        .background(Color(hex: "#111111"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     }
                     Spacer()
                 }
 
                 // Venue name + bank
-                VStack(spacing: 6) {
+                RacingPanel(accent: bankColor(stats.bank)) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(name)
                         .font(.system(size: 28, weight: .black))
-                        .foregroundColor(.white)
+                            .foregroundColor(Color(hex: "#111111"))
                     AdaptiveStack(horizontalSpacing: 16, verticalSpacing: 6) {
                         Label("\(stats.bank)m バンク", systemImage: "arrow.triangle.2.circlepath")
                             .foregroundColor(bankColor(stats.bank))
                         Label("\(stats.races)レース", systemImage: "flag.checkered")
-                            .foregroundColor(.white.opacity(0.5))
+                                .foregroundColor(Color(hex: "#5D5344"))
                     }
                     .font(.system(size: 13, design: .monospaced))
 
                     // Bank type label
                     Text(bankTypeLabel(stats.bank))
                         .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                        .foregroundColor(.white)
+                            .foregroundColor(.white)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 4)
-                        .background(bankColor(stats.bank).opacity(0.2))
-                        .cornerRadius(20)
+                            .background(Color(hex: "#111111"))
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                }
                 }
 
                 // Kimarite distribution chart
+                RacingPanel(accent: KeirinUI.gold) {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("決まり手分布")
                         .font(.system(size: 13, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                            .foregroundColor(Color(hex: "#B68000"))
 
                     ForEach(stats.km.sorted(by: { $0.value > $1.value }), id: \.key) { (key, val) in
                         KimariteBar(name: key, ratio: val)
                     }
                 }
-                .padding()
-                .background(Color.white.opacity(0.05))
-                .cornerRadius(12)
+                }
 
                 // Strategy hints
+                RacingPanel(accent: KeirinUI.red) {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("バンク攻略ヒント")
                         .font(.system(size: 13, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                            .foregroundColor(KeirinUI.red)
 
                     ForEach(bankHints(bank: stats.bank, km: stats.km), id: \.self) { hint in
                         HStack(alignment: .top, spacing: 8) {
                             Image(systemName: "bolt.fill")
                                 .font(.system(size: 10))
-                                .foregroundColor(Color(hex: "#FFD700"))
+                                    .foregroundColor(KeirinUI.red)
                                 .padding(.top, 2)
                             Text(hint)
                                 .font(.system(size: 13))
-                                .foregroundColor(.white.opacity(0.8))
+                                    .foregroundColor(Color(hex: "#111111").opacity(0.80))
                         }
                     }
                 }
-                .padding()
-                .background(Color.white.opacity(0.05))
-                .cornerRadius(12)
+                }
 
             }
         }
@@ -247,13 +260,13 @@ struct KimariteBar: View {
         HStack(spacing: 10) {
             Text(name)
                 .font(.system(size: 13, weight: .semibold, design: .monospaced))
-                .foregroundColor(colors[name] ?? .white)
+                .foregroundColor(colors[name] ?? Color(hex: "#111111"))
                 .frame(width: 36, alignment: .leading)
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(Color.white.opacity(0.08))
+                        .fill(Color.black.opacity(0.08))
                     Capsule()
                         .fill(colors[name] ?? Color.white)
                         .frame(width: geo.size.width * CGFloat(ratio))
@@ -263,7 +276,7 @@ struct KimariteBar: View {
 
             Text("\(Int(ratio * 100))%")
                 .font(.system(size: 13, weight: .bold, design: .monospaced))
-                .foregroundColor(.white)
+                .foregroundColor(Color(hex: "#111111"))
                 .frame(width: 36, alignment: .trailing)
         }
     }

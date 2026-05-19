@@ -6,7 +6,7 @@ struct TrackingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinStageBackground()
+                KeirinUI.lightBackground.ignoresSafeArea()
 
                 CompactAwareScroll {
                     VStack(spacing: 16) {
@@ -21,76 +21,48 @@ struct TrackingView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("TRACKING")
-                        .font(.system(size: 16, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                    Text("成績")
+                        .font(.system(size: 17, weight: .black, design: .rounded))
+                        .foregroundColor(Color(hex: "#111111"))
                 }
             }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
+            .toolbarColorScheme(.light, for: .navigationBar)
         }
     }
 
     private var performanceHeader: some View {
-        GlassPanel(cornerRadius: 20, borderColor: KeirinUI.cyan.opacity(0.24)) {
+        RacingPanel(accent: KeirinUI.red) {
             AdaptiveStack(horizontalSpacing: 14, verticalSpacing: 12) {
                 ZStack {
-                    Circle()
-                        .stroke(KeirinUI.cyan.opacity(0.25), lineWidth: 8)
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [Color(hex: "#111111"), KeirinUI.red],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
                         .frame(width: 58, height: 58)
                     Image(systemName: "chart.xyaxis.line")
                         .font(.system(size: 24, weight: .black))
-                        .foregroundColor(KeirinUI.gold)
+                        .foregroundColor(.white)
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("PERFORMANCE")
                         .font(.system(size: 11, weight: .black, design: .monospaced))
-                        .foregroundColor(KeirinUI.cyan)
+                        .foregroundColor(KeirinUI.red)
                     Text("予測成績")
                         .font(.system(size: 20, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                     Text(tracker.totalPredictions == 0 ? "まだ予測はありません" : "\(tracker.totalPredictions)レースを解析済み")
                         .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundColor(.white.opacity(0.58))
+                        .foregroundColor(Color(hex: "#5D5344"))
                 }
             }
         }
-    }
-
-    private var legacyPerformanceHeader: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "chart.xyaxis.line")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 50, height: 50)
-                .clipShape(Circle())
-                .overlay(Circle().stroke(Color(hex: "#FFD700").opacity(0.5), lineWidth: 2))
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text("鉄脚博士の成績")
-                    .font(.system(size: 18, weight: .black, design: .monospaced))
-                    .foregroundColor(Color(hex: "#FFD700"))
-                Text(tracker.totalPredictions == 0 ? "予測を始めよう" : "予測\(tracker.totalPredictions)レース分析済み")
-                    .font(.system(size: 13, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.6))
-            }
-            Spacer()
-        }
-        .padding(14)
-        .background(
-            ZStack {
-                Image("HeaderBg")
-                    .resizable()
-                    .scaledToFill()
-                    .opacity(0.2)
-                Color.white.opacity(0.03)
-            }
-        )
-        .clipped()
-        .cornerRadius(12)
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(hex: "#FFD700").opacity(0.3), lineWidth: 1)
-        )
     }
 
     private var statsCards: some View {
@@ -131,16 +103,16 @@ struct TrackingView: View {
     }
 
     private var calibrationCard: some View {
-        GlassPanel(cornerRadius: 18, borderColor: calibrationColor.opacity(0.32)) {
+        RacingPanel(accent: calibrationColor) {
             VStack(alignment: .leading, spacing: 12) {
                 AdaptiveStack(horizontalSpacing: 12, verticalSpacing: 10) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("30% WALL")
                             .font(.system(size: 11, weight: .black, design: .monospaced))
-                            .foregroundColor(KeirinUI.cyan)
+                            .foregroundColor(calibrationColor)
                         Text(tracker.actionTuningAdvice)
                             .font(.system(size: 18, weight: .black, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(hex: "#111111"))
                             .lineLimit(2)
                     }
                     VStack(alignment: .trailing, spacing: 2) {
@@ -149,16 +121,16 @@ struct TrackingView: View {
                             .foregroundColor(calibrationColor)
                         Text("30%との差")
                             .font(.system(size: 10, weight: .black, design: .rounded))
-                            .foregroundColor(.white.opacity(0.44))
+                            .foregroundColor(Color(hex: "#111111").opacity(0.44))
                     }
                 }
 
                 ProbabilityBar(value: min(max(tracker.actionHitRate / 30, 0), 1), color: calibrationColor)
 
                 MetricPillRow {
-                    MetricPill(title: "勝負数", value: "\(tracker.actionPredictionCount)", color: KeirinUI.gold)
-                    MetricPill(title: "状態", value: tracker.actionSampleLabel, color: KeirinUI.cyan)
-                    MetricPill(title: "目標", value: "30%", color: KeirinUI.green)
+                    RacingMetricBox(title: "勝負数", value: "\(tracker.actionPredictionCount)", color: Color(hex: "#B68000"))
+                    RacingMetricBox(title: "状態", value: tracker.actionSampleLabel, color: KeirinUI.red)
+                    RacingMetricBox(title: "目標", value: "30%", color: KeirinUI.green)
                 }
             }
         }
@@ -173,8 +145,8 @@ struct TrackingView: View {
     private var recentHistory: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("直近の予測")
-                .font(.system(size: 16, weight: .black, design: .monospaced))
-                .foregroundColor(Color(hex: "#FFD700"))
+                .font(.system(size: 18, weight: .black, design: .rounded))
+                .foregroundColor(Color(hex: "#111111"))
 
             if tracker.recentRecords.isEmpty {
                 VStack(spacing: 12) {
@@ -184,8 +156,8 @@ struct TrackingView: View {
                         .frame(width: 120, height: 120)
                         .opacity(0.5)
                     Text("レースを予測すると記録されます")
-                        .font(.system(size: 13, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.4))
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
+                        .foregroundColor(Color(hex: "#5D5344"))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 20)
@@ -213,19 +185,28 @@ struct StatCard: View {
                 .minimumScaleFactor(0.68)
             Text(label)
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.white.opacity(0.5))
+                .foregroundColor(Color(hex: "#111111").opacity(0.58))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
             Text(sub)
                 .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(.white.opacity(0.3))
+                .foregroundColor(Color(hex: "#111111").opacity(0.42))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(Color.white.opacity(0.05))
-        .cornerRadius(10)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(color)
+                .frame(height: 3)
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
+        )
     }
 }
 
@@ -262,18 +243,18 @@ struct RecordRow: View {
                 HStack(spacing: 6) {
                     Text(record.venue)
                         .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                     Text("\(record.raceNo)R")
                         .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(Color(hex: "#FFD700"))
+                        .foregroundColor(Color(hex: "#B68000"))
                 }
                 Text("予: \(record.predictedTop3.map { "\($0)" }.joined(separator: "-"))")
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(Color(hex: "#5D5344"))
                 if let grade = record.playGrade {
                     Text("勝負 \(grade) / 軸目安 \(String(format: "%.0f", record.axisWinEstimate ?? 0))%")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(grade == "S" || grade == "A" ? KeirinUI.green : .white.opacity(0.38))
+                        .foregroundColor(grade == "S" || grade == "A" ? KeirinUI.green : Color(hex: "#5D5344"))
                 }
             }
 
@@ -286,12 +267,16 @@ struct RecordRow: View {
             } else if !record.actualTop3.isEmpty {
                 Text("不的中")
                     .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.3))
+                    .foregroundColor(Color(hex: "#5D5344"))
             }
         }
         .padding(10)
-        .background(Color.white.opacity(0.03))
-        .cornerRadius(8)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+        )
     }
 
     private var resultColor: Color {

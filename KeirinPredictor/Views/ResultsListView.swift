@@ -22,17 +22,17 @@ struct ResultsListView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("RESULTS")
-                        .font(.system(size: 18, weight: .black, design: .monospaced))
-                        .foregroundColor(KeirinUI.gold)
+                    Text("結果")
+                        .font(.system(size: 17, weight: .black, design: .rounded))
+                        .foregroundColor(Color(hex: "#111111"))
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         dataLoader.fetchRemoteTodayResults()
                     } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundColor(KeirinUI.gold)
+                        RacingIconButtonLabel(icon: "arrow.clockwise", color: KeirinUI.red)
                     }
+                    .buttonStyle(.plain)
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
@@ -47,19 +47,19 @@ struct ResultsListView: View {
     }
 
     private var resultsHeader: some View {
-        GlassPanel(cornerRadius: 22, borderColor: KeirinUI.gold.opacity(0.32)) {
+        RacingPanel(accent: KeirinUI.red) {
             VStack(alignment: .leading, spacing: 13) {
                 AdaptiveStack(horizontalSpacing: 12, verticalSpacing: 10) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("RACE RESULTS")
                             .font(.system(size: 11, weight: .black, design: .monospaced))
-                            .foregroundColor(KeirinUI.cyan)
+                            .foregroundColor(KeirinUI.red)
                         Text("レース結果")
                             .font(.system(size: 24, weight: .black, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(hex: "#111111"))
                         Text("データ日 \(resultDateText)")
                             .font(.system(size: 12, weight: .bold, design: .rounded))
-                            .foregroundColor(KeirinUI.gold.opacity(0.86))
+                            .foregroundColor(Color(hex: "#5D5344"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
@@ -67,18 +67,27 @@ struct ResultsListView: View {
                     VStack(alignment: .trailing, spacing: 2) {
                         Text("\(dataLoader.todayResults.count)")
                             .font(.system(size: 34, weight: .black, design: .monospaced))
-                            .foregroundColor(KeirinUI.gold)
+                            .foregroundColor(.white)
+                            .frame(width: 72, height: 54)
+                            .background(
+                                LinearGradient(
+                                    colors: [Color(hex: "#111111"), KeirinUI.red],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         Text("CONFIRMED")
                             .font(.system(size: 10, weight: .black, design: .monospaced))
-                            .foregroundColor(.white.opacity(0.45))
+                            .foregroundColor(Color(hex: "#111111").opacity(0.45))
                     }
                 }
 
                 MetricPillRow {
-                    MetricPill(title: "DATE", value: shortDateText, color: KeirinUI.green)
-                    MetricPill(title: "RESULT", value: "\(dataLoader.todayResults.count)R", color: KeirinUI.gold)
-                    MetricPill(title: "STATUS", value: statusLabel, color: statusColor)
-                    MetricPill(title: "BUILD", value: appBuildNumber, color: KeirinUI.cyan)
+                    RacingMetricBox(title: "DATE", value: shortDateText, color: Color(hex: "#B68000"))
+                    RacingMetricBox(title: "RESULT", value: "\(dataLoader.todayResults.count)R", color: KeirinUI.red)
+                    RacingMetricBox(title: "STATUS", value: statusLabel, color: statusColor)
+                    RacingMetricBox(title: "BUILD", value: appBuildNumber, color: Color(hex: "#111111"))
                 }
             }
         }
@@ -163,24 +172,24 @@ struct ResultsStatusCard: View {
     let color: Color
 
     var body: some View {
-        GlassPanel(cornerRadius: 20, borderColor: color.opacity(0.28)) {
+        RacingPanel(accent: color) {
             AdaptiveStack(horizontalSpacing: 12, verticalSpacing: 10) {
                 ZStack {
-                    Circle()
-                        .fill(color.opacity(0.13))
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(color)
                         .frame(width: 52, height: 52)
                     Image(systemName: icon)
                         .font(.system(size: 22, weight: .black))
-                        .foregroundColor(color)
+                        .foregroundColor(.white)
                 }
 
                 VStack(alignment: .leading, spacing: 5) {
                     Text(title)
                         .font(.system(size: 18, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                     Text(message)
                         .font(.system(size: 13, weight: .bold, design: .rounded))
-                        .foregroundColor(.white.opacity(0.58))
+                        .foregroundColor(Color(hex: "#5D5344"))
                         .lineLimit(3)
                 }
             }
@@ -198,18 +207,22 @@ struct VenueResultSection: View {
     let results: [TodayRaceResult]
 
     var body: some View {
-        GlassPanel(cornerRadius: 18, borderColor: KeirinUI.gold.opacity(0.18)) {
+        RacingPanel(accent: KeirinUI.gold) {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Image(systemName: "mappin.circle.fill")
-                        .foregroundColor(KeirinUI.gold)
+                        .foregroundColor(Color(hex: "#B68000"))
                     Text(venue)
                         .font(.system(size: 17, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                     Spacer()
                     Text("\(results.count)R")
                         .font(.system(size: 13, weight: .black, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.56))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 5)
+                        .background(Color(hex: "#111111"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
 
                 ForEach(results) { result in
@@ -236,7 +249,7 @@ struct RaceResultRow: View {
                 HStack(spacing: 8) {
                     Text("\(i + 1)着")
                         .font(.system(size: 13, weight: .bold, design: .monospaced))
-                        .foregroundColor(i == 0 ? KeirinUI.gold : .white.opacity(0.6))
+                        .foregroundColor(i == 0 ? Color(hex: "#B68000") : Color(hex: "#5D5344"))
                         .frame(width: 34)
 
                     Text("\(finisher.umaban)")
@@ -248,7 +261,7 @@ struct RaceResultRow: View {
 
                     Text(finisher.name)
                         .font(.system(size: 15, weight: i == 0 ? .bold : .regular, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
@@ -265,32 +278,40 @@ struct RaceResultRow: View {
             }
 
             if !result.paybacks.isEmpty {
-                Divider().background(Color.white.opacity(0.1))
+                Divider().background(Color.black.opacity(0.1))
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 84), spacing: 8)], alignment: .leading, spacing: 6) {
                     ForEach(Array(result.paybacks.enumerated()), id: \.offset) { _, pb in
                         VStack(spacing: 2) {
                             Text(pb.type)
                                 .font(.system(size: 11, weight: .bold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.5))
+                                .foregroundColor(Color(hex: "#5D5344"))
                             Text(pb.combination)
                                 .font(.system(size: 11, weight: .bold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.7))
+                                .foregroundColor(Color(hex: "#111111").opacity(0.70))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             Text("\(pb.payout)円")
                                 .font(.system(size: 13, weight: .black, design: .monospaced))
-                                .foregroundColor(pb.payout >= 10000 ? KeirinUI.red : KeirinUI.gold)
+                                .foregroundColor(pb.payout >= 10000 ? KeirinUI.red : Color(hex: "#B68000"))
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 7)
-                        .background(Color.white.opacity(0.04))
+                        .background(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                        )
                     }
                 }
             }
         }
         .padding(10)
-        .background(Color.white.opacity(0.035))
+        .background(Color(hex: "#F7F6F1"))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+        )
     }
 }
