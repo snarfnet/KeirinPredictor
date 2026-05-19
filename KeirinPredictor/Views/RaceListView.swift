@@ -64,7 +64,15 @@ struct RaceListView: View {
                         showVenuePicker = true
                     } label: {
                         Image(systemName: homeVenue.isEmpty ? "mappin.circle" : "house.and.flag.fill")
-                            .foregroundColor(homeVenue.isEmpty ? Color(hex: "#1E5BFF") : Color(hex: "#B68000"))
+                            .font(.system(size: 14, weight: .black))
+                            .foregroundColor(.white)
+                            .frame(width: 34, height: 34)
+                            .background(homeVenue.isEmpty ? Color(hex: "#111111") : KeirinUI.red)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .stroke(KeirinUI.gold.opacity(0.34), lineWidth: 1)
+                            )
                     }
                 }
             }
@@ -592,21 +600,27 @@ struct LightMetricPill: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 10, weight: .black, design: .rounded))
-                .foregroundColor(Color(hex: "#766D61"))
+                .foregroundColor(Color(hex: "#111111").opacity(0.62))
             Text(value)
-                .font(.system(size: 16, weight: .black, design: .monospaced))
+                .font(.system(size: 20, weight: .black, design: .monospaced))
                 .foregroundColor(tone)
                 .lineLimit(1)
                 .minimumScaleFactor(0.65)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 7)
-        .background(.white.opacity(0.92))
+        .padding(.horizontal, 11)
+        .padding(.vertical, 9)
+        .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(tone)
+                .frame(height: 3)
+        }
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
         )
+        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 5)
     }
 }
 
@@ -623,10 +637,13 @@ struct DataStatusRow: View {
     }
 
     var body: some View {
-        HStack(spacing: 9) {
-            Circle()
-                .fill(tone)
-                .frame(width: 9, height: 9)
+        HStack(spacing: 10) {
+            Image(systemName: iconName)
+                .font(.system(size: 14, weight: .black))
+                .foregroundColor(.white)
+                .frame(width: 30, height: 30)
+                .background(tone)
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -643,18 +660,20 @@ struct DataStatusRow: View {
 
             Spacer(minLength: 6)
 
-            Image(systemName: iconName)
-                .font(.system(size: 15, weight: .black))
-                .foregroundColor(tone)
+            Rectangle()
+                .fill(tone)
+                .frame(width: 4, height: 34)
+                .clipShape(Capsule())
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(Color(hex: "#F7F6F1"))
+        .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(tone.opacity(0.22), lineWidth: 1)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
         )
+        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 6)
     }
 
     private var iconName: String {
@@ -745,7 +764,10 @@ struct VenueSectionView: View {
                 HStack(spacing: 10) {
                     Image(systemName: isHome ? "house.and.flag.fill" : "building.columns.fill")
                         .font(.system(size: 16, weight: .black))
-                        .foregroundColor(isHome ? Color(hex: "#B68000") : Color(hex: "#1E5BFF"))
+                        .foregroundColor(.white)
+                        .frame(width: 34, height: 34)
+                        .background(isHome ? KeirinUI.red : Color(hex: "#111111"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(venue)
@@ -760,15 +782,15 @@ struct VenueSectionView: View {
 
                     Text("\(races.count)R")
                         .font(.system(size: 13, weight: .black, design: .monospaced))
-                        .foregroundColor(Color(hex: "#151515"))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 5)
-                        .background(Color(hex: "#EFE7D7"))
-                        .clipShape(Capsule())
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 6)
+                        .background(Color(hex: "#111111"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .black))
-                        .foregroundColor(Color(hex: "#81786D"))
+                        .foregroundColor(Color(hex: "#111111"))
                 }
                 .padding(12)
             }
@@ -790,11 +812,17 @@ struct VenueSectionView: View {
         }
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(isHome ? KeirinUI.red : KeirinUI.gold)
+                .frame(width: 4)
+                .padding(.vertical, 8)
+        }
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(isExpanded ? Color(hex: "#1E5BFF").opacity(0.28) : Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(isExpanded ? KeirinUI.red.opacity(0.28) : Color.black.opacity(0.10), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.04), radius: 10, x: 0, y: 5)
+        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 7)
         .onAppear {
             if isHome {
                 isExpanded = true
@@ -831,15 +859,15 @@ struct RaceCardView: View {
         HStack(spacing: 10) {
             VStack(spacing: -1) {
                 Text("\(race.raceNo)")
-                    .font(.system(size: 24, weight: .black, design: .monospaced))
+                    .font(.system(size: 27, weight: .black, design: .monospaced))
                 Text("R")
-                    .font(.system(size: 9, weight: .black, design: .monospaced))
+                    .font(.system(size: 10, weight: .black, design: .monospaced))
             }
             .foregroundColor(.white)
-            .frame(width: 48, height: 54)
+            .frame(width: 52, height: 58)
             .background(
                 LinearGradient(
-                    colors: [Color(hex: "#111111"), Color(hex: "#333333")],
+                    colors: [Color(hex: "#111111"), KeirinUI.red.opacity(0.92)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -874,21 +902,21 @@ struct RaceCardView: View {
                     Spacer()
                     Text(playAction)
                         .font(.system(size: 12, weight: .black, design: .rounded))
-                        .foregroundColor(playAction == "注目" ? .white : Color(hex: "#1E5BFF"))
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(playAction == "注目" ? KeirinUI.red : Color(hex: "#E7EEFF"))
-                        .clipShape(Capsule())
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 5)
+                        .background(playAction == "注目" ? KeirinUI.red : Color(hex: "#111111"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
         .padding(10)
-        .background(Color(hex: "#FBFAF7"))
+        .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+                .stroke(Color.black.opacity(0.09), lineWidth: 1)
         )
     }
 }
@@ -926,10 +954,22 @@ struct FocusRaceStrip: View {
         .padding(12)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [KeirinUI.red, KeirinUI.gold],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .frame(height: 4)
+        }
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .stroke(Color.black.opacity(0.08), lineWidth: 1)
         )
+        .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 8)
     }
 }
 
@@ -959,7 +999,13 @@ struct FocusRaceCard: View {
             }
             .foregroundColor(.white)
             .frame(width: 58, height: 64)
-            .background(KeirinUI.red)
+            .background(
+                LinearGradient(
+                    colors: [Color(hex: "#111111"), KeirinUI.red],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
             VStack(alignment: .leading, spacing: 8) {
@@ -991,7 +1037,7 @@ struct FocusRaceCard: View {
                     }
                     .foregroundColor(.white)
                     .frame(width: 58, height: 44)
-                    .background(KeirinUI.red)
+                    .background(pick.actionLabel == "勝負" ? KeirinUI.red : Color(hex: "#111111"))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -1030,17 +1076,26 @@ struct FocusRaceCard: View {
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .black))
-                        .foregroundColor(Color(hex: "#1E5BFF"))
+                        .foregroundColor(.white)
+                        .frame(width: 28, height: 28)
+                        .background(Color(hex: "#111111"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
             }
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
         .padding(10)
-        .background(Color(hex: "#F7F6F1"))
+        .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(alignment: .leading) {
+            Rectangle()
+                .fill(pick.actionLabel == "勝負" ? KeirinUI.red : KeirinUI.gold)
+                .frame(width: 4)
+                .padding(.vertical, 8)
+        }
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(Color.black.opacity(0.10), lineWidth: 1)
         )
     }
 }

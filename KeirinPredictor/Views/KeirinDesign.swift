@@ -187,6 +187,101 @@ struct GlassPanel<Content: View>: View {
     }
 }
 
+struct RacingPanel<Content: View>: View {
+    var accent: Color = KeirinUI.red
+    var cornerRadius: CGFloat = 8
+    let content: Content
+
+    init(
+        accent: Color = KeirinUI.red,
+        cornerRadius: CGFloat = 8,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.accent = accent
+        self.cornerRadius = cornerRadius
+        self.content = content()
+    }
+
+    var body: some View {
+        content
+            .padding(UIScreen.main.bounds.width < 390 ? 11 : 13)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(.white)
+            )
+            .overlay(alignment: .leading) {
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [accent, KeirinUI.gold],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: 4)
+                    .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
+                    .padding(.vertical, 8)
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(Color.black.opacity(0.10), lineWidth: 1)
+            )
+            .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 8)
+    }
+}
+
+struct RacingPrimaryButtonLabel: View {
+    let title: String
+    var icon: String = "bolt.fill"
+    var isLoading: Bool = false
+
+    var body: some View {
+        HStack(spacing: 10) {
+            if isLoading {
+                ProgressView()
+                    .tint(.white)
+                    .scaleEffect(0.9)
+            } else {
+                Image(systemName: icon)
+                    .font(.system(size: 17, weight: .black))
+            }
+
+            Text(title)
+                .font(.system(size: 18, weight: .black, design: .rounded))
+                .lineLimit(1)
+                .minimumScaleFactor(0.76)
+        }
+        .foregroundColor(.white)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 17)
+        .background(
+            ZStack(alignment: .bottomLeading) {
+                LinearGradient(
+                    colors: [Color(hex: "#111111"), Color(hex: "#272727")],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [KeirinUI.red, KeirinUI.gold],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(height: 5)
+            }
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(KeirinUI.gold.opacity(0.28), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.20), radius: 14, x: 0, y: 8)
+    }
+}
+
 struct LaneBadge: View {
     let number: Int
     var size: CGFloat = 30

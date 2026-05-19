@@ -50,23 +50,31 @@ struct RaceDetailView: View {
     }
 
     private var raceHeader: some View {
-        GlassPanel(cornerRadius: 24, borderColor: KeirinUI.gold.opacity(0.35)) {
+        RacingPanel(accent: KeirinUI.red) {
             VStack(alignment: .leading, spacing: 14) {
                 AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("RACE CONTROL")
                             .font(.system(size: 11, weight: .black, design: .monospaced))
-                            .foregroundColor(KeirinUI.cyan)
+                            .foregroundColor(KeirinUI.red)
                         Text("\(race.venue) \(race.raceNo)R")
                             .font(.system(size: 30, weight: .black, design: .rounded))
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(hex: "#111111"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
                     Text("\(race.raceNo)")
                         .font(.system(size: 44, weight: .black, design: .monospaced))
-                        .foregroundColor(KeirinUI.gold)
-                        .shadow(color: KeirinUI.gold.opacity(0.35), radius: 14)
+                        .foregroundColor(.white)
+                        .frame(width: 74, height: 58)
+                        .background(
+                            LinearGradient(
+                                colors: [Color(hex: "#111111"), KeirinUI.red],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
 
                 MetricPillRow {
@@ -81,16 +89,16 @@ struct RaceDetailView: View {
     }
 
     private var entryListSection: some View {
-        GlassPanel(cornerRadius: 18) {
+        RacingPanel(accent: KeirinUI.gold) {
             VStack(alignment: .leading, spacing: 11) {
                 HStack {
                     Label("出走表", systemImage: "list.number")
                         .font(.system(size: 14, weight: .black, design: .rounded))
-                        .foregroundColor(KeirinUI.gold)
+                        .foregroundColor(Color(hex: "#111111"))
                     Spacer()
                     Text("SCORE ORDER")
                         .font(.system(size: 10, weight: .black, design: .monospaced))
-                        .foregroundColor(.white.opacity(0.38))
+                        .foregroundColor(Color(hex: "#111111").opacity(0.45))
                 }
 
                 ForEach(race.entries.sorted { $0.score > $1.score }) { entry in
@@ -104,18 +112,9 @@ struct RaceDetailView: View {
         Button {
             runPrediction()
         } label: {
-            HStack(spacing: 10) {
-                Image(systemName: "waveform.path.ecg")
-                Text("このレースの指数を計算")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 17)
-            .background(KeirinUI.actionGradient)
-            .foregroundColor(.black)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: KeirinUI.red.opacity(0.42), radius: 18, x: 0, y: 10)
+            RacingPrimaryButtonLabel(title: "このレースの指数を計算", icon: "waveform.path.ecg")
         }
+        .buttonStyle(.plain)
     }
 
     private var animatingView: some View {
@@ -151,7 +150,7 @@ struct RaceDetailView: View {
                         .foregroundColor(KeirinUI.gold)
                     Text("指数結果")
                         .font(.system(size: 23, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                 }
                 Button {
                     showResults = false
@@ -161,10 +160,10 @@ struct RaceDetailView: View {
                 } label: {
                     Image(systemName: "arrow.counterclockwise")
                         .font(.system(size: 15, weight: .black))
-                        .foregroundColor(KeirinUI.cyan)
+                        .foregroundColor(.white)
                         .frame(width: 36, height: 36)
-                        .background(Color.white.opacity(0.07))
-                        .clipShape(Circle())
+                        .background(Color(hex: "#111111"))
+                        .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 }
             }
 
@@ -180,7 +179,7 @@ struct RaceDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("ライン予測")
                         .font(.system(size: 13, weight: .black, design: .rounded))
-                        .foregroundColor(KeirinUI.cyan)
+                        .foregroundColor(Color(hex: "#111111"))
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
                             ForEach(Array(lineFormations.enumerated()), id: \.offset) { (i, line) in
@@ -199,14 +198,14 @@ struct RaceDetailView: View {
     }
 
     private var betSection: some View {
-        GlassPanel(cornerRadius: 18, borderColor: KeirinUI.red.opacity(0.28)) {
+        RacingPanel(accent: KeirinUI.red) {
             VStack(alignment: .leading, spacing: 12) {
                 AdaptiveStack(horizontalSpacing: 10, verticalSpacing: 8) {
                     Image(systemName: "square.stack.3d.up.fill")
-                        .foregroundColor(KeirinUI.gold)
+                        .foregroundColor(KeirinUI.red)
                     Text("注目組み合わせ")
                         .font(.system(size: 18, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                     Text("\(filteredBets.count)")
                         .font(.system(size: 15, weight: .black, design: .monospaced))
                         .foregroundColor(KeirinUI.gold)
@@ -220,11 +219,11 @@ struct RaceDetailView: View {
                             } label: {
                                 Text(type)
                                     .font(.system(size: 14, weight: .black, design: .rounded))
-                                    .foregroundColor(selectedBetType == type ? .black : .white.opacity(0.7))
+                                    .foregroundColor(selectedBetType == type ? .white : Color(hex: "#111111").opacity(0.66))
                                     .padding(.horizontal, 14)
                                     .padding(.vertical, 9)
-                                    .background(selectedBetType == type ? KeirinUI.gold : Color.white.opacity(0.075))
-                                    .clipShape(Capsule())
+                                    .background(selectedBetType == type ? Color(hex: "#111111") : Color(hex: "#F3F0E9"))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             }
                         }
                     }
@@ -434,7 +433,7 @@ struct BetCardView: View {
                         if i > 0 {
                             Image(systemName: bet.type == "ワイド" ? "minus" : "arrow.right")
                                 .font(.system(size: 10, weight: .black))
-                                .foregroundColor(.white.opacity(0.35))
+                                .foregroundColor(Color(hex: "#111111").opacity(0.35))
                         }
                         LaneBadge(number: waku, size: 30)
                     }
@@ -443,19 +442,19 @@ struct BetCardView: View {
                     ForEach(Array(bet.names.enumerated()), id: \.offset) { (i, name) in
                         if i > 0 {
                             Text("-")
-                                .foregroundColor(.white.opacity(0.25))
+                                .foregroundColor(Color(hex: "#111111").opacity(0.25))
                         }
                         Text(String(name.prefix(3)))
                             .lineLimit(1)
                     }
                 }
                 .font(.system(size: 12, weight: .bold, design: .rounded))
-                .foregroundColor(.white.opacity(0.55))
+                .foregroundColor(Color(hex: "#111111").opacity(0.60))
 
                 if !bet.rationale.isEmpty {
                     Text(bet.rationale)
                         .font(.system(size: 11, weight: .black, design: .rounded))
-                        .foregroundColor(KeirinUI.cyan.opacity(0.78))
+                        .foregroundColor(KeirinUI.red.opacity(0.80))
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
                 }
@@ -468,7 +467,7 @@ struct BetCardView: View {
             VStack(alignment: .trailing, spacing: 2) {
                 Text("\(String(format: "%.1f", bet.probability))%")
                     .font(.system(size: 17, weight: .black, design: .monospaced))
-                    .foregroundColor(bet.confidence == "S" ? KeirinUI.gold : .white)
+                    .foregroundColor(bet.confidence == "S" ? Color(hex: "#B68000") : Color(hex: "#111111"))
                     .lineLimit(1)
                     .minimumScaleFactor(0.65)
                 if let ev = bet.expectedValue {
@@ -480,15 +479,15 @@ struct BetCardView: View {
                 }
                 Text("\(bet.stakeUnits)u")
                     .font(.system(size: 11, weight: .black, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.42))
+                    .foregroundColor(Color(hex: "#111111").opacity(0.42))
             }
         }
         .padding(10)
-        .background(bet.confidence == "S" ? KeirinUI.gold.opacity(0.12) : Color.white.opacity(0.045))
+        .background(bet.confidence == "S" ? KeirinUI.gold.opacity(0.13) : Color(hex: "#F7F6F1"))
         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(bet.confidence == "S" ? KeirinUI.gold.opacity(0.45) : Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(bet.confidence == "S" ? KeirinUI.gold.opacity(0.45) : Color.black.opacity(0.08), lineWidth: 1)
         )
     }
 
@@ -511,7 +510,7 @@ struct LineFormationCard: View {
             HStack(spacing: 5) {
                 Text(line.district)
                     .font(.system(size: 13, weight: .black, design: .rounded))
-                    .foregroundColor(isStrongest ? KeirinUI.gold : .white)
+                    .foregroundColor(isStrongest ? Color(hex: "#B68000") : Color(hex: "#111111"))
                 if isStrongest {
                     Text("本線")
                         .font(.system(size: 10, weight: .black, design: .rounded))
@@ -527,19 +526,19 @@ struct LineFormationCard: View {
                     LaneBadge(number: member.waku, size: 25)
                     Text(String(member.name.prefix(3)))
                         .font(.system(size: 12, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                     Text(member.role)
                         .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .foregroundColor(member.role == "先行" ? KeirinUI.red : .white.opacity(0.46))
+                        .foregroundColor(member.role == "先行" ? KeirinUI.red : Color(hex: "#111111").opacity(0.50))
                 }
             }
         }
         .padding(11)
-        .background(isStrongest ? KeirinUI.gold.opacity(0.12) : Color.white.opacity(0.05))
+        .background(isStrongest ? KeirinUI.gold.opacity(0.13) : .white)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .stroke(isStrongest ? KeirinUI.gold.opacity(0.36) : Color.white.opacity(0.08), lineWidth: 1)
+                .stroke(isStrongest ? KeirinUI.gold.opacity(0.36) : Color.black.opacity(0.08), lineWidth: 1)
         )
     }
 }
@@ -555,7 +554,7 @@ struct EntryRowView: View {
                 HStack(spacing: 7) {
                     Text(entry.name)
                         .font(.system(size: 16, weight: .black, design: .rounded))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     if !entry.style.isEmpty {
@@ -567,7 +566,7 @@ struct EntryRowView: View {
                 if !entry.comment.isEmpty {
                     Text(entry.comment)
                         .font(.system(size: 12, weight: .semibold, design: .rounded))
-                        .foregroundColor(.white.opacity(0.42))
+                        .foregroundColor(Color(hex: "#111111").opacity(0.50))
                         .lineLimit(1)
                 }
                 ProbabilityBar(value: min(entry.score / 120, 1), color: KeirinUI.cyan)
@@ -585,22 +584,22 @@ struct EntryRowView: View {
                     .minimumScaleFactor(0.65)
                 Text("WIN \(String(format: "%.0f", entry.winRate))%")
                     .font(.system(size: 10, weight: .black, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.42))
+                    .foregroundColor(Color(hex: "#111111").opacity(0.45))
                     .lineLimit(1)
                     .minimumScaleFactor(0.65)
                 Text("3着 \(String(format: "%.0f", entry.top3Rate))%")
                     .font(.system(size: 10, weight: .black, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.42))
+                    .foregroundColor(Color(hex: "#111111").opacity(0.45))
                     .lineLimit(1)
                     .minimumScaleFactor(0.65)
             }
         }
         .padding(12)
-        .background(Color.white.opacity(0.045))
+        .background(Color(hex: "#F7F6F1"))
         .clipShape(RoundedRectangle(cornerRadius: 15, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 15, style: .continuous)
-                .stroke(Color.white.opacity(0.075), lineWidth: 1)
+                .stroke(Color.black.opacity(0.08), lineWidth: 1)
         )
     }
 }

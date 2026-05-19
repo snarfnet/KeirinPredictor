@@ -192,24 +192,13 @@ struct PredictionView: View {
         Button {
             runPrediction()
         } label: {
-            HStack(spacing: 10) {
-                if isAnimating {
-                    ProgressView()
-                        .tint(.black)
-                        .scaleEffect(0.9)
-                } else {
-                    Image(systemName: "bolt.fill")
-                }
-                Text(isAnimating ? "解析中..." : "指数を計算")
-                    .font(.system(size: 17, weight: .black, design: .rounded))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 17)
-            .background(KeirinUI.actionGradient)
-            .foregroundColor(.black)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .shadow(color: KeirinUI.red.opacity(isAnimating ? 0.15 : 0.45), radius: 18, x: 0, y: 10)
+            RacingPrimaryButtonLabel(
+                title: isAnimating ? "解析中..." : "指数を計算",
+                icon: "bolt.fill",
+                isLoading: isAnimating
+            )
         }
+        .buttonStyle(.plain)
         .disabled(selectedVenue.isEmpty || playerCount < 3 || isAnimating)
         .opacity(selectedVenue.isEmpty || playerCount < 3 ? 0.45 : 1)
     }
