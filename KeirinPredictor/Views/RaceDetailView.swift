@@ -62,6 +62,7 @@ struct RaceDetailView: View {
                             .foregroundColor(Color(hex: "#111111"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
+                        ScheduleBadge(label: race.scheduleLabel, time: race.startTimeText, tone: race.scheduleTone)
                     }
                     Text("\(race.raceNo)")
                         .font(.system(size: 44, weight: .black, design: .monospaced))

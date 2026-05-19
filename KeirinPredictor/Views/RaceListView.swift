@@ -624,6 +624,51 @@ struct LightMetricPill: View {
     }
 }
 
+struct ScheduleBadge: View {
+    let label: String
+    let time: String
+    let tone: String
+
+    private var color: Color {
+        switch tone {
+        case "midnight": return Color(hex: "#111111")
+        case "night": return KeirinUI.red
+        case "day": return Color(hex: "#B68000")
+        default: return Color(hex: "#111111")
+        }
+    }
+
+    private var icon: String {
+        switch tone {
+        case "midnight": return "moon.stars.fill"
+        case "night": return "sparkles"
+        case "day": return "sun.max.fill"
+        default: return "clock.fill"
+        }
+    }
+
+    var body: some View {
+        if !label.isEmpty {
+            HStack(spacing: 5) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .black))
+                Text(label)
+                    .font(.system(size: 11, weight: .black, design: .rounded))
+                if !time.isEmpty {
+                    Text(time)
+                        .font(.system(size: 11, weight: .black, design: .monospaced))
+                        .opacity(0.82)
+                }
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 5)
+            .background(color)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+        }
+    }
+}
+
 struct DataStatusRow: View {
     let title: String
     let detail: String
@@ -754,6 +799,22 @@ struct VenueSectionView: View {
     var isHome: Bool = false
     @State private var isExpanded = false
 
+    private var scheduleLabel: String {
+        if races.contains(where: { $0.scheduleLabel == "ミッドナイト" }) { return "ミッドナイト" }
+        if races.contains(where: { $0.scheduleLabel == "ナイター" }) { return "ナイター" }
+        if races.contains(where: { $0.scheduleLabel == "デイ" }) { return "デイ" }
+        return ""
+    }
+
+    private var scheduleTone: String {
+        switch scheduleLabel {
+        case "ミッドナイト": return "midnight"
+        case "ナイター": return "night"
+        case "デイ": return "day"
+        default: return ""
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             Button {
@@ -773,9 +834,12 @@ struct VenueSectionView: View {
                         Text(venue)
                             .font(.system(size: 21, weight: .black, design: .rounded))
                             .foregroundColor(Color(hex: "#151515"))
-                        Text(isExpanded ? "タップで閉じる" : "タップでレース表示")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
-                            .foregroundColor(Color(hex: "#81786D"))
+                        HStack(spacing: 6) {
+                            Text(isExpanded ? "タップで閉じる" : "タップでレース表示")
+                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .foregroundColor(Color(hex: "#81786D"))
+                            ScheduleBadge(label: scheduleLabel, time: "", tone: scheduleTone)
+                        }
                     }
 
                     Spacer()
@@ -878,11 +942,14 @@ struct RaceCardView: View {
                 HStack(spacing: 7) {
                     if let top = topEntries.first {
                         LaneBadge(number: top.umaban, size: 26)
-                        Text(top.name)
-                            .font(.system(size: 18, weight: .black, design: .rounded))
-                            .foregroundColor(Color(hex: "#151515"))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(top.name)
+                                .font(.system(size: 18, weight: .black, design: .rounded))
+                                .foregroundColor(Color(hex: "#151515"))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            ScheduleBadge(label: race.scheduleLabel, time: race.startTimeText, tone: race.scheduleTone)
+                        }
                     }
                     Spacer()
                     Image(systemName: "chevron.right")
@@ -1016,6 +1083,7 @@ struct FocusRaceCard: View {
                             .foregroundColor(Color(hex: "#151515"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
+                        ScheduleBadge(label: race.scheduleLabel, time: race.startTimeText, tone: race.scheduleTone)
                         if let topEntry {
                             Text("軸 \(topEntry.umaban)番 \(topEntry.name)")
                                 .font(.system(size: 14, weight: .bold, design: .rounded))

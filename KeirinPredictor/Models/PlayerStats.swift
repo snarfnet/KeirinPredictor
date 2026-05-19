@@ -90,11 +90,34 @@ struct TodayRace: Codable, Identifiable, Hashable {
     let venue: String
     let venue_cd: String
     let race_no: Int
+    let start_time: String?
+    let close_time: String?
     let entries: [TodayRaceEntry]
     let date: String?
 
     var raceNo: Int { race_no }
     var dateString: String { date ?? "" }
+    var startTimeText: String { start_time ?? "" }
+    var closeTimeText: String { close_time ?? "" }
+    var scheduleLabel: String {
+        guard let hour = startHour else { return "" }
+        if hour >= 20 && race_no <= 9 { return "ミッドナイト" }
+        if hour >= 16 { return "ナイター" }
+        return "デイ"
+    }
+    var scheduleTone: String {
+        switch scheduleLabel {
+        case "ミッドナイト": return "midnight"
+        case "ナイター": return "night"
+        case "デイ": return "day"
+        default: return ""
+        }
+    }
+
+    private var startHour: Int? {
+        guard let hourText = startTimeText.split(separator: ":").first else { return nil }
+        return Int(hourText)
+    }
 
     static func == (lhs: TodayRace, rhs: TodayRace) -> Bool { lhs.race_id == rhs.race_id }
     func hash(into hasher: inout Hasher) { hasher.combine(race_id) }
