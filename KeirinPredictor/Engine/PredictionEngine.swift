@@ -874,10 +874,10 @@ struct PredictionEngine {
             return ("見", "混戦。30%狙いから外す", "見送り", "荒れやすいので買わない")
         }
         if axisWinEstimate >= 36, topGap >= 11, chaosScore <= 48, closePack <= 3, darkHorseCount <= 1 {
-            return ("S", "30%超え候補。軸から絞る", "買う", "軸が抜けていて荒れ指数も低い")
+            return ("S", "30%超え候補。軸から絞る", "買い", "軸が抜けていて荒れ指数も低い")
         }
         if axisWinEstimate >= 32, topGap >= 8, chaosScore <= 55, closePack <= 3, darkHorseCount <= 1 {
-            return ("A", "勝負可。点数を増やしすぎない", "買う", "軸候補と2番手以下の差がある")
+            return ("A", "勝負可。点数を増やしすぎない", "買い", "軸候補と2番手以下の差がある")
         }
         if axisWinEstimate >= 28, topGap >= 7, chaosScore <= 60 {
             return ("B", "薄め。押さえ中心", "見送り", "悪くないが50%狙いでは薄い")

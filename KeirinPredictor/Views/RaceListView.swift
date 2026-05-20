@@ -183,7 +183,7 @@ struct RaceListView: View {
             return d == todayStr
         }
 
-        let analyzed = visibleRaces.compactMap { race -> (race: TodayRace, analysis: RaceIntelligence, quality: Double, isBuy: Bool)? in
+        let analyzed = visibleRaces.compactMap { race -> (race: TodayRace, analysis: RaceIntelligence, insight: PredictionConditionInsight, quality: Double, isBuy: Bool)? in
             guard race.entries.count >= 3 else { return nil }
             let analysis = PredictionEngine.analyzeTodayRace(
                 race,
@@ -191,11 +191,18 @@ struct RaceListView: View {
                 venueStats: dataLoader.venueStats,
                 lineMatrix: dataLoader.lineMatrix
             )
+            let insight = tracker.conditionInsight(
+                venue: race.venue,
+                raceNo: race.raceNo,
+                playGrade: analysis.playGrade,
+                axisWinEstimate: analysis.axisWinEstimate
+            )
             return (
                 race: race,
                 analysis: analysis,
-                quality: dailyPickQuality(analysis),
-                isBuy: analysis.actionLabel == "買う"
+                insight: insight,
+                quality: dailyPickQuality(analysis, insight: insight),
+                isBuy: analysis.actionLabel == "買い"
             )
         }
         .sorted { lhs, rhs in
@@ -213,13 +220,15 @@ struct RaceListView: View {
 
         return selected.map { item in
             let analysis = item.analysis
-            let label = item.isBuy ? "勝負" : (analysis.axisWinEstimate >= 30 ? "注目" : "押さえ")
+            let adjustedEstimate = min(max(analysis.axisWinEstimate + item.insight.estimateAdjustment, 0), 60)
+            let label = item.isBuy ? "買い" : (adjustedEstimate >= 30 ? "注目" : "押さえ")
             let reason = item.isBuy ? analysis.actionReason : "勝負条件まであと少し。指数上位から候補に追加"
             var reasons: [String] = [
                 reason,
-                "本命1着の目安 \(String(format: "%.0f", analysis.axisWinEstimate))%",
+                "本命1着の目安 \(String(format: "%.0f", adjustedEstimate))%",
                 "軸候補 \(analysis.axisName)"
             ]
+            reasons.append(contentsOf: item.insight.notes)
             reasons.append(contentsOf: analysis.notes.prefix(3))
 
             return FocusRacePick(
@@ -237,7 +246,7 @@ struct RaceListView: View {
         }
     }
 
-    private func dailyPickQuality(_ analysis: RaceIntelligence) -> Double {
+    private func dailyPickQuality(_ analysis: RaceIntelligence, insight: PredictionConditionInsight) -> Double {
         let gradeBonus: Double
         switch analysis.playGrade {
         case "S": gradeBonus = 24
@@ -245,9 +254,9 @@ struct RaceListView: View {
         case "B": gradeBonus = 8
         default: gradeBonus = 0
         }
-        let buyBonus = analysis.actionLabel == "買う" ? 40.0 : 0.0
+        let buyBonus = analysis.actionLabel == "買い" ? 40.0 : 0.0
         let chaosPenalty = max(0, analysis.chaosScore - 55) * 1.4
-        return analysis.axisWinEstimate * 2.0 + gradeBonus + buyBonus - chaosPenalty
+        return analysis.axisWinEstimate * 2.0 + gradeBonus + buyBonus - chaosPenalty + insight.qualityAdjustment
     }
 
     private var emptyState: some View {
@@ -1204,7 +1213,7 @@ struct FocusRaceCard: View {
                     }
                     .foregroundColor(.white)
                     .frame(width: 58, height: 44)
-                    .background(pick.actionLabel == "勝負" ? KeirinUI.red : Color(hex: "#111111"))
+                    .background(pick.actionLabel == "買い" ? KeirinUI.red : Color(hex: "#111111"))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -1256,7 +1265,7 @@ struct FocusRaceCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(alignment: .leading) {
             Rectangle()
-                .fill(pick.actionLabel == "勝負" ? KeirinUI.red : KeirinUI.gold)
+                .fill(pick.actionLabel == "買い" ? KeirinUI.red : KeirinUI.gold)
                 .frame(width: 4)
                 .padding(.vertical, 8)
         }

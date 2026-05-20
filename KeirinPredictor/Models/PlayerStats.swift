@@ -341,6 +341,18 @@ struct PredictionRecord: Codable, Identifiable {
     }
 }
 
+struct PredictionConditionInsight {
+    let qualityAdjustment: Double
+    let estimateAdjustment: Double
+    let notes: [String]
+
+    static let neutral = PredictionConditionInsight(
+        qualityAdjustment: 0,
+        estimateAdjustment: 0,
+        notes: []
+    )
+}
+
 // MARK: - Bankroll
 struct BankrollState: Codable {
     var budget: Int = 10000

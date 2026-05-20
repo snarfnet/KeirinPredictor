@@ -412,7 +412,7 @@ struct RaceIntelligenceCard: View {
     }
 
     private var actionColor: Color {
-        analysis.actionLabel == "買う" ? KeirinUI.green : KeirinUI.red
+        analysis.actionLabel == "買い" ? KeirinUI.green : KeirinUI.red
     }
 }
 

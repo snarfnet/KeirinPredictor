@@ -164,6 +164,53 @@ class PredictionTracker: ObservableObject {
         records.sorted { $0.date > $1.date }.prefix(30).map { $0 }
     }
 
+    func conditionInsight(
+        venue: String,
+        raceNo: Int,
+        playGrade: String,
+        axisWinEstimate: Double
+    ) -> PredictionConditionInsight {
+        let completed = records
+            .filter { !$0.actualTop3.isEmpty }
+            .sorted { $0.date > $1.date }
+            .prefix(240)
+
+        guard completed.count >= 10 else {
+            return .neutral
+        }
+
+        let baseline = max(18, min(42, Double(completed.filter { $0.isHit }.count) / Double(completed.count) * 100))
+        let raceBand = raceNoBand(raceNo)
+        let axisBand = axisEstimateBand(axisWinEstimate)
+        var adjustment = 0.0
+        var notes: [String] = []
+
+        func apply(_ sample: [PredictionRecord], label: String, weight: Double, minCount: Int) {
+            guard sample.count >= minCount else { return }
+            let wins = sample.filter { $0.isHit }.count
+            let rate = Double(wins) / Double(sample.count) * 100
+            let confidence = min(1.0, Double(sample.count) / 24.0)
+            let edge = rate - baseline
+            adjustment += (edge / 10.0) * weight * confidence
+
+            if abs(edge) >= 6, notes.count < 2 {
+                notes.append("\(label)の過去1着 \(wins)/\(sample.count)")
+            }
+        }
+
+        apply(completed.filter { $0.playGrade == playGrade }, label: "グレード\(playGrade)", weight: 8.0, minCount: 3)
+        apply(completed.filter { axisEstimateBand($0.axisWinEstimate ?? 0) == axisBand }, label: axisBand, weight: 6.0, minCount: 4)
+        apply(completed.filter { raceNoBand($0.raceNo) == raceBand }, label: raceBand, weight: 4.5, minCount: 4)
+        apply(completed.filter { $0.venue == venue }, label: venue, weight: 3.5, minCount: 3)
+
+        let capped = min(max(adjustment, -10), 10)
+        return PredictionConditionInsight(
+            qualityAdjustment: capped * 2.4,
+            estimateAdjustment: capped * 0.55,
+            notes: notes
+        )
+    }
+
     /// Kelly criterion: optimal bet fraction
     func kellyFraction(winProb: Double, odds: Double) -> Double {
         guard odds > 0, winProb > 0, winProb < 1 else { return 0 }
@@ -216,5 +263,18 @@ class PredictionTracker: ObservableObject {
     private func recalculateBankrollFromRecords() {
         bankroll.spent = records.compactMap { $0.betAmount }.reduce(0, +)
         bankroll.returned = records.compactMap { $0.payout }.reduce(0, +)
+    }
+
+    private func axisEstimateBand(_ value: Double) -> String {
+        if value >= 36 { return "軸36%以上" }
+        if value >= 32 { return "軸32-35%" }
+        if value >= 28 { return "軸28-31%" }
+        return "軸28%未満"
+    }
+
+    private func raceNoBand(_ raceNo: Int) -> String {
+        if raceNo <= 3 { return "序盤レース" }
+        if raceNo <= 6 { return "中盤レース" }
+        return "後半レース"
     }
 }
