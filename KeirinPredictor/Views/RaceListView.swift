@@ -400,6 +400,22 @@ struct LiveHitRateCard: View {
         liveMatches.filter { Set($0.predicted) == Set($0.actual) }.count
     }
 
+    private var liveTrifectaCount: Int {
+        liveMatches.filter { $0.predicted == $0.actual }.count
+    }
+
+    private var liveExactaCount: Int {
+        liveMatches.filter {
+            Array($0.predicted.prefix(2)) == Array($0.actual.prefix(2))
+        }.count
+    }
+
+    private var liveWideCount: Int {
+        liveMatches.filter {
+            Set($0.predicted.prefix(2)).isSubset(of: Set($0.actual.prefix(3)))
+        }.count
+    }
+
     private var liveCount: Int {
         liveMatches.count
     }
@@ -430,6 +446,27 @@ struct LiveHitRateCard: View {
             return Double(liveTop3Count) / Double(liveCount) * 100
         }
         return tracker.top3HitRate
+    }
+
+    private var trifectaRate: Double {
+        if liveCount > 0 {
+            return Double(liveTrifectaCount) / Double(liveCount) * 100
+        }
+        return tracker.trifectaHitRate
+    }
+
+    private var exactaRate: Double {
+        if liveCount > 0 {
+            return Double(liveExactaCount) / Double(liveCount) * 100
+        }
+        return tracker.exactaHitRate
+    }
+
+    private var wideRate: Double {
+        if liveCount > 0 {
+            return Double(liveWideCount) / Double(liveCount) * 100
+        }
+        return tracker.wideHitRate
     }
 
     private var rateText: String {
@@ -475,9 +512,10 @@ struct LiveHitRateCard: View {
             }
 
             HStack(spacing: 8) {
-                HitRateMiniPill(title: "的中", value: "\(hitCount)/\(totalCount)", tone: rateColor)
-                HitRateMiniPill(title: "3連対", value: String(format: "%.1f%%", top3Rate), tone: Color(hex: "#1E5BFF"))
-                HitRateMiniPill(title: "30%壁", value: String(format: "%+.1f", rate - 30), tone: rate >= 30 ? KeirinUI.green : KeirinUI.red)
+                HitRateMiniPill(title: "1着", value: "\(hitCount)/\(totalCount)", tone: rateColor)
+                HitRateMiniPill(title: "3連単", value: String(format: "%.1f%%", trifectaRate), tone: KeirinUI.red)
+                HitRateMiniPill(title: "2車単", value: String(format: "%.1f%%", exactaRate), tone: Color(hex: "#1E5BFF"))
+                HitRateMiniPill(title: "ワイド", value: String(format: "%.1f%%", wideRate), tone: KeirinUI.green)
             }
         }
         .padding(14)

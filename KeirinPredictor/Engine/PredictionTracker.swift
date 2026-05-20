@@ -98,6 +98,12 @@ class PredictionTracker: ObservableObject {
 
     var top3HitCount: Int { records.filter { $0.isTop3Hit }.count }
 
+    var trifectaHitCount: Int { records.filter { $0.isTrifectaHit }.count }
+
+    var exactaHitCount: Int { records.filter { $0.isExactaHit }.count }
+
+    var wideHitCount: Int { records.filter { $0.isWideHit }.count }
+
     var actionPredictions: [PredictionRecord] {
         records.filter { !$0.actualTop3.isEmpty && $0.isActionRace }
     }
@@ -140,6 +146,18 @@ class PredictionTracker: ObservableObject {
 
     var top3HitRate: Double {
         totalPredictions > 0 ? Double(top3HitCount) / Double(totalPredictions) * 100 : 0
+    }
+
+    var trifectaHitRate: Double {
+        totalPredictions > 0 ? Double(trifectaHitCount) / Double(totalPredictions) * 100 : 0
+    }
+
+    var exactaHitRate: Double {
+        totalPredictions > 0 ? Double(exactaHitCount) / Double(totalPredictions) * 100 : 0
+    }
+
+    var wideHitRate: Double {
+        totalPredictions > 0 ? Double(wideHitCount) / Double(totalPredictions) * 100 : 0
     }
 
     var recentRecords: [PredictionRecord] {

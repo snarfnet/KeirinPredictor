@@ -89,10 +89,22 @@ struct TrackingView: View {
                 color: tracker.hitRate >= 20 ? .green : Color(hex: "#FFD700")
             )
             StatCard(
-                label: "3連対的中",
-                value: String(format: "%.1f%%", tracker.top3HitRate),
-                sub: "\(tracker.top3HitCount)/\(tracker.totalPredictions)",
-                color: tracker.top3HitRate >= 30 ? .green : Color(hex: "#FFD700")
+                label: "3連単",
+                value: String(format: "%.1f%%", tracker.trifectaHitRate),
+                sub: "\(tracker.trifectaHitCount)/\(tracker.totalPredictions)",
+                color: tracker.trifectaHitRate >= 10 ? .green : Color(hex: "#FFD700")
+            )
+            StatCard(
+                label: "2車単",
+                value: String(format: "%.1f%%", tracker.exactaHitRate),
+                sub: "\(tracker.exactaHitCount)/\(tracker.totalPredictions)",
+                color: tracker.exactaHitRate >= 20 ? .green : Color(hex: "#FFD700")
+            )
+            StatCard(
+                label: "ワイド",
+                value: String(format: "%.1f%%", tracker.wideHitRate),
+                sub: "\(tracker.wideHitCount)/\(tracker.totalPredictions)",
+                color: tracker.wideHitRate >= 30 ? .green : Color(hex: "#FFD700")
             )
             StatCard(
                 label: "記録数",

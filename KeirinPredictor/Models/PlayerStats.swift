@@ -317,6 +317,18 @@ struct PredictionRecord: Codable, Identifiable {
         guard !actualTop3.isEmpty, !predictedTop3.isEmpty else { return false }
         return predictedTop3[0] == actualTop3[0]  // 1着的中
     }
+    var isTrifectaHit: Bool {
+        guard actualTop3.count >= 3, predictedTop3.count >= 3 else { return false }
+        return Array(predictedTop3.prefix(3)) == Array(actualTop3.prefix(3))
+    }
+    var isExactaHit: Bool {
+        guard actualTop3.count >= 2, predictedTop3.count >= 2 else { return false }
+        return Array(predictedTop3.prefix(2)) == Array(actualTop3.prefix(2))
+    }
+    var isWideHit: Bool {
+        guard actualTop3.count >= 3, predictedTop3.count >= 2 else { return false }
+        return Set(predictedTop3.prefix(2)).isSubset(of: Set(actualTop3.prefix(3)))
+    }
     var isActionRace: Bool {
         ["S", "A"].contains(playGrade ?? "")
     }
