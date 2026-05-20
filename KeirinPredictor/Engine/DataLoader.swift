@@ -85,7 +85,7 @@ class DataLoader: ObservableObject {
             self.dataStatusDetail = "最新の出走表を確認しています"
         }
         // First try upcoming_entries.json (multi-day)
-        guard let upcomingURL = URL(string: "\(Self.remoteBaseURL)/upcoming_entries.json") else { return }
+        guard let upcomingURL = Self.remoteURL("upcoming_entries.json") else { return }
         var request = URLRequest(url: upcomingURL)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         performDataRequest(request) { data, response, error in
@@ -136,7 +136,7 @@ class DataLoader: ObservableObject {
     }
 
     private func fetchTodayEntriesFallback() {
-        guard let url = URL(string: "\(Self.remoteBaseURL)/today_entries.json") else { return }
+        guard let url = Self.remoteURL("today_entries.json") else { return }
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         performDataRequest(request) { data, response, error in
@@ -188,7 +188,7 @@ class DataLoader: ObservableObject {
     }
 
     func fetchRemoteTodayOdds() {
-        guard let url = URL(string: "\(Self.remoteBaseURL)/today_odds.json") else { return }
+        guard let url = Self.remoteURL("today_odds.json") else { return }
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         performDataRequest(request) { data, response, error in
@@ -223,7 +223,7 @@ class DataLoader: ObservableObject {
             self.resultsLoadError = nil
         }
 
-        guard let url = URL(string: "\(Self.remoteBaseURL)/today_results.json") else {
+        guard let url = Self.remoteURL("today_results.json") else {
             DispatchQueue.main.async {
                 self.isResultsLoading = false
                 self.resultsLoadError = "結果データのURLを確認できませんでした"
@@ -277,7 +277,7 @@ class DataLoader: ObservableObject {
     }
 
     private func fetchRemoteEntriesForResultDate(_ dateString: String) {
-        guard let url = URL(string: "\(Self.remoteBaseURL)/entries_\(dateString).json") else { return }
+        guard let url = Self.remoteURL("entries_\(dateString).json") else { return }
         var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         performDataRequest(request) { data, response, error in
@@ -345,7 +345,12 @@ class DataLoader: ObservableObject {
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return nil }
         do {
             let data = try Data(contentsOf: fileURL)
-            return try JSONDecoder().decode(TodayResultsData.self, from: data)
+            let result = try JSONDecoder().decode(TodayResultsData.self, from: data)
+            guard result.date >= Self.expectedResultsDateString() else {
+                try? FileManager.default.removeItem(at: fileURL)
+                return nil
+            }
+            return result
         } catch {
             return nil
         }
@@ -403,5 +408,25 @@ class DataLoader: ObservableObject {
         f.dateFormat = "yyyyMMdd"
         f.timeZone = TimeZone(identifier: "Asia/Tokyo")
         return f.string(from: Date())
+    }
+
+    private static func expectedResultsDateString() -> String {
+        let calendar = Calendar(identifier: .gregorian)
+        let timeZone = TimeZone(identifier: "Asia/Tokyo") ?? .current
+        let now = Date()
+        let hour = calendar.dateComponents(in: timeZone, from: now).hour ?? 0
+        let target = hour >= 21 ? now : calendar.date(byAdding: .day, value: -1, to: now) ?? now
+        let f = DateFormatter()
+        f.dateFormat = "yyyyMMdd"
+        f.timeZone = timeZone
+        return f.string(from: target)
+    }
+
+    private static func remoteURL(_ fileName: String) -> URL? {
+        var components = URLComponents(string: "\(remoteBaseURL)/\(fileName)")
+        components?.queryItems = [
+            URLQueryItem(name: "v", value: String(Int(Date().timeIntervalSince1970)))
+        ]
+        return components?.url
     }
 }
