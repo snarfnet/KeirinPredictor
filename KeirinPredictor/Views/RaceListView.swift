@@ -304,7 +304,7 @@ struct RaceListView: View {
             grouped[d, default: []].append(race)
         }
 
-        return grouped.map { (date, races) in
+        let groups = grouped.map { (date, races) in
             let label: String
             if date == todayStr { label = "今日" }
             else if date == tomorrowStr { label = "明日" }
@@ -326,7 +326,21 @@ struct RaceListView: View {
                 totalRaces: races.count,
                 venues: venueGroups
             )
-        }.sorted { $0.date < $1.date }
+        }
+
+        return groups.sorted { lhs, rhs in
+            if shouldPrioritizeTomorrow {
+                if lhs.date == tomorrowStr, rhs.date != tomorrowStr { return true }
+                if rhs.date == tomorrowStr, lhs.date != tomorrowStr { return false }
+            }
+            return lhs.date < rhs.date
+        }
+    }
+
+    private var shouldPrioritizeTomorrow: Bool {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Asia/Tokyo") ?? .current
+        return calendar.component(.hour, from: Date()) >= 21
     }
 
     private func todayString() -> String {
