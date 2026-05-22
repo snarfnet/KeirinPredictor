@@ -642,6 +642,7 @@ struct FocusRacePick: Identifiable {
 struct DaySectionView: View {
     let group: DayGroup
     var homeVenue: String = ""
+    @State private var isExpanded = true
 
     private var scheduleGroups: [RaceScheduleGroup] {
         let order = [
@@ -665,7 +666,12 @@ struct DaySectionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .lastTextBaseline) {
+            Button {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack(alignment: .lastTextBaseline) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(group.label)
                         .font(.system(size: 25, weight: .black, design: .rounded))
@@ -677,16 +683,23 @@ struct DaySectionView: View {
 
                 Spacer()
 
-                Text("\(group.totalRaces)R")
-                    .font(.system(size: 12, weight: .black, design: .monospaced))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 9)
-                    .padding(.vertical, 5)
-                    .background(Color(hex: "#111111"))
-                    .clipShape(Capsule())
-            }
+                    Text("\(group.totalRaces)R")
+                        .font(.system(size: 12, weight: .black, design: .monospaced))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 9)
+                        .padding(.vertical, 5)
+                        .background(Color(hex: "#111111"))
+                        .clipShape(Capsule())
 
-            VStack(spacing: 10) {
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 12, weight: .black))
+                        .foregroundColor(Color(hex: "#111111"))
+                }
+            }
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                VStack(spacing: 10) {
                 ForEach(scheduleGroups) { scheduleGroup in
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
@@ -708,6 +721,13 @@ struct DaySectionView: View {
                         }
                     }
                 }
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .onAppear {
+            if group.label == "明日" {
+                isExpanded = false
             }
         }
     }
@@ -1114,6 +1134,15 @@ struct FocusRaceStrip: View {
     let picks: [FocusRacePick]
     let venueStats: [String: VenueStats]
     let playerStats: [String: PlayerStats]
+    @State private var showAll = false
+
+    private var visiblePicks: [FocusRacePick] {
+        showAll ? picks : Array(picks.prefix(3))
+    }
+
+    private var hiddenCount: Int {
+        max(0, picks.count - visiblePicks.count)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -1132,12 +1161,38 @@ struct FocusRaceStrip: View {
             }
 
             VStack(spacing: 8) {
-                ForEach(picks) { pick in
+                ForEach(visiblePicks) { pick in
                     NavigationLink(value: pick.race.race_id) {
                         FocusRaceCard(pick: pick, venueStats: venueStats)
                     }
                     .buttonStyle(.plain)
                 }
+            }
+
+            if picks.count > 3 {
+                Button {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
+                        showAll.toggle()
+                    }
+                } label: {
+                    HStack {
+                        Text(showAll ? "一押しを3件に戻す" : "残り\(hiddenCount)件を見る")
+                            .font(.system(size: 14, weight: .black, design: .rounded))
+                        Spacer()
+                        Image(systemName: showAll ? "chevron.up" : "chevron.down")
+                            .font(.system(size: 12, weight: .black))
+                    }
+                    .foregroundColor(Color(hex: "#111111"))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 10)
+                    .background(Color(hex: "#F7F6F1"))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
             }
         }
         .padding(12)
