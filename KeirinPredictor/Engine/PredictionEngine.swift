@@ -622,8 +622,12 @@ struct PredictionEngine {
         let top4 = Array(top.prefix(min(4, top.count)))
         for i in 0..<min(3, top4.count) {
             for j in 0..<top4.count where j != i {
-                let prob = top4[i].winProb / 100 * top4[j].winProb / 100 * 3
-                let conf = prob > 0.15 ? "S" : (prob > 0.08 ? "A" : "B")
+                let prob = estimateExactaProb([top4[i], top4[j]], allPredictions: top)
+                let conf = confidence(
+                    probability: prob,
+                    expectedValue: nil,
+                    base: prob > 0.18 ? "S" : (prob > 0.10 ? "A" : "B")
+                )
                 appendBet(
                     type: "2車単",
                     combo: [top4[i], top4[j]],
@@ -637,14 +641,18 @@ struct PredictionEngine {
 
         for i in 0..<min(4, top.count) {
             for j in (i + 1)..<min(4, top.count) {
-                let prob = (top[i].winProb + top[j].winProb) / 100 * 0.6
+                let prob = estimateWideProb([top[i], top[j]], allPredictions: top)
                 appendBet(
                     type: "ワイド",
                     combo: [top[i], top[j]],
                     probability: prob,
-                    confidence: prob > 0.3 ? "S" : (prob > 0.15 ? "A" : "B"),
+                    confidence: confidence(
+                        probability: prob,
+                        expectedValue: nil,
+                        base: prob > 0.42 ? "S" : (prob > 0.28 ? "A" : "B")
+                    ),
                     expectedValue: nil,
-                    rationale: "安全寄り"
+                    rationale: "3着内同時到達"
                 )
             }
         }
@@ -672,12 +680,91 @@ struct PredictionEngine {
 
     private static func estimateTrifectaProb(_ trio: [PredictionResult], allPredictions: [PredictionResult]) -> Double {
         guard trio.count >= 3 else { return 0 }
-        let p1 = trio[0].winProb / 100
-        let remaining1 = max(0.01, 1 - p1)
-        let p2 = min(1, (trio[1].winProb / 100) / remaining1)
-        let remaining2 = max(0.01, remaining1 - trio[1].winProb / 100)
-        let p3 = min(1, (trio[2].winProb / 100) / remaining2)
-        return p1 * p2 * p3
+        return plackettLuceProbability(order: Array(trio.prefix(3)), allPredictions: allPredictions)
+    }
+
+    private static func estimateExactaProb(_ pair: [PredictionResult], allPredictions: [PredictionResult]) -> Double {
+        guard pair.count >= 2 else { return 0 }
+        return plackettLuceProbability(order: Array(pair.prefix(2)), allPredictions: allPredictions)
+    }
+
+    private static func estimateWideProb(_ pair: [PredictionResult], allPredictions: [PredictionResult]) -> Double {
+        guard pair.count >= 2 else { return 0 }
+        let target = Set(pair.prefix(2).map { $0.waku })
+        let field = allPredictions
+        guard field.count >= 3 else { return 0 }
+
+        var total = 0.0
+        for first in field {
+            for second in field where second.waku != first.waku {
+                for third in field where third.waku != first.waku && third.waku != second.waku {
+                    let top3 = [first.waku, second.waku, third.waku]
+                    if target.isSubset(of: Set(top3)) {
+                        total += plackettLuceProbability(order: [first, second, third], allPredictions: field)
+                    }
+                }
+            }
+        }
+        return clamp(total, lower: 0, upper: 0.99)
+    }
+
+    private static func plackettLuceProbability(order: [PredictionResult], allPredictions: [PredictionResult]) -> Double {
+        guard !order.isEmpty, !allPredictions.isEmpty else { return 0 }
+        let strengths = calibratedStrengths(allPredictions)
+        var remaining = Set(allPredictions.map { $0.waku })
+        var probability = 1.0
+
+        for pick in order {
+            guard remaining.contains(pick.waku) else { return 0 }
+            let denominator = remaining.reduce(0.0) { partial, waku in
+                partial + (strengths[waku] ?? 0.001)
+            }
+            guard denominator > 0 else { return 0 }
+            probability *= (strengths[pick.waku] ?? 0.001) / denominator
+            remaining.remove(pick.waku)
+        }
+
+        return clamp(probability, lower: 0, upper: 0.99)
+    }
+
+    private static func calibratedStrengths(_ predictions: [PredictionResult]) -> [Int: Double] {
+        guard !predictions.isEmpty else { return [:] }
+        let maxScore = predictions.map(\.score).max() ?? 0
+        let scoreStdDev = standardDeviation(predictions.map(\.score))
+        let temperature = clamp(9.6 - scoreStdDev / 6.0, lower: 6.8, upper: 11.0)
+
+        var raw: [Int: Double] = [:]
+        for prediction in predictions {
+            let modelStrength = max(0.002, prediction.winProb / 100)
+            let scoreStrength = exp((prediction.score - maxScore) / temperature)
+            let empiricalWin = rate01(prediction.winRate)
+            let empiricalTop3 = rate01(prediction.top3Rate)
+            let empiricalStrength = max(0.002, empiricalWin * 0.62 + empiricalTop3 * 0.18)
+            let formBoost = clamp(1.0 + prediction.formScore * 0.018, lower: 0.94, upper: 1.16)
+            let lineBoost: Double
+            switch prediction.lineRole {
+            case "番手": lineBoost = 1.04
+            case "先行": lineBoost = 1.02
+            case "3番手": lineBoost = 0.99
+            default: lineBoost = 1.0
+            }
+            let upsetPenalty = prediction.riskLabel == "穴候補" ? 0.94 : 1.0
+            let blendedStrength = modelStrength * 0.58 + scoreStrength * 0.27 + empiricalStrength * 0.15
+            raw[prediction.waku] = max(
+                0.001,
+                blendedStrength * formBoost * lineBoost * upsetPenalty
+            )
+        }
+
+        let total = max(0.001, raw.values.reduce(0, +))
+        return raw.mapValues { clamp($0 / total, lower: 0.001, upper: 0.75) }
+    }
+
+    private static func rate01(_ value: Double) -> Double {
+        if value > 1.0 {
+            return clamp(value / 100, lower: 0, upper: 1)
+        }
+        return clamp(value, lower: 0, upper: 1)
     }
 
     private static func permutations(_ arr: [PredictionResult]) -> [[PredictionResult]] {
