@@ -11,7 +11,10 @@ enum KeirinUI {
     static let green = Color(hex: "#49E37A")
     static let muted = Color.white.opacity(0.58)
     static let scrollBottomPadding: CGFloat = 24
-    static let lightBackground = Color(hex: "#F7F6F1")
+    static let lightBackground = Color(hex: "#050912")
+    static let paper = Color(hex: "#F3E7C8")
+    static let paperDark = Color(hex: "#D7C59A")
+    static let deepGold = Color(hex: "#D7A842")
 
     static var actionGradient: LinearGradient {
         LinearGradient(
@@ -112,35 +115,49 @@ struct KeirinStageBackground: View {
             ZStack {
                 KeirinUI.ink
 
+                Image("HeaderBg")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                    .opacity(0.58)
+                    .clipped()
+
                 LinearGradient(
                     colors: [
-                        Color(hex: "#101827"),
-                        Color(hex: "#05070D"),
-                        Color(hex: "#120A0C")
+                        Color(hex: "#02050A").opacity(0.42),
+                        Color(hex: "#06101C").opacity(0.82),
+                        Color(hex: "#02050A")
                     ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
 
-                VStack(spacing: 22) {
-                    ForEach(0..<18, id: \.self) { _ in
+                VStack(spacing: 18) {
+                    ForEach(0..<22, id: \.self) { _ in
                         Rectangle()
-                            .fill(Color.white.opacity(0.035))
+                            .fill(KeirinUI.gold.opacity(0.055))
                             .frame(height: 1)
                     }
                 }
-                .rotationEffect(.degrees(-8))
+                .rotationEffect(.degrees(-11))
                 .scaleEffect(1.35)
 
-                Circle()
-                    .stroke(KeirinUI.cyan.opacity(0.11), lineWidth: 32)
-                    .frame(width: min(520, width * 1.35), height: min(300, width * 0.78))
-                    .offset(x: width * 0.28, y: -height * 0.22)
-
-                Circle()
-                    .stroke(KeirinUI.red.opacity(0.10), lineWidth: 24)
-                    .frame(width: min(420, width * 1.12), height: min(250, width * 0.67))
-                    .offset(x: -width * 0.35, y: height * 0.56)
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.clear,
+                                KeirinUI.gold.opacity(0.16),
+                                KeirinUI.red.opacity(0.12),
+                                Color.clear
+                            ],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: width * 1.25, height: 2)
+                    .rotationEffect(.degrees(-18))
+                    .offset(y: -height * 0.18)
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
             .clipped()
@@ -208,7 +225,13 @@ struct RacingPanel<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(.white)
+                    .fill(
+                        LinearGradient(
+                            colors: [KeirinUI.paper, Color(hex: "#E8D7AF")],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             )
             .overlay(alignment: .leading) {
                 Rectangle()
@@ -225,9 +248,9 @@ struct RacingPanel<Content: View>: View {
             }
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.black.opacity(0.10), lineWidth: 1)
+                    .stroke(KeirinUI.gold.opacity(0.45), lineWidth: 1)
             )
-            .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 8)
+            .shadow(color: Color.black.opacity(0.26), radius: 14, x: 0, y: 8)
     }
 }
 

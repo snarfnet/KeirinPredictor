@@ -16,7 +16,7 @@ struct RaceDetailView: View {
 
     var body: some View {
         ZStack {
-            KeirinUI.lightBackground.ignoresSafeArea()
+            KeirinStageBackground()
 
             CompactAwareScroll {
                 VStack(spacing: 16) {
@@ -40,8 +40,8 @@ struct RaceDetailView: View {
         .navigationTitle("\(race.venue) \(race.raceNo)R")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.visible, for: .navigationBar)
-        .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
-        .toolbarColorScheme(.light, for: .navigationBar)
+        .toolbarBackground(Color(hex: "#050912"), for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .onAppear {
             withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
                 pulse = true
@@ -58,7 +58,7 @@ struct RaceDetailView: View {
                             .font(.system(size: 11, weight: .black, design: .monospaced))
                             .foregroundColor(KeirinUI.red)
                         Text("\(race.venue) \(race.raceNo)R")
-                            .font(.system(size: 30, weight: .black, design: .rounded))
+                            .font(.system(size: 31, weight: .black, design: .serif))
                             .foregroundColor(Color(hex: "#111111"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
@@ -150,8 +150,8 @@ struct RaceDetailView: View {
                         .font(.system(size: 11, weight: .black, design: .monospaced))
                         .foregroundColor(KeirinUI.gold)
                     Text("指数結果")
-                        .font(.system(size: 23, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .font(.system(size: 24, weight: .black, design: .serif))
+                        .foregroundColor(KeirinUI.paper)
                 }
                 Button {
                     showResults = false
@@ -180,7 +180,7 @@ struct RaceDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("ライン予測")
                         .font(.system(size: 13, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .foregroundColor(KeirinUI.gold)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
                             ForEach(Array(lineFormations.enumerated()), id: \.offset) { (i, line) in

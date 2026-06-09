@@ -10,7 +10,7 @@ struct RaceListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinUI.lightBackground.ignoresSafeArea()
+                KeirinStageBackground()
 
                 if dataLoader.todayRaces.isEmpty {
                     emptyState
@@ -56,10 +56,10 @@ struct RaceListView: View {
                 ToolbarItem(placement: .principal) {
                     HStack(spacing: 7) {
                         Image(systemName: "bolt.horizontal.circle.fill")
-                            .foregroundColor(KeirinUI.red)
+                            .foregroundColor(KeirinUI.gold)
                         Text("競輪鉄脚ラボ")
-                            .font(.system(size: 16, weight: .black, design: .rounded))
-                            .foregroundColor(Color(hex: "#151515"))
+                            .font(.system(size: 17, weight: .black, design: .serif))
+                            .foregroundColor(KeirinUI.gold)
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -70,18 +70,18 @@ struct RaceListView: View {
                             .font(.system(size: 14, weight: .black))
                             .foregroundColor(.white)
                             .frame(width: 34, height: 34)
-                            .background(homeVenue.isEmpty ? Color(hex: "#111111") : KeirinUI.red)
+                            .background(homeVenue.isEmpty ? Color(hex: "#111827") : KeirinUI.red)
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .stroke(KeirinUI.gold.opacity(0.34), lineWidth: 1)
+                                    .stroke(KeirinUI.gold.opacity(0.55), lineWidth: 1)
                             )
                     }
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
-            .toolbarColorScheme(.light, for: .navigationBar)
+            .toolbarBackground(Color(hex: "#050912"), for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .navigationDestination(for: String.self) { raceId in
                 if let race = dataLoader.todayRaces.first(where: { $0.race_id == raceId }) {
                     RaceDetailView(race: race)
@@ -100,35 +100,69 @@ struct RaceListView: View {
     }
 
     private var heroHeader: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Image("HeroVisualV2")
+        ZStack(alignment: .bottomLeading) {
+            Image("HeaderBg")
+                .resizable()
+                .scaledToFill()
+                .frame(minHeight: 286)
+                .clipped()
+                .overlay(
+                    LinearGradient(
+                        colors: [
+                            Color.black.opacity(0.12),
+                            Color(hex: "#06101C").opacity(0.58),
+                            Color.black.opacity(0.92)
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+
+            Image("HakaseAvatar")
                 .resizable()
                 .scaledToFit()
-                .frame(maxWidth: .infinity)
-                .background(.white)
+                .frame(width: UIScreen.main.bounds.width < 390 ? 128 : 142)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.trailing, -10)
+                .offset(y: 8)
+                .shadow(color: KeirinUI.gold.opacity(0.22), radius: 14, x: 0, y: 4)
 
-            VStack(alignment: .leading, spacing: 9) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 7) {
                     Text("BUILD \(appBuildNumber)")
                     Text(compactDateLabel)
                 }
                 .font(.system(size: 10, weight: .black, design: .monospaced))
-                .foregroundColor(.white)
+                .foregroundColor(KeirinUI.gold)
                 .padding(.horizontal, 9)
                 .padding(.vertical, 5)
-                .background(Color.black.opacity(0.72))
+                .background(Color.black.opacity(0.56))
                 .clipShape(Capsule())
+                .overlay(Capsule().stroke(KeirinUI.gold.opacity(0.45), lineWidth: 1))
 
-                Text("競輪鉄脚ラボ")
-                    .font(.system(size: 38, weight: .black, design: .rounded))
-                    .foregroundColor(Color(hex: "#111111"))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.68)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("鉄脚博士")
+                        .font(.system(size: 42, weight: .black, design: .serif))
+                        .foregroundColor(KeirinUI.gold)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.58)
+                    Text("今日の一着、博士に聞け。")
+                        .font(.system(size: 16, weight: .bold, design: .serif))
+                        .foregroundColor(.white.opacity(0.92))
+                }
 
-                Text(dataLoader.todayDateString.isEmpty ? "本日のデータを確認中" : "データ日 \(dataLoader.todayDateString)")
-                    .font(.system(size: 13, weight: .bold, design: .rounded))
-                    .foregroundColor(Color(hex: "#5D5344"))
-                    .lineLimit(1)
+                Text("展開と脚の流れ...この並び、見逃すな。")
+                    .font(.system(size: 15, weight: .bold, design: .serif))
+                    .foregroundColor(KeirinUI.paper)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 9)
+                    .background(Color.black.opacity(0.46))
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(KeirinUI.gold.opacity(0.55), lineWidth: 1)
+                    )
+                    .frame(maxWidth: 250, alignment: .leading)
 
                 DataStatusRow(
                     title: dataLoader.dataStatusTitle,
@@ -137,22 +171,21 @@ struct RaceListView: View {
                 )
 
                 MetricPillRow {
-                    LightMetricPill(title: "開催場", value: "\(availableVenues.count)", tone: Color(hex: "#1E5BFF"))
-                    LightMetricPill(title: "レース", value: "\(dataLoader.todayRaces.count)", tone: Color(hex: "#C79314"))
-                    LightMetricPill(title: "一押し", value: "\(aiPicks.count)", tone: KeirinUI.red)
+                    LightMetricPill(title: "開催場", value: "\(availableVenues.count)", tone: KeirinUI.gold)
+                    LightMetricPill(title: "レース", value: "\(dataLoader.todayRaces.count)", tone: KeirinUI.red)
+                    LightMetricPill(title: "一押し", value: "\(aiPicks.count)", tone: KeirinUI.green)
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.bottom, 14)
+            .padding(14)
         }
         .frame(maxWidth: .infinity)
-        .background(.white)
+        .background(Color(hex: "#07101A"))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(KeirinUI.gold.opacity(0.48), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.10), radius: 16, x: 0, y: 8)
+        .shadow(color: Color.black.opacity(0.34), radius: 20, x: 0, y: 10)
     }
 
     private var availableVenues: [String] {
@@ -272,12 +305,12 @@ struct RaceListView: View {
                 .opacity(0.92)
 
             Text("本日の出走表がありません")
-                .font(.system(size: 20, weight: .black, design: .rounded))
-                .foregroundColor(Color(hex: "#151515"))
+                .font(.system(size: 21, weight: .black, design: .serif))
+                .foregroundColor(KeirinUI.gold)
 
             Text(dataLoader.todayDataWarning ?? "前日データは表示せず、今日以降のデータだけ表示します。")
                 .font(.system(size: 13, weight: .bold, design: .rounded))
-                .foregroundColor(Color(hex: "#6E665A"))
+                .foregroundColor(.white.opacity(0.70))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 28)
 
@@ -289,12 +322,12 @@ struct RaceListView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
-                    .background(Color(hex: "#111111"))
+                    .background(KeirinUI.red)
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(KeirinUI.lightBackground.ignoresSafeArea())
+        .background(KeirinStageBackground())
     }
 
     private var dayGroups: [DayGroup] {
@@ -514,16 +547,16 @@ struct LiveHitRateCard: View {
             HStack(alignment: .top, spacing: 10) {
                 VStack(alignment: .leading, spacing: 3) {
                     Text("鉄脚先生")
-                        .font(.system(size: 15, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#B68000"))
+                        .font(.system(size: 15, weight: .black, design: .serif))
+                        .foregroundColor(KeirinUI.gold)
                     Text("ただ今の的中率")
-                        .font(.system(size: 22, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .font(.system(size: 23, weight: .black, design: .serif))
+                        .foregroundColor(KeirinUI.paper)
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
                     Text(statusText)
                         .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundColor(Color(hex: "#6E665A"))
+                        .foregroundColor(.white.opacity(0.64))
                         .lineLimit(1)
                         .minimumScaleFactor(0.72)
                 }
@@ -547,7 +580,7 @@ struct LiveHitRateCard: View {
         .padding(14)
         .background(
             LinearGradient(
-                colors: [.white, Color(hex: "#FFF8E7")],
+                colors: [Color(hex: "#101923"), Color(hex: "#07101A")],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -555,9 +588,14 @@ struct LiveHitRateCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color(hex: "#E2C46F").opacity(0.46), lineWidth: 1)
+                .stroke(KeirinUI.gold.opacity(0.54), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 7)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(LinearGradient(colors: [KeirinUI.gold, KeirinUI.red], startPoint: .leading, endPoint: .trailing))
+                .frame(height: 3)
+        }
+        .shadow(color: Color.black.opacity(0.30), radius: 16, x: 0, y: 8)
     }
 
     private var rateColor: Color {
@@ -577,7 +615,7 @@ struct HitRateMiniPill: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 10, weight: .black, design: .rounded))
-                .foregroundColor(Color(hex: "#766D61"))
+                .foregroundColor(Color(hex: "#6B5830"))
             Text(value)
                 .font(.system(size: 15, weight: .black, design: .monospaced))
                 .foregroundColor(tone)
@@ -587,7 +625,7 @@ struct HitRateMiniPill: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 9)
         .padding(.vertical, 7)
-        .background(Color(hex: "#F7F6F1"))
+        .background(KeirinUI.paper)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
@@ -677,26 +715,26 @@ struct DaySectionView: View {
                 HStack(alignment: .lastTextBaseline) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(group.label)
-                        .font(.system(size: 25, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#151515"))
+                        .font(.system(size: 25, weight: .black, design: .serif))
+                        .foregroundColor(KeirinUI.gold)
                     Text(group.dateLabel)
                         .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundColor(Color(hex: "#81786D"))
+                        .foregroundColor(.white.opacity(0.64))
                 }
 
                 Spacer()
 
                     Text("\(group.totalRaces)R")
                         .font(.system(size: 12, weight: .black, design: .monospaced))
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(hex: "#111111"))
                         .padding(.horizontal, 9)
                         .padding(.vertical, 5)
-                        .background(Color(hex: "#111111"))
+                        .background(KeirinUI.gold)
                         .clipShape(Capsule())
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .black))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .foregroundColor(KeirinUI.gold)
                 }
             }
             .buttonStyle(.plain)
@@ -709,7 +747,7 @@ struct DaySectionView: View {
                             ScheduleBadge(label: scheduleGroup.label, time: "", tone: scheduleGroup.tone)
                             Text("\(scheduleGroup.venues.count)場 \(scheduleGroup.totalRaces)R")
                                 .font(.system(size: 12, weight: .black, design: .rounded))
-                                .foregroundColor(Color(hex: "#5D5344"))
+                                .foregroundColor(.white.opacity(0.70))
                             Spacer()
                         }
 
@@ -745,7 +783,7 @@ struct LightMetricPill: View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.system(size: 10, weight: .black, design: .rounded))
-                .foregroundColor(Color(hex: "#111111").opacity(0.62))
+                .foregroundColor(Color(hex: "#6B5830"))
             Text(value)
                 .font(.system(size: 20, weight: .black, design: .monospaced))
                 .foregroundColor(tone)
@@ -754,7 +792,7 @@ struct LightMetricPill: View {
         }
         .padding(.horizontal, 11)
         .padding(.vertical, 9)
-        .background(.white)
+        .background(KeirinUI.paper)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(alignment: .top) {
             Rectangle()
@@ -765,7 +803,7 @@ struct LightMetricPill: View {
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .stroke(Color.black.opacity(0.10), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 5)
+        .shadow(color: Color.black.opacity(0.22), radius: 10, x: 0, y: 5)
     }
 }
 
@@ -838,12 +876,12 @@ struct DataStatusRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.system(size: 13, weight: .black, design: .rounded))
-                    .foregroundColor(Color(hex: "#151515"))
+                    .foregroundColor(KeirinUI.paper)
                     .lineLimit(1)
                     .minimumScaleFactor(0.76)
                 Text(updated.isEmpty ? detail : "\(detail) ・ \(updated)")
                     .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundColor(Color(hex: "#6E665A"))
+                    .foregroundColor(.white.opacity(0.58))
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
             }
@@ -857,13 +895,13 @@ struct DataStatusRow: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(.white)
+        .background(Color.black.opacity(0.42))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.10), lineWidth: 1)
+                .stroke(KeirinUI.gold.opacity(0.34), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: 6)
+        .shadow(color: Color.black.opacity(0.26), radius: 10, x: 0, y: 6)
     }
 
     private var iconName: String {
@@ -881,7 +919,7 @@ struct HomeVenuePickerView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(hex: "#F7F6F1").ignoresSafeArea()
+                KeirinStageBackground()
 
                 ScrollView {
                     VStack(spacing: 8) {
@@ -909,31 +947,34 @@ struct HomeVenuePickerView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("閉じる") { dismiss() }
-                        .foregroundColor(Color(hex: "#1E5BFF"))
+                        .foregroundColor(KeirinUI.gold)
                 }
             }
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color(hex: "#050912"), for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 
     private func pickerRow(title: String, icon: String, selected: Bool) -> some View {
         HStack(spacing: 12) {
             Image(systemName: icon)
-                .foregroundColor(selected ? Color(hex: "#B68000") : Color(hex: "#1E5BFF"))
+                .foregroundColor(selected ? KeirinUI.red : KeirinUI.gold)
             Text(title)
                 .font(.system(size: 16, weight: selected ? .black : .semibold, design: .rounded))
                 .foregroundColor(Color(hex: "#151515"))
             Spacer()
             if selected {
                 Image(systemName: "checkmark.seal.fill")
-                    .foregroundColor(Color(hex: "#B68000"))
+                    .foregroundColor(KeirinUI.red)
             }
         }
         .padding(13)
-        .background(.white)
+        .background(KeirinUI.paper)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(selected ? Color(hex: "#B68000").opacity(0.35) : Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(selected ? KeirinUI.red.opacity(0.45) : KeirinUI.gold.opacity(0.22), lineWidth: 1)
         )
     }
 }
@@ -977,12 +1018,12 @@ struct VenueSectionView: View {
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(venue)
-                            .font(.system(size: 21, weight: .black, design: .rounded))
-                            .foregroundColor(Color(hex: "#151515"))
+                            .font(.system(size: 22, weight: .black, design: .serif))
+                            .foregroundColor(KeirinUI.paper)
                         HStack(spacing: 6) {
                             Text(isExpanded ? "タップで閉じる" : "タップでレース表示")
                                 .font(.system(size: 13, weight: .bold, design: .rounded))
-                                .foregroundColor(Color(hex: "#81786D"))
+                                .foregroundColor(.white.opacity(0.58))
                             ScheduleBadge(label: scheduleLabel, time: "", tone: scheduleTone)
                         }
                     }
@@ -999,7 +1040,7 @@ struct VenueSectionView: View {
 
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.system(size: 12, weight: .black))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .foregroundColor(KeirinUI.gold)
                 }
                 .padding(12)
             }
@@ -1019,7 +1060,13 @@ struct VenueSectionView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
-        .background(.white)
+        .background(
+            LinearGradient(
+                colors: [Color(hex: "#101923"), Color(hex: "#07101A")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(alignment: .leading) {
             Rectangle()
@@ -1029,9 +1076,9 @@ struct VenueSectionView: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(isExpanded ? KeirinUI.red.opacity(0.28) : Color.black.opacity(0.10), lineWidth: 1)
+                .stroke(isExpanded ? KeirinUI.gold.opacity(0.55) : KeirinUI.gold.opacity(0.24), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 7)
+        .shadow(color: Color.black.opacity(0.28), radius: 12, x: 0, y: 7)
         .onAppear {
             if isHome {
                 isExpanded = true
@@ -1089,8 +1136,8 @@ struct RaceCardView: View {
                         LaneBadge(number: top.umaban, size: 26)
                         VStack(alignment: .leading, spacing: 3) {
                             Text(top.name)
-                                .font(.system(size: 18, weight: .black, design: .rounded))
-                                .foregroundColor(Color(hex: "#151515"))
+                                .font(.system(size: 18, weight: .black, design: .serif))
+                                .foregroundColor(KeirinUI.paper)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
                             ScheduleBadge(label: race.scheduleLabel, time: race.startTimeText, tone: race.scheduleTone)
@@ -1099,7 +1146,7 @@ struct RaceCardView: View {
                     Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 12, weight: .black))
-                        .foregroundColor(Color(hex: "#1E5BFF"))
+                        .foregroundColor(KeirinUI.gold)
                 }
 
                 HStack(spacing: 6) {
@@ -1108,7 +1155,7 @@ struct RaceCardView: View {
                             LaneBadge(number: entry.umaban, size: 21)
                             Text(index == 0 ? "軸" : "\(index + 1)")
                                 .font(.system(size: 9, weight: .black, design: .rounded))
-                                .foregroundColor(index == 0 ? Color(hex: "#B68000") : Color(hex: "#81786D"))
+                                .foregroundColor(index == 0 ? KeirinUI.gold : .white.opacity(0.64))
                         }
                     }
                     Spacer()
@@ -1124,11 +1171,11 @@ struct RaceCardView: View {
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
         .padding(10)
-        .background(.white)
+        .background(Color.black.opacity(0.32))
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.09), lineWidth: 1)
+                .stroke(KeirinUI.gold.opacity(0.18), lineWidth: 1)
         )
     }
 }
@@ -1151,15 +1198,15 @@ struct FocusRaceStrip: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("今日の一押し！")
-                    .font(.system(size: 21, weight: .black, design: .rounded))
-                    .foregroundColor(Color(hex: "#151515"))
+                    .font(.system(size: 22, weight: .black, design: .serif))
+                    .foregroundColor(KeirinUI.gold)
                 Spacer()
                 Text("\(picks.count)")
                     .font(.system(size: 13, weight: .black, design: .monospaced))
-                    .foregroundColor(.white)
+                    .foregroundColor(Color(hex: "#111111"))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(KeirinUI.red)
+                    .background(KeirinUI.gold)
                     .clipShape(Capsule())
             }
 
@@ -1185,21 +1232,27 @@ struct FocusRaceStrip: View {
                         Image(systemName: showAll ? "chevron.up" : "chevron.down")
                             .font(.system(size: 12, weight: .black))
                     }
-                    .foregroundColor(Color(hex: "#111111"))
+                    .foregroundColor(KeirinUI.paper)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 10)
-                    .background(Color(hex: "#F7F6F1"))
+                    .background(Color.black.opacity(0.36))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 8, style: .continuous)
-                            .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                            .stroke(KeirinUI.gold.opacity(0.25), lineWidth: 1)
                     )
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(12)
-        .background(.white)
+        .background(
+            LinearGradient(
+                colors: [Color(hex: "#0E1721"), Color(hex: "#050912")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(alignment: .top) {
             Rectangle()
@@ -1214,9 +1267,9 @@ struct FocusRaceStrip: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(KeirinUI.gold.opacity(0.42), lineWidth: 1)
         )
-        .shadow(color: Color.black.opacity(0.08), radius: 14, x: 0, y: 8)
+        .shadow(color: Color.black.opacity(0.32), radius: 16, x: 0, y: 8)
     }
 }
 
@@ -1259,14 +1312,14 @@ struct FocusRaceCard: View {
                 HStack(alignment: .top, spacing: 7) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(race.venue)
-                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .font(.system(size: 19, weight: .black, design: .serif))
                             .foregroundColor(Color(hex: "#151515"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         ScheduleBadge(label: race.scheduleLabel, time: race.startTimeText, tone: race.scheduleTone)
                         if let topEntry {
                             Text("軸 \(topEntry.umaban)番 \(topEntry.name)")
-                                .font(.system(size: 14, weight: .bold, design: .rounded))
+                                .font(.system(size: 14, weight: .black, design: .rounded))
                                 .foregroundColor(Color(hex: "#5D5344"))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.72)
@@ -1298,12 +1351,12 @@ struct FocusRaceCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     ForEach(pick.reasons.prefix(4), id: \.self) { reason in
                         HStack(alignment: .top, spacing: 5) {
-                            Circle()
-                                .fill(Color(hex: "#B68000"))
-                                .frame(width: 4, height: 4)
-                                .padding(.top, 6)
+                            Text("◎")
+                                .font(.system(size: 11, weight: .black, design: .serif))
+                                .foregroundColor(KeirinUI.red)
+                                .padding(.top, 1)
                             Text(reason)
-                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                .font(.system(size: 14, weight: .bold, design: .serif))
                                 .foregroundColor(Color(hex: "#5D5344"))
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1333,7 +1386,13 @@ struct FocusRaceCard: View {
             .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
         }
         .padding(10)
-        .background(.white)
+        .background(
+            LinearGradient(
+                colors: [KeirinUI.paper, Color(hex: "#E7D5AA")],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        )
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(alignment: .leading) {
             Rectangle()
@@ -1343,7 +1402,7 @@ struct FocusRaceCard: View {
         }
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.10), lineWidth: 1)
+                .stroke(KeirinUI.gold.opacity(0.56), lineWidth: 1)
         )
     }
 }
