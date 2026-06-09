@@ -64,7 +64,6 @@ jobs:
             -destination "generic/platform=iOS" \
             -archivePath build/KeirinPredictor.xcarchive \
             CODE_SIGN_STYLE=Automatic \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
             DEVELOPMENT_TEAM=83VGKGSQUH \
             MARKETING_VERSION=$APP_VERSION \
             CURRENT_PROJECT_VERSION=$BUILD_NUMBER \
