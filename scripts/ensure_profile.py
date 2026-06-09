@@ -46,6 +46,19 @@ def first(path, label):
     return items[0]
 
 
+def all_items(path):
+    items = []
+    next_path = path
+    while next_path:
+        payload = api("GET", next_path)
+        items.extend(payload.get("data") or [])
+        next_url = payload.get("links", {}).get("next")
+        if not next_url:
+            break
+        next_path = next_url.replace(BASE_URL, "")
+    return items
+
+
 def profile_content(profile_id):
     payload = api("GET", f"/profiles/{profile_id}")
     content = (payload.get("data") or {}).get("attributes", {}).get("profileContent")
@@ -59,17 +72,32 @@ def main():
     bundle = first(f"/bundleIds?filter[identifier]={BUNDLE_ID}", "bundle id")
     bundle_id = bundle["id"]
 
-    profiles = api(
-        "GET",
-        f"/profiles?filter[profileType]=IOS_APP_STORE&filter[name]={PROFILE_NAME}&limit=10",
-    ).get("data") or []
+    profiles = all_items("/profiles?filter[profileType]=IOS_APP_STORE&limit=200")
     for profile in profiles:
         if profile["attributes"].get("name") == PROFILE_NAME:
             out_path.write_bytes(base64.b64decode(profile_content(profile["id"])))
             print(PROFILE_NAME)
             return
 
-    cert = first("/certificates?filter[certificateType]=IOS_DISTRIBUTION&limit=10", "iOS distribution certificate")
+    for profile in profiles:
+        profile_bundle = api("GET", f"/profiles/{profile['id']}/bundleId").get("data") or {}
+        if profile_bundle.get("id") == bundle_id:
+            profile_name = profile["attributes"].get("name") or PROFILE_NAME
+            out_path.write_bytes(base64.b64decode(profile_content(profile["id"])))
+            print(profile_name)
+            return
+
+    certificates = all_items("/certificates?limit=200")
+    cert = None
+    for candidate in certificates:
+        cert_type = candidate.get("attributes", {}).get("certificateType")
+        if cert_type in {"IOS_DISTRIBUTION", "DISTRIBUTION"}:
+            cert = candidate
+            break
+    if not cert:
+        seen = ", ".join(sorted({c.get("attributes", {}).get("certificateType", "unknown") for c in certificates}))
+        raise RuntimeError(f"iOS distribution certificate not found. Visible certificate types: {seen or 'none'}")
+
     payload = api(
         "POST",
         "/profiles",
