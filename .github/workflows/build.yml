@@ -49,9 +49,11 @@ jobs:
 
       - name: Install App Store provisioning profile
         run: |
-          python3 -m pip install --quiet PyJWT requests cryptography
+          python3 -m venv "$RUNNER_TEMP/profile-venv"
+          source "$RUNNER_TEMP/profile-venv/bin/activate"
+          python -m pip install --quiet PyJWT requests cryptography
           PROFILE_PATH="$RUNNER_TEMP/KeirinPredictor.mobileprovision"
-          PROFILE_NAME=$(python3 scripts/ensure_profile.py "$PROFILE_PATH")
+          PROFILE_NAME=$(python scripts/ensure_profile.py "$PROFILE_PATH")
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
           UUID=$(security cms -D -i "$PROFILE_PATH" | /usr/libexec/PlistBuddy -c 'Print UUID' /dev/stdin)
           cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
