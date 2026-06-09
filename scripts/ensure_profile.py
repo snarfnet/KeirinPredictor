@@ -11,7 +11,7 @@ KEY_ID = os.environ.get("ASC_KEY_ID", "WDXGY9WX55")
 ISSUER_ID = os.environ.get("ASC_ISSUER_ID", "2be0734f-943a-4d61-9dc9-5d9045c46fec")
 KEY_PATH = Path.home() / ".appstoreconnect" / "private_keys" / f"AuthKey_{KEY_ID}.p8"
 BUNDLE_ID = "com.tokyonasu.keirinpredictor"
-PROFILE_NAME = "KeirinPredictor App Store CI"
+PROFILE_NAME = "KeirinPredictor App Store CI 20260609"
 BASE_URL = "https://api.appstoreconnect.apple.com/v1"
 
 
@@ -87,21 +87,17 @@ def main():
             print(PROFILE_NAME)
             return
 
-    for profile in profiles:
-        profile_bundle = api("GET", f"/profiles/{profile['id']}/bundleId").get("data") or {}
-        if profile_bundle.get("id") == bundle_id:
-            profile_name = profile["attributes"].get("name") or PROFILE_NAME
-            write_profile(out_path, profile_content(profile["id"]))
-            print(profile_name)
-            return
-
     certificates = all_items("/certificates?limit=200")
-    cert = None
+    distribution_certificates = []
     for candidate in certificates:
         cert_type = candidate.get("attributes", {}).get("certificateType")
         if cert_type in {"IOS_DISTRIBUTION", "DISTRIBUTION"}:
-            cert = candidate
-            break
+            distribution_certificates.append(candidate)
+    distribution_certificates.sort(
+        key=lambda c: c.get("attributes", {}).get("expirationDate") or "",
+        reverse=True,
+    )
+    cert = distribution_certificates[0] if distribution_certificates else None
     if not cert:
         seen = ", ".join(sorted({c.get("attributes", {}).get("certificateType", "unknown") for c in certificates}))
         raise RuntimeError(f"iOS distribution certificate not found. Visible certificate types: {seen or 'none'}")
