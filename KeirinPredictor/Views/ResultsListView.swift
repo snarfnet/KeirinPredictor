@@ -6,7 +6,7 @@ struct ResultsListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinUI.lightBackground.ignoresSafeArea()
+                KeirinStageBackground()
 
                 CompactAwareScroll {
                     VStack(alignment: .leading, spacing: 16) {
@@ -24,7 +24,7 @@ struct ResultsListView: View {
                 ToolbarItem(placement: .principal) {
                     Text("結果")
                         .font(.system(size: 17, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .foregroundColor(KeirinUI.gold)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -37,7 +37,7 @@ struct ResultsListView: View {
             }
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
-            .toolbarColorScheme(.light, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .onAppear {
                 if dataLoader.todayResults.isEmpty && !dataLoader.isResultsLoading {
                     dataLoader.fetchRemoteTodayResults()

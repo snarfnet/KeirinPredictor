@@ -25,7 +25,7 @@ struct PlayerDatabaseView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinUI.lightBackground.ignoresSafeArea()
+                KeirinStageBackground()
 
                 VStack(spacing: 0) {
                     // Search bar
@@ -91,12 +91,12 @@ struct PlayerDatabaseView: View {
                 ToolbarItem(placement: .principal) {
                     Text("選手")
                         .font(.system(size: 17, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .foregroundColor(KeirinUI.gold)
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
-            .toolbarColorScheme(.light, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 }
@@ -217,7 +217,7 @@ struct PlayerDetailView: View {
 
     var body: some View {
         ZStack {
-            KeirinUI.lightBackground.ignoresSafeArea()
+            KeirinStageBackground()
 
             CompactAwareScroll {
                 VStack(spacing: 20) {

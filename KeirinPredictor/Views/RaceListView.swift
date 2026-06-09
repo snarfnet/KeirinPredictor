@@ -101,31 +101,29 @@ struct RaceListView: View {
 
     private var heroHeader: some View {
         ZStack(alignment: .bottomLeading) {
-            Image("HeaderBg")
+            Image("HakaseHeroV3")
                 .resizable()
                 .scaledToFill()
-                .frame(minHeight: 286)
+                .frame(minHeight: 334)
                 .clipped()
                 .overlay(
                     LinearGradient(
                         colors: [
-                            Color.black.opacity(0.12),
-                            Color(hex: "#06101C").opacity(0.58),
-                            Color.black.opacity(0.92)
+                            Color.black.opacity(0.04),
+                            Color(hex: "#06101C").opacity(0.36),
+                            Color.black.opacity(0.96)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-
-            Image("HakaseAvatar")
-                .resizable()
-                .scaledToFit()
-                .frame(width: UIScreen.main.bounds.width < 390 ? 128 : 142)
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding(.trailing, -10)
-                .offset(y: 8)
-                .shadow(color: KeirinUI.gold.opacity(0.22), radius: 14, x: 0, y: 4)
+                .overlay(
+                    LinearGradient(
+                        colors: [Color.black.opacity(0.80), Color.clear],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 7) {
@@ -142,7 +140,7 @@ struct RaceListView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text("鉄脚博士")
-                        .font(.system(size: 42, weight: .black, design: .serif))
+                        .font(.system(size: 46, weight: .black, design: .serif))
                         .foregroundColor(KeirinUI.gold)
                         .lineLimit(1)
                         .minimumScaleFactor(0.58)
@@ -177,6 +175,7 @@ struct RaceListView: View {
                 }
             }
             .padding(14)
+            .padding(.top, 14)
         }
         .frame(maxWidth: .infinity)
         .background(Color(hex: "#07101A"))
@@ -297,7 +296,7 @@ struct RaceListView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image("HeroVisual")
+            Image("HakaseHeroV3")
                 .resizable()
                 .scaledToFill()
                 .frame(width: 260, height: 150)

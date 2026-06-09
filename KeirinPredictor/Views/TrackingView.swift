@@ -6,7 +6,7 @@ struct TrackingView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinUI.lightBackground.ignoresSafeArea()
+                KeirinStageBackground()
 
                 CompactAwareScroll {
                     VStack(spacing: 16) {
@@ -23,12 +23,12 @@ struct TrackingView: View {
                 ToolbarItem(placement: .principal) {
                     Text("成績")
                         .font(.system(size: 17, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .foregroundColor(KeirinUI.gold)
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
-            .toolbarColorScheme(.light, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 
@@ -158,7 +158,7 @@ struct TrackingView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("直近の予測")
                 .font(.system(size: 18, weight: .black, design: .rounded))
-                .foregroundColor(Color(hex: "#111111"))
+                .foregroundColor(KeirinUI.gold)
 
             if tracker.recentRecords.isEmpty {
                 VStack(spacing: 12) {

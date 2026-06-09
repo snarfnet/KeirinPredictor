@@ -24,7 +24,7 @@ struct PredictionView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinUI.lightBackground.ignoresSafeArea()
+                KeirinStageBackground()
 
                 CompactAwareScroll {
                     VStack(spacing: 18) {
@@ -64,7 +64,7 @@ struct PredictionView: View {
             }
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
-            .toolbarColorScheme(.light, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .onAppear {
                 withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
                     pulse = true

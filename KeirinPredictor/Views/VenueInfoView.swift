@@ -11,7 +11,7 @@ struct VenueInfoView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                KeirinUI.lightBackground.ignoresSafeArea()
+                KeirinStageBackground()
 
                 if let venue = selectedVenue, let stats = dataLoader.venueStats[venue] {
                     VenueDetailView(name: venue, stats: stats, onBack: { selectedVenue = nil })
@@ -25,12 +25,12 @@ struct VenueInfoView: View {
                 ToolbarItem(placement: .principal) {
                     Text("競輪場")
                         .font(.system(size: 17, weight: .black, design: .rounded))
-                        .foregroundColor(Color(hex: "#111111"))
+                        .foregroundColor(KeirinUI.gold)
                 }
             }
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarBackground(KeirinUI.lightBackground, for: .navigationBar)
-            .toolbarColorScheme(.light, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 
