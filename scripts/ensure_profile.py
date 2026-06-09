@@ -60,11 +60,19 @@ def all_items(path):
 
 
 def profile_content(profile_id):
-    payload = api("GET", f"/profiles/{profile_id}")
+    payload = api("GET", f"/profiles/{profile_id}?fields[profiles]=name,profileContent")
     content = (payload.get("data") or {}).get("attributes", {}).get("profileContent")
     if not content:
         raise RuntimeError(f"profileContent missing for profile {profile_id}")
     return content
+
+
+def write_profile(out_path, content):
+    normalized = "".join(str(content).split())
+    data = base64.b64decode(normalized, validate=True)
+    if not data:
+        raise RuntimeError("downloaded provisioning profile is empty")
+    out_path.write_bytes(data)
 
 
 def main():
@@ -75,7 +83,7 @@ def main():
     profiles = all_items("/profiles?filter[profileType]=IOS_APP_STORE&limit=200")
     for profile in profiles:
         if profile["attributes"].get("name") == PROFILE_NAME:
-            out_path.write_bytes(base64.b64decode(profile_content(profile["id"])))
+            write_profile(out_path, profile_content(profile["id"]))
             print(PROFILE_NAME)
             return
 
@@ -83,7 +91,7 @@ def main():
         profile_bundle = api("GET", f"/profiles/{profile['id']}/bundleId").get("data") or {}
         if profile_bundle.get("id") == bundle_id:
             profile_name = profile["attributes"].get("name") or PROFILE_NAME
-            out_path.write_bytes(base64.b64decode(profile_content(profile["id"])))
+            write_profile(out_path, profile_content(profile["id"]))
             print(profile_name)
             return
 
@@ -114,7 +122,7 @@ def main():
     )
     profile_id = payload["data"]["id"]
     content = payload["data"].get("attributes", {}).get("profileContent") or profile_content(profile_id)
-    out_path.write_bytes(base64.b64decode(content))
+    write_profile(out_path, content)
     print(PROFILE_NAME)
 
 
