@@ -39,9 +39,30 @@ class DataLoader: ObservableObject {
                     self.todayDateString = self.formatDateString(today.date)
                 }
                 self.isLoaded = true
+                self.fetchRemotePlayerStats()
                 self.fetchRemoteTodayEntries()
                 self.fetchRemoteTodayResults()
                 self.fetchRemoteTodayOdds()
+            }
+        }
+    }
+
+    func fetchRemotePlayerStats() {
+        guard let url = Self.remoteURL("player_stats.json") else { return }
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        performDataRequest(request) { data, response, error in
+            guard let data = data,
+                  let httpResp = response as? HTTPURLResponse,
+                  httpResp.statusCode == 200 else { return }
+            do {
+                let result = try JSONDecoder().decode([String: PlayerStats].self, from: data)
+                guard !result.isEmpty else { return }
+                DispatchQueue.main.async {
+                    self.playerStats = result
+                }
+            } catch {
+                print("Remote player_stats decode error: \(error)")
             }
         }
     }
