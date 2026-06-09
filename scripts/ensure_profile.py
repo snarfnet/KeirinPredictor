@@ -61,7 +61,7 @@ def main():
 
     profiles = api(
         "GET",
-        f"/profiles?filter[profileType]=IOS_APP_STORE&filter[bundleId]={bundle_id}&limit=200",
+        f"/profiles?filter[profileType]=IOS_APP_STORE&filter[name]={PROFILE_NAME}&limit=10",
     ).get("data") or []
     for profile in profiles:
         if profile["attributes"].get("name") == PROFILE_NAME:
