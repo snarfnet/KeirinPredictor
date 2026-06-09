@@ -40,7 +40,10 @@ struct RaceListView: View {
                         }
                     }
                     .refreshable {
+                        dataLoader.fetchRemotePlayerStats()
                         dataLoader.fetchRemoteTodayEntries()
+                        dataLoader.fetchRemoteTodayResults()
+                        dataLoader.fetchRemoteTodayOdds()
                     }
                 }
             }
