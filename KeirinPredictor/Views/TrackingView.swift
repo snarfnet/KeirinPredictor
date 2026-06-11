@@ -226,75 +226,118 @@ struct RecordRow: View {
     let record: PredictionRecord
 
     var body: some View {
-        HStack(spacing: 10) {
-            // Result indicator
-            ZStack {
-                Circle()
-                    .fill(resultColor)
-                    .frame(width: 32, height: 32)
-                if record.actualTop3.isEmpty {
-                    Image(systemName: "clock")
-                        .font(.system(size: 13))
-                        .foregroundColor(.white)
-                } else if record.isHit {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(.black)
-                } else if record.isTop3Hit {
-                    Text("3")
-                        .font(.system(size: 14, weight: .black))
-                        .foregroundColor(.black)
-                } else {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 13))
-                        .foregroundColor(.white)
+        ZStack(alignment: .topTrailing) {
+            HStack(spacing: 12) {
+                resultMark
+
+                VStack(alignment: .leading, spacing: 5) {
+                    HStack(spacing: 8) {
+                        Text(record.venue)
+                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .foregroundColor(Color(hex: "#111111"))
+                        Text("\(record.raceNo)R")
+                            .font(.system(size: 20, weight: .black, design: .monospaced))
+                            .foregroundColor(Color(hex: "#B68000"))
+                    }
+                    Text("予: \(record.predictedTop3.map { "\($0)" }.joined(separator: "-"))")
+                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .foregroundColor(Color(hex: "#4F473B"))
+                    if !record.actualTop3.isEmpty {
+                        Text("結: \(record.actualTop3.prefix(3).map { "\($0)" }.joined(separator: "-"))")
+                            .font(.system(size: 13, weight: .bold, design: .monospaced))
+                            .foregroundColor(resultTextColor)
+                    }
+                    if let grade = record.playGrade {
+                        Text("勝負 \(grade) / 軸目安 \(String(format: "%.0f", record.axisWinEstimate ?? 0))%")
+                            .font(.system(size: 12, weight: .black, design: .monospaced))
+                            .foregroundColor(grade == "S" || grade == "A" ? KeirinUI.green : Color(hex: "#5D5344"))
+                    }
+                }
+
+                Spacer(minLength: 8)
+
+                VStack(alignment: .trailing, spacing: 6) {
+                    Text(resultLabel)
+                        .font(.system(size: 15, weight: .black, design: .rounded))
+                        .foregroundColor(resultTextColor)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.68)
+                    if let payout = record.payout, payout > 0 {
+                        Text("+\(payout)円")
+                            .font(.system(size: 14, weight: .black, design: .monospaced))
+                            .foregroundColor(KeirinUI.green)
+                    }
                 }
             }
+            .padding(12)
 
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text(record.venue)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundColor(Color(hex: "#111111"))
-                    Text("\(record.raceNo)R")
-                        .font(.system(size: 14, weight: .bold, design: .monospaced))
-                        .foregroundColor(Color(hex: "#B68000"))
-                }
-                Text("予: \(record.predictedTop3.map { "\($0)" }.joined(separator: "-"))")
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(Color(hex: "#5D5344"))
-                if let grade = record.playGrade {
-                    Text("勝負 \(grade) / 軸目安 \(String(format: "%.0f", record.axisWinEstimate ?? 0))%")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(grade == "S" || grade == "A" ? KeirinUI.green : Color(hex: "#5D5344"))
-                }
-            }
-
-            Spacer()
-
-            if let payout = record.payout, payout > 0 {
-                Text("+\(payout)円")
-                    .font(.system(size: 14, weight: .bold, design: .monospaced))
-                    .foregroundColor(.green)
-            } else if !record.actualTop3.isEmpty {
-                Text("不的中")
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundColor(Color(hex: "#5D5344"))
+            if isSuccessful {
+                Text("的中!")
+                    .font(.system(size: 22, weight: .black, design: .serif))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .background(KeirinUI.red)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6, style: .continuous)
+                            .stroke(KeirinUI.gold, lineWidth: 2)
+                    )
+                    .rotationEffect(.degrees(-9))
+                    .offset(x: -8, y: -10)
+                    .shadow(color: KeirinUI.red.opacity(0.42), radius: 8, x: 0, y: 4)
             }
         }
-        .padding(10)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                .stroke(isSuccessful ? KeirinUI.red.opacity(0.42) : Color.black.opacity(0.08), lineWidth: 1)
         )
     }
 
+    private var resultMark: some View {
+        ZStack {
+            Circle()
+                .fill(resultColor)
+                .frame(width: 46, height: 46)
+            Image(systemName: resultIcon)
+                .font(.system(size: 19, weight: .black))
+                .foregroundColor(resultIconColor)
+        }
+    }
+
+    private var resultLabel: String {
+        if record.actualTop3.isEmpty { return "結果待ち" }
+        if record.isTrifectaHit { return "3連単的中" }
+        if record.isExactaHit { return "2車単的中" }
+        if record.isWideHit { return "ワイド的中" }
+        if record.isHit { return "1着的中" }
+        if record.isTop3Hit { return "3連対" }
+        return "不的中"
+    }
+
+    private var isSuccessful: Bool {
+        record.isTrifectaHit || record.isExactaHit || record.isWideHit || record.isHit || record.isTop3Hit
+    }
+
     private var resultColor: Color {
-        if record.actualTop3.isEmpty { return Color.white.opacity(0.15) }
-        if record.isHit { return Color(hex: "#FFD700") }
-        if record.isTop3Hit { return Color(hex: "#CD7F32") }
-        return Color.white.opacity(0.1)
+        if record.actualTop3.isEmpty { return Color(hex: "#8A8F98") }
+        return isSuccessful ? Color(hex: "#FFD400") : Color(hex: "#2E333B")
+    }
+
+    private var resultIcon: String {
+        if record.actualTop3.isEmpty { return "clock" }
+        return isSuccessful ? "checkmark" : "xmark"
+    }
+
+    private var resultIconColor: Color {
+        if record.actualTop3.isEmpty { return .white }
+        return isSuccessful ? .black : .white
+    }
+
+    private var resultTextColor: Color {
+        if record.actualTop3.isEmpty { return Color(hex: "#5D5344") }
+        return isSuccessful ? KeirinUI.red : Color(hex: "#5D5344")
     }
 }

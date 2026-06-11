@@ -246,7 +246,7 @@ struct RaceListView: View {
             return lhs.quality > rhs.quality
         }
 
-        let targetCount = min(5, analyzed.count)
+        let targetCount = min(10, analyzed.count)
         let buyCandidates = analyzed.filter { $0.isBuy }
         let backupCandidates = analyzed.filter { !$0.isBuy }
         let selected = buyCandidates.count >= targetCount
@@ -1183,10 +1183,9 @@ struct FocusRaceStrip: View {
     let picks: [FocusRacePick]
     let venueStats: [String: VenueStats]
     let playerStats: [String: PlayerStats]
-    @State private var showAll = false
 
     private var visiblePicks: [FocusRacePick] {
-        showAll ? picks : Array(picks.prefix(3))
+        picks
     }
 
     private var hiddenCount: Int {
@@ -1197,7 +1196,7 @@ struct FocusRaceStrip: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("今日の一押し！")
-                    .font(.system(size: 22, weight: .black, design: .serif))
+                    .font(.system(size: 24, weight: .black, design: .serif))
                     .foregroundColor(KeirinUI.gold)
                 Spacer()
                 Text("\(picks.count)")
@@ -1218,17 +1217,14 @@ struct FocusRaceStrip: View {
                 }
             }
 
-            if picks.count > 3 {
+            if hiddenCount > 0 {
                 Button {
-                    withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
-                        showAll.toggle()
-                    }
                 } label: {
                     HStack {
-                        Text(showAll ? "一押しを3件に戻す" : "残り\(hiddenCount)件を見る")
-                            .font(.system(size: 14, weight: .black, design: .rounded))
+                        Text("残り\(hiddenCount)件を見る")
+                            .font(.system(size: 16, weight: .black, design: .rounded))
                         Spacer()
-                        Image(systemName: showAll ? "chevron.up" : "chevron.down")
+                        Image(systemName: "chevron.down")
                             .font(.system(size: 12, weight: .black))
                     }
                     .foregroundColor(KeirinUI.paper)
@@ -1290,14 +1286,14 @@ struct FocusRaceCard: View {
         HStack(alignment: .top, spacing: 10) {
             VStack(spacing: -1) {
                 Text("\(race.raceNo)")
-                    .font(.system(size: 34, weight: .black, design: .monospaced))
+                    .font(.system(size: 38, weight: .black, design: .monospaced))
                     .lineLimit(1)
                     .minimumScaleFactor(0.72)
                 Text("R")
                     .font(.system(size: 11, weight: .black, design: .monospaced))
             }
             .foregroundColor(.white)
-            .frame(width: 58, height: 64)
+            .frame(width: 62, height: 68)
             .background(
                 LinearGradient(
                     colors: [Color(hex: "#111111"), KeirinUI.red],
@@ -1311,14 +1307,14 @@ struct FocusRaceCard: View {
                 HStack(alignment: .top, spacing: 7) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(race.venue)
-                            .font(.system(size: 19, weight: .black, design: .serif))
+                            .font(.system(size: 21, weight: .black, design: .serif))
                             .foregroundColor(Color(hex: "#151515"))
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         ScheduleBadge(label: race.scheduleLabel, time: race.startTimeText, tone: race.scheduleTone)
                         if let topEntry {
                             Text("軸 \(topEntry.umaban)番 \(topEntry.name)")
-                                .font(.system(size: 14, weight: .black, design: .rounded))
+                                .font(.system(size: 15, weight: .black, design: .rounded))
                                 .foregroundColor(Color(hex: "#5D5344"))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.72)
@@ -1329,14 +1325,14 @@ struct FocusRaceCard: View {
 
                     VStack(spacing: 2) {
                         Text(pick.actionLabel)
-                            .font(.system(size: 18, weight: .black, design: .rounded))
+                            .font(.system(size: 19, weight: .black, design: .rounded))
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                         Text(pick.grade)
                             .font(.system(size: 10, weight: .black, design: .monospaced))
                     }
                     .foregroundColor(.white)
-                    .frame(width: 58, height: 44)
+                    .frame(width: 62, height: 46)
                     .background(pick.actionLabel == "買い" ? KeirinUI.red : Color(hex: "#111111"))
                     .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
@@ -1355,7 +1351,7 @@ struct FocusRaceCard: View {
                                 .foregroundColor(KeirinUI.red)
                                 .padding(.top, 1)
                             Text(reason)
-                                .font(.system(size: 14, weight: .bold, design: .serif))
+                                .font(.system(size: 15, weight: .bold, design: .serif))
                                 .foregroundColor(Color(hex: "#5D5344"))
                                 .lineLimit(2)
                                 .fixedSize(horizontal: false, vertical: true)
@@ -1366,7 +1362,7 @@ struct FocusRaceCard: View {
                 HStack(spacing: 6) {
                     ForEach(Array(sortedEntries.prefix(3).enumerated()), id: \.offset) { index, entry in
                         HStack(spacing: 5) {
-                            LaneBadge(number: entry.umaban, size: 24)
+                            LaneBadge(number: entry.umaban, size: 28)
                             Text(index == 0 ? "軸" : "\(index + 1)")
                                 .font(.system(size: 14, weight: .black, design: .rounded))
                                 .foregroundColor(index == 0 ? Color(hex: "#B68000") : Color(hex: "#81786D"))
