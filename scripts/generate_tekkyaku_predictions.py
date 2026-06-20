@@ -178,6 +178,125 @@ def softmax_prob(scores: list[float]) -> list[float]:
     return [w / total for w in weights]
 
 
+def stable_choice(key: str, options: list[str], salt: int = 0) -> str:
+    if not options:
+        return ""
+    value = sum(ord(ch) for ch in key) + salt * 97
+    return options[value % len(options)]
+
+
+def style_phrase(style: str) -> str:
+    if "逃" in style:
+        return "先に踏んで場を作れる"
+    if "追" in style:
+        return "前を使って最後に脚を残せる"
+    if "両" in style:
+        return "自力も追走も選べる"
+    return "流れに合わせて脚を出せる"
+
+
+def build_hakase_copy(
+    race: dict[str, Any],
+    axis: dict[str, Any],
+    second: dict[str, Any],
+    third: dict[str, Any],
+    gap12: float,
+    chaos: float,
+    axis_win: float,
+    grade: str,
+    action: str,
+) -> tuple[str, str, list[str]]:
+    key = f"{race.get('race_id', '')}-{axis.get('name', '')}"
+    axis_name = axis.get("name", "")
+    second_name = second.get("name", "")
+    third_name = third.get("name", "")
+    venue = race.get("venue", "")
+    start = race.get("start_time") or ""
+    schedule = schedule_label(start, int(race.get("race_no") or 0))
+    axis_style = str(axis.get("style") or "")
+    axis_line = style_phrase(axis_style)
+
+    if grade == "S":
+        action_options = [
+            f"ワシの赤鉛筆はここで止まった。{axis_name}から素直に入る。",
+            f"ここはひねりすぎると外す番組じゃ。{axis_name}の頭を厚く見る。",
+            f"新聞を三度見ても、最後は{axis_name}に戻る。軸はここ。",
+            f"偏屈なワシでも、この並びは逆らいにくい。{axis_name}中心。",
+        ]
+    elif grade == "A":
+        action_options = [
+            f"勝負気配はある。{axis_name}を軸に、相手を間違えないように見る。",
+            f"本線は{axis_name}。ただし相手は一枚だけ慎重に拾う。",
+            f"ここは買い目を広げすぎるより、{axis_name}から絞る方が面白い。",
+            f"地味だが悪くない。{axis_name}の脚を信じて組み立てる。",
+        ]
+    elif action == "注目":
+        action_options = [
+            f"{axis_name}は買い材料あり。ただし、勝負札を切るなら相手確認がいる。",
+            f"軸候補は{axis_name}。ワシなら見送りにせず、まずここを覗く。",
+            f"荒れ目も残るが、{axis_name}の存在は軽く扱えん。",
+            f"派手な勝負ではない。{axis_name}を中心に様子を見る一戦。",
+        ]
+    else:
+        action_options = [
+            f"強くは押さないが、{axis_name}の数字は捨てにくい。",
+            f"ここは渋い。買うなら{axis_name}から薄く、無理はしない。",
+            f"ワシなら大勝負は避ける。それでも{axis_name}は候補に残す。",
+            f"迷う番組じゃ。軸を置くなら{axis_name}、ただし深追い禁物。",
+        ]
+    action_reason = stable_choice(key, action_options, 1)
+
+    lead_options = [
+        f"朝から出走表を眺めていたが、{venue}のこの番組はじわじわ味が出る。",
+        f"茶をすすりながら見直した。こういうレースは人気より脚の置き場じゃ。",
+        f"ワシは派手な穴だけ追う年寄りではない。残る脚を持つ者から見る。",
+        f"何度も紙に書いたが、最後に残ったのはこの並びだった。",
+        f"競輪しか趣味がないせいで、こういう細かい差が気になって仕方ない。",
+    ]
+    lead = stable_choice(key, lead_options, 2)
+
+    if schedule == "ミッドナイト":
+        time_line = "夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。"
+    elif schedule == "ナイター":
+        time_line = "ナイターは流れが一変することもある。だからこそ軸の安定感を重く見る。"
+    elif start:
+        time_line = "早めの時間帯は変に欲を出さず、形が見えるところから入る。"
+    else:
+        time_line = "時間帯の色は薄いが、番組の骨格ははっきりしている。"
+
+    if gap12 >= 8:
+        gap_line = f"{axis_name}と{second_name}の差は数字以上に見える。ワシならここを太く取る。"
+    elif gap12 >= 5:
+        gap_line = f"{second_name}も悪くないが、軸の座りは{axis_name}が上。ここを見落とすと悔いが残る。"
+    else:
+        gap_line = f"{second_name}との差は大きくない。だから相手の順番まで雑に決めてはいけない。"
+
+    if chaos >= 58:
+        chaos_line = f"ただし混戦の匂いはある。{third_name}まで拾って、欲張りすぎない。"
+    elif chaos >= 45:
+        chaos_line = f"乱れる余地は少しある。一本釣りより、相手をきれいに押さえる方がワシ好み。"
+    else:
+        chaos_line = f"荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。"
+
+    style_line = f"{axis_name}は{axis_line}タイプ。ここは脚の出しどころが合う。"
+    story = " ".join([lead, time_line, style_line, gap_line, chaos_line])
+
+    reasons = [
+        action_reason,
+        f"博士の軸は{axis_name}",
+        f"軸1着目安 {axis_win:.0f}%",
+        f"相手筆頭は{second_name}、三番手は{third_name}",
+    ]
+    if gap12 >= 5:
+        reasons.append("軸と相手の差を評価")
+    if chaos >= 58:
+        reasons.append("混戦気配あり。買い目は広げすぎない")
+    for signal in axis.get("signals") or []:
+        if signal not in reasons:
+            reasons.append(signal)
+    return action_reason, story, reasons[:7]
+
+
 def analyze_race(race: dict[str, Any], player_stats: dict[str, Any], venue_stats: dict[str, Any]) -> dict[str, Any] | None:
     entries = race.get("entries") or []
     if len(entries) < 3:
@@ -208,31 +327,26 @@ def analyze_race(race: dict[str, Any], player_stats: dict[str, Any], venue_stats
     if axis_win >= 34 and gap12 >= 5.5 and chaos < 48:
         grade = "S"
         action = "買い"
-        action_reason = "軸が抜けていて、相手も絞りやすい"
     elif axis_win >= 28 and gap12 >= 3.0 and chaos < 60:
         grade = "A"
         action = "買い"
-        action_reason = "本命の形が見え、勝負条件を満たす"
     elif axis_win >= 23:
         grade = "B"
         action = "注目"
-        action_reason = "上位候補は見えるが、相手の食い込みに注意"
     else:
         grade = "候"
         action = "押さえ"
-        action_reason = "指数上位から候補に追加"
-
-    reasons = [
-        action_reason,
-        f"軸候補 {axis.get('name', '')}",
-        f"軸1着目安 {axis_win:.0f}%",
-    ]
-    if gap12 >= 5:
-        reasons.append("2番手との差があり、軸評価を上げる")
-    if chaos >= 58:
-        reasons.append("混戦気配。買い目は広げすぎない")
-    for signal in axis.get("signals") or []:
-        reasons.append(signal)
+    action_reason, story, reasons = build_hakase_copy(
+        race,
+        axis,
+        second,
+        third,
+        gap12,
+        chaos,
+        axis_win,
+        grade,
+        action,
+    )
 
     start_time = race.get("start_time") or ""
     return {
@@ -253,6 +367,7 @@ def analyze_race(race: dict[str, Any], player_stats: dict[str, Any], venue_stats
         "grade": grade,
         "action_label": action,
         "action_reason": action_reason,
+        "story": story,
         "quality": round(axis_win * 2 + {"S": 24, "A": 16, "B": 8}.get(grade, 0) + (40 if action == "買い" else 0) - max(0, chaos - 55) * 1.4, 2),
         "reasons": reasons[:6],
         "top_entries": [
@@ -384,8 +499,9 @@ def build_note(date: str, predictions: list[dict[str, Any]], stats: dict[str, An
         title,
         "",
         "どうも、鉄脚博士です。",
+        "競輪しか趣味がない、少し偏屈な年寄りです。",
         f"今日は展開、脚質、指数、直近の数字を見て、勝負候補を{len(predictions)}本に絞りました。",
-        "買い目だけではなく、なぜそこを見るのかも短く添えます。",
+        "買い目だけではなく、ワシがどこで赤鉛筆を止めたのかも書きます。",
         "",
         "先に数字を出します。盛りません。",
         "",
@@ -448,6 +564,7 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
     reasons = pick.get("reasons") or []
     shown = reasons[:4 if paid else 2]
     reason_text = "\n".join(f"  - {r}" for r in shown) or "  - 出走表と指数を確認してから最終判断"
+    story = pick.get("story") or "数字だけでは味気ないが、ここは軸の脚を素直に見る。"
     start = f" {pick.get('start_time')}発走" if pick.get("start_time") else ""
     return f"""
 {index}. {pick.get('venue')} {pick.get('race_no')}R{start}
@@ -456,6 +573,8 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
 3連単候補: {combo(pred)}
 2車単候補: {combo(exacta) if len(exacta) >= 2 else "-"}
 ワイド候補: {combo(wide) if len(wide) >= 2 else "-"}
+博士の見立て:
+{story}
 理由:
 {reason_text}
 """.rstrip()

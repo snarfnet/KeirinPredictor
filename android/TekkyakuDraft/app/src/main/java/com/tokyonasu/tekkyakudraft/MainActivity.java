@@ -242,6 +242,14 @@ public class MainActivity extends Activity {
         pred.setPadding(0, dp(10), 0, dp(4));
         box.addView(pred);
 
+        String storyValue = pick.optString("story");
+        if (!storyValue.isEmpty()) {
+            TextView story = text(storyValue, 15, 0xFF2B241A, Typeface.BOLD);
+            story.setLineSpacing(0, 1.18f);
+            story.setPadding(0, dp(4), 0, dp(6));
+            box.addView(story);
+        }
+
         JSONArray reasons = pick.optJSONArray("reasons");
         StringBuilder reasonText = new StringBuilder();
         if (reasons != null) {
