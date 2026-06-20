@@ -1317,17 +1317,20 @@ struct FocusRaceStrip: View {
         let completed = tracker.records.filter { !$0.actualTop3.isEmpty }
         let previous = previousDayRecords(from: completed)
         let previousHits = previous.filter { isAnyHit($0) }
-        let title = "鉄脚博士の競輪予想｜\(today) 本日の一押し\(picks.count)レース"
+        let firstPick = picks.first
+        let firstRaceLabel = firstPick.map { "\($0.race.venue)\($0.race.raceNo)R" } ?? "本日の競輪"
+        let firstStart = firstPick?.race.startTimeText ?? ""
+        let startSummary = firstStart.isEmpty ? "" : " 発走\(firstStart)"
+        let title = "鉄脚博士の競輪予想｜\(today) \(firstRaceLabel)\(startSummary) 本日の一押し\(picks.count)本"
 
         var lines: [String] = [
             title,
             "",
-            "本日の鉄脚博士予想です。",
-            "指数、展開、軸候補、過去の記録を見て、勝負候補を\(picks.count)レースに絞りました。",
-            "有料部分は200円想定です。",
+            "どうも、鉄脚博士です。",
+            "今日は展開、脚質、指数、直近の記録を見て、勝負候補を\(picks.count)本に絞りました。",
+            "買い目だけではなく、なぜそこを見るのかも短く添えます。",
             "",
-            "※的中を保証するものではありません。",
-            "※車券購入は20歳以上です。無理のない範囲で楽しんでください。",
+            "先に数字を出します。盛りません。",
             "",
             "【現在の的中率】",
             "対象: アプリに記録済みで結果まで同期できた\(completed.count)レース",
@@ -1335,7 +1338,10 @@ struct FocusRaceStrip: View {
             "3連単: \(tracker.trifectaHitCount)/\(tracker.totalPredictions)（\(percent(tracker.trifectaHitRate))）",
             "2車単: \(tracker.exactaHitCount)/\(tracker.totalPredictions)（\(percent(tracker.exactaHitRate))）",
             "ワイド: \(tracker.wideHitCount)/\(tracker.totalPredictions)（\(percent(tracker.wideHitRate))）",
-            ""
+            "",
+            "※的中を保証するものではありません。",
+            "※車券購入は20歳以上です。無理のない範囲で楽しんでください。",
+            "※有料部分は200円想定です。"
         ]
 
         lines.append("【前日的中実績】")
@@ -1357,8 +1363,8 @@ struct FocusRaceStrip: View {
 
         lines.append(contentsOf: [
             "",
-            "【無料公開】",
-            "上位2レースだけ先に出します。残りの一押し、買い目候補、理由は有料部分です。",
+            "さて、今日も素直に見ます。",
+            "無料部分では上位2本だけ出します。残りの一押し、買い目候補、理由は有料部分です。",
             ""
         ])
 
@@ -1368,8 +1374,9 @@ struct FocusRaceStrip: View {
 
         lines.append(contentsOf: [
             "",
-            "----- ここから先は有料部分です -----",
-            "noteでは、この下から有料エリアにしてください。価格は200円想定です。",
+            "## ここから先は",
+            "本日の一押し全\(picks.count)本、買い目候補、見解です。",
+            "noteでは、この下から有料エリアにしてください。価格は200円です。",
             "",
             "【本日の一押し一覧】"
         ])
@@ -1381,7 +1388,9 @@ struct FocusRaceStrip: View {
         lines.append(contentsOf: [
             "",
             "【最後に】",
-            "的中率はアプリの記録ベースでそのまま載せています。良い日も悪い日も数字を残して、予想精度を少しずつ上げていきます。"
+            "的中率はアプリの記録ベースでそのまま載せています。良い日も悪い日も数字を残して、予想精度を少しずつ上げていきます。",
+            "",
+            "#競輪予想 #鉄脚博士 #本日の一押し"
         ])
 
         return lines.joined(separator: "\n")
