@@ -1333,7 +1333,7 @@ struct FocusRaceStrip: View {
             "先に数字を出します。盛りません。",
             "",
             "【現在の的中率】",
-            "対象: アプリに記録済みで結果まで同期できた\(completed.count)レース",
+            "集計対象: 鉄脚博士の予想から結果が出た\(completed.count)レース",
             "1着的中: \(tracker.winCount)/\(tracker.totalPredictions)（\(percent(tracker.hitRate))）",
             "3連単: \(tracker.trifectaHitCount)/\(tracker.totalPredictions)（\(percent(tracker.trifectaHitRate))）",
             "2車単: \(tracker.exactaHitCount)/\(tracker.totalPredictions)（\(percent(tracker.exactaHitRate))）",
@@ -1341,15 +1341,15 @@ struct FocusRaceStrip: View {
             "",
             "※的中を保証するものではありません。",
             "※車券購入は20歳以上です。無理のない範囲で楽しんでください。",
-            "※有料部分は200円想定です。"
+            "※有料部分は200円です。"
         ]
 
         lines.append("【前日的中実績】")
         if previous.isEmpty {
-            lines.append("前日分の記録はまだありません。結果同期後にここへ反映します。")
+            lines.append("前日分はまだ集計中です。結果がそろい次第、ここへ入れます。")
         } else if previousHits.isEmpty {
             let date = previous.first?.date ?? ""
-            lines.append("\(formatRecordDate(date))は的中記録なし。外れも隠さず記録しています。")
+            lines.append("\(formatRecordDate(date))は的中なし。外れも隠さず載せます。")
         } else {
             let date = previousHits.first?.date ?? ""
             lines.append("\(formatRecordDate(date))の的中: \(previousHits.count)/\(previous.count)")
@@ -1376,7 +1376,7 @@ struct FocusRaceStrip: View {
             "",
             "## ここから先は",
             "本日の一押し全\(picks.count)本、買い目候補、見解です。",
-            "noteでは、この下から有料エリアにしてください。価格は200円です。",
+            "ここから先は有料部分です。価格は200円です。",
             "",
             "【本日の一押し一覧】"
         ])
@@ -1388,7 +1388,7 @@ struct FocusRaceStrip: View {
         lines.append(contentsOf: [
             "",
             "【最後に】",
-            "的中率はアプリの記録ベースでそのまま載せています。良い日も悪い日も数字を残して、予想精度を少しずつ上げていきます。",
+            "的中率はそのまま載せています。良い日も悪い日も数字を見て、予想精度を少しずつ上げていきます。",
             "",
             "#競輪予想 #鉄脚博士 #本日の一押し"
         ])
