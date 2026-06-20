@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct RaceListView: View {
     @EnvironmentObject var dataLoader: DataLoader
@@ -28,7 +29,8 @@ struct RaceListView: View {
                                 FocusRaceStrip(
                                     picks: aiPicks,
                                     venueStats: dataLoader.venueStats,
-                                    playerStats: dataLoader.playerStats
+                                    playerStats: dataLoader.playerStats,
+                                    tracker: tracker
                                 )
                                 .opacity(appeared ? 1 : 0)
                                 .offset(y: appeared ? 0 : 12)
@@ -1183,6 +1185,8 @@ struct FocusRaceStrip: View {
     let picks: [FocusRacePick]
     let venueStats: [String: VenueStats]
     let playerStats: [String: PlayerStats]
+    @ObservedObject var tracker: PredictionTracker
+    @State private var didCopyNote = false
 
     private var visiblePicks: [FocusRacePick] {
         picks
@@ -1207,6 +1211,47 @@ struct FocusRaceStrip: View {
                     .background(KeirinUI.gold)
                     .clipShape(Capsule())
             }
+
+            Button {
+                UIPasteboard.general.string = buildNoteDraft()
+                withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) {
+                    didCopyNote = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        didCopyNote = false
+                    }
+                }
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: didCopyNote ? "checkmark.seal.fill" : "doc.on.doc.fill")
+                        .font(.system(size: 15, weight: .black))
+                    Text(didCopyNote ? "note用文面をコピーしました" : "note用にコピー")
+                        .font(.system(size: 16, weight: .black, design: .rounded))
+                    Spacer()
+                    Text("前日実績・的中率入り")
+                        .font(.system(size: 11, weight: .black, design: .rounded))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.72)
+                        .opacity(0.78)
+                }
+                .foregroundColor(.white)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 11)
+                .background(
+                    LinearGradient(
+                        colors: [KeirinUI.red, Color(hex: "#7C1111")],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .stroke(KeirinUI.gold.opacity(0.38), lineWidth: 1)
+                )
+            }
+            .buttonStyle(.plain)
 
             VStack(spacing: 8) {
                 ForEach(visiblePicks) { pick in
@@ -1265,6 +1310,164 @@ struct FocusRaceStrip: View {
                 .stroke(KeirinUI.gold.opacity(0.42), lineWidth: 1)
         )
         .shadow(color: Color.black.opacity(0.32), radius: 16, x: 0, y: 8)
+    }
+
+    private func buildNoteDraft() -> String {
+        let today = noteDateLabel(Date())
+        let completed = tracker.records.filter { !$0.actualTop3.isEmpty }
+        let previous = previousDayRecords(from: completed)
+        let previousHits = previous.filter { isAnyHit($0) }
+        let title = "鉄脚博士の競輪予想｜\(today) 本日の一押し\(picks.count)レース"
+
+        var lines: [String] = [
+            title,
+            "",
+            "本日の鉄脚博士予想です。",
+            "指数、展開、軸候補、過去の記録を見て、勝負候補を\(picks.count)レースに絞りました。",
+            "有料部分は200円想定です。",
+            "",
+            "※的中を保証するものではありません。",
+            "※車券購入は20歳以上です。無理のない範囲で楽しんでください。",
+            "",
+            "【現在の的中率】",
+            "対象: アプリに記録済みで結果まで同期できた\(completed.count)レース",
+            "1着的中: \(tracker.winCount)/\(tracker.totalPredictions)（\(percent(tracker.hitRate))）",
+            "3連単: \(tracker.trifectaHitCount)/\(tracker.totalPredictions)（\(percent(tracker.trifectaHitRate))）",
+            "2車単: \(tracker.exactaHitCount)/\(tracker.totalPredictions)（\(percent(tracker.exactaHitRate))）",
+            "ワイド: \(tracker.wideHitCount)/\(tracker.totalPredictions)（\(percent(tracker.wideHitRate))）",
+            ""
+        ]
+
+        lines.append("【前日的中実績】")
+        if previous.isEmpty {
+            lines.append("前日分の記録はまだありません。結果同期後にここへ反映します。")
+        } else if previousHits.isEmpty {
+            let date = previous.first?.date ?? ""
+            lines.append("\(formatRecordDate(date))は的中記録なし。外れも隠さず記録しています。")
+        } else {
+            let date = previousHits.first?.date ?? ""
+            lines.append("\(formatRecordDate(date))の的中: \(previousHits.count)/\(previous.count)")
+            for record in previousHits.prefix(8) {
+                lines.append("・\(record.venue) \(record.raceNo)R \(hitLabel(record)) / 予 \(combo(record.predictedTop3)) → 結 \(combo(record.actualTop3))")
+            }
+            if previousHits.count > 8 {
+                lines.append("・ほか\(previousHits.count - 8)件")
+            }
+        }
+
+        lines.append(contentsOf: [
+            "",
+            "【無料公開】",
+            "上位2レースだけ先に出します。残りの一押し、買い目候補、理由は有料部分です。",
+            ""
+        ])
+
+        for (index, pick) in picks.prefix(2).enumerated() {
+            lines.append(notePickBlock(index: index + 1, pick: pick, isPaid: false))
+        }
+
+        lines.append(contentsOf: [
+            "",
+            "----- ここから先は有料部分です -----",
+            "noteでは、この下から有料エリアにしてください。価格は200円想定です。",
+            "",
+            "【本日の一押し一覧】"
+        ])
+
+        for (index, pick) in picks.enumerated() {
+            lines.append(notePickBlock(index: index + 1, pick: pick, isPaid: true))
+        }
+
+        lines.append(contentsOf: [
+            "",
+            "【最後に】",
+            "的中率はアプリの記録ベースでそのまま載せています。良い日も悪い日も数字を残して、予想精度を少しずつ上げていきます。"
+        ])
+
+        return lines.joined(separator: "\n")
+    }
+
+    private func notePickBlock(index: Int, pick: FocusRacePick, isPaid: Bool) -> String {
+        let top = pick.race.entries.sorted { $0.score > $1.score }.prefix(3).map(\.umaban)
+        let prediction = combo(Array(top))
+        let exactaCandidate = top.count >= 2 ? "\(top[0])-\(top[1])" : "-"
+        let wideCandidate = exactaCandidate
+        let reasons = pick.reasons.prefix(isPaid ? 4 : 2).map { "  - \($0)" }.joined(separator: "\n")
+        let reasonsText = reasons.isEmpty ? "  - 出走表と指数を確認してから最終判断" : reasons
+        let start = pick.race.startTimeText.isEmpty ? "" : " \(pick.race.startTimeText)発走"
+        return """
+
+\(index). \(pick.race.venue) \(pick.race.raceNo)R\(start)
+判定: \(pick.actionLabel) \(pick.grade)
+予想: \(prediction)
+3連単候補: \(prediction)
+2車単候補: \(exactaCandidate)
+ワイド候補: \(wideCandidate)
+理由:
+\(reasonsText)
+"""
+    }
+
+    private func previousDayRecords(from records: [PredictionRecord]) -> [PredictionRecord] {
+        let today = yyyymmdd(Date())
+        let yesterday = yyyymmdd(Date().addingTimeInterval(-86400))
+        let exact = records.filter { $0.date == yesterday }
+        if !exact.isEmpty { return exact.sorted { $0.raceNo < $1.raceNo } }
+
+        guard let latestPastDate = records
+            .map(\.date)
+            .filter({ !$0.isEmpty && $0 < today })
+            .max()
+        else {
+            return []
+        }
+        return records.filter { $0.date == latestPastDate }.sorted { $0.raceNo < $1.raceNo }
+    }
+
+    private func isAnyHit(_ record: PredictionRecord) -> Bool {
+        record.isTrifectaHit || record.isExactaHit || record.isWideHit || record.isHit || record.isTop3Hit
+    }
+
+    private func hitLabel(_ record: PredictionRecord) -> String {
+        if record.isTrifectaHit { return "3連単的中" }
+        if record.isExactaHit { return "2車単的中" }
+        if record.isWideHit { return "ワイド的中" }
+        if record.isHit { return "1着的中" }
+        if record.isTop3Hit { return "3連対" }
+        return "的中"
+    }
+
+    private func combo(_ values: [Int]) -> String {
+        values.prefix(3).map { String($0) }.joined(separator: "-")
+    }
+
+    private func percent(_ value: Double) -> String {
+        String(format: "%.1f%%", value)
+    }
+
+    private func yyyymmdd(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "yyyyMMdd"
+        return formatter.string(from: date)
+    }
+
+    private func noteDateLabel(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ja_JP")
+        formatter.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        formatter.dateFormat = "yyyy年M月d日"
+        return formatter.string(from: date)
+    }
+
+    private func formatRecordDate(_ value: String) -> String {
+        guard value.count == 8,
+              let y = Int(value.prefix(4)),
+              let m = Int(value.dropFirst(4).prefix(2)),
+              let d = Int(value.suffix(2)) else {
+            return value.isEmpty ? "前日" : value
+        }
+        return "\(y)年\(m)月\(d)日"
     }
 }
 
