@@ -3,6 +3,13 @@ name: Build and Submit
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "android/**"
+      - "generated/**"
+      - ".github/workflows/build.yml"
+      - ".github/workflows/generate-tekkyaku.yml"
+      - ".github/workflows/build-android-tekkyaku.yml"
+      - "scripts/generate_tekkyaku_predictions.py"
   workflow_dispatch:
 
 jobs:

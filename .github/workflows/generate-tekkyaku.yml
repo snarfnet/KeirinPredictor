@@ -1,0 +1,48 @@
+name: Generate Tekkyaku Predictions
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 21:15 JST: next-day data is often available around this window.
+    - cron: "15 12 * * *"
+    # 07:30 JST: refresh current-day predictions in the morning.
+    - cron: "30 22 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate prediction JSON and note draft
+        run: python scripts/generate_tekkyaku_predictions.py --out generated/tekkyaku
+
+      - name: Upload generated drafts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tekkyaku-drafts
+          path: |
+            generated/tekkyaku/latest.json
+            generated/tekkyaku/latest.md
+            generated/tekkyaku/predictions_*.json
+            generated/tekkyaku/note_draft_*.md
+
+      - name: Commit generated drafts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add generated/tekkyaku
+          if git diff --cached --quiet; then
+            echo "No generated draft changes"
+          else
+            git commit -m "Update Tekkyaku prediction drafts"
+            git push
+          fi
