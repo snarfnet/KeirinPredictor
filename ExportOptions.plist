@@ -11,7 +11,7 @@
     <key>provisioningProfiles</key>
     <dict>
         <key>com.tokyonasu.keirinpredictor</key>
-        <string>KeirinPredictor App Store CI 20260611</string>
+        <string>KeirinPredictor App Store CI 20260620</string>
     </dict>
     <key>uploadSymbols</key>
     <false/>
