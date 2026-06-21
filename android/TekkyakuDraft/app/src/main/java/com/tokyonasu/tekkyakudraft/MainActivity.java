@@ -148,6 +148,11 @@ public class MainActivity extends Activity {
             addStats(stats);
         }
 
+        JSONObject proverb = json.optJSONObject("daily_proverb");
+        if (proverb != null) {
+            addProverb(proverb);
+        }
+
         JSONObject previous = json.optJSONObject("previous");
         if (previous != null) {
             addPrevious(previous);
@@ -181,6 +186,13 @@ public class MainActivity extends Activity {
             + "2車単 " + stats.optInt("exacta_count") + "/" + stats.optInt("completed") + "（" + one(stats.optDouble("exacta_rate")) + "%）\n"
             + "ワイド " + stats.optInt("wide_count") + "/" + stats.optInt("completed") + "（" + one(stats.optDouble("wide_rate")) + "%）";
         content.addView(card("現在の的中率", body));
+    }
+
+    private void addProverb(JSONObject proverb) {
+        String body = proverb.optString("title") + "\n"
+            + "意味: " + proverb.optString("meaning") + "\n"
+            + "競輪で言えば: " + proverb.optString("keirin");
+        content.addView(card("本日のことわざ", body));
     }
 
     private void addPrevious(JSONObject previous) {

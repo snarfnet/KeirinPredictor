@@ -13,6 +13,58 @@ from typing import Any
 BASE_URL = "https://snarfnet.github.io/keirin-data"
 JST = timezone(timedelta(hours=9))
 REPO_ROOT = Path(__file__).resolve().parents[1]
+PROVERBS = [
+    (
+        "急がば回れ",
+        "急ぐ時ほど、危ない近道を選ばず確かな道を行く方が早い。",
+        "競輪も同じです。無理に穴へ飛びつくより、展開の筋が通る一車を見つける方が、最後に財布へやさしい。",
+    ),
+    (
+        "石橋を叩いて渡る",
+        "安全そうに見える橋でも、念のため確かめてから渡る。",
+        "本命が強く見える番組ほど、相手の食い込みを確かめる。吾輩はそこで赤鉛筆を止めます。",
+    ),
+    (
+        "勝って兜の緒を締めよ",
+        "勝ったあとほど油断せず、気を引き締める。",
+        "昨日当たったから今日も当たる、とは限りません。的中の翌日こそ買い目を細く、目を厳しくします。",
+    ),
+    (
+        "灯台下暗し",
+        "近くにある大事なものほど、かえって見落としやすい。",
+        "派手な穴ばかり見ていると、番手の安定やラインの素直な並びを見落とします。そこに妙味が隠れます。",
+    ),
+    (
+        "二兎を追う者は一兎をも得ず",
+        "欲張って二つを同時に追うと、どちらも逃す。",
+        "3連単も穴も全部欲しい日は危ない。吾輩はまず軸を決め、そこから話を始めます。",
+    ),
+    (
+        "転ばぬ先の杖",
+        "失敗する前に、あらかじめ備えておく。",
+        "競輪では見送りも立派な杖です。荒れ気配が強い番組で無理をしないのも、予想のうちです。",
+    ),
+    (
+        "雨垂れ石を穿つ",
+        "小さな積み重ねでも、続ければ大きな結果になる。",
+        "的中率は一日で作れません。外れを隠さず数え、少しずつ癖を直す。吾輩はそこに執念を置きます。",
+    ),
+    (
+        "備えあれば憂いなし",
+        "準備ができていれば、いざという時に慌てない。",
+        "出走表、脚質、場の相性を先に見ておけば、締切前に妙な欲で手が震えません。",
+    ),
+    (
+        "損して得取れ",
+        "目先の損を受け入れて、あとで大きな得を取る。",
+        "今日は薄く、明日は厚く。見送る勇気が、次の勝負金を残します。",
+    ),
+    (
+        "猿も木から落ちる",
+        "どんな名人でも失敗することがある。",
+        "堅く見える軸でも飛ぶ日はあります。だから吾輩は、当たった日より外れた日の理由をよく見ます。",
+    ),
+]
 
 
 def fetch_json(file_name: str, required: bool = True) -> Any:
@@ -47,6 +99,20 @@ def compact_date_label(value: str) -> str:
         return f"{dt.month}/{dt.day}"
     except ValueError:
         return value
+
+
+def daily_proverb(value: str) -> dict[str, str]:
+    try:
+        dt = datetime.strptime(value, "%Y%m%d")
+        index = dt.toordinal() % len(PROVERBS)
+    except ValueError:
+        index = sum(ord(ch) for ch in value) % len(PROVERBS)
+    title, meaning, keirin = PROVERBS[index]
+    return {
+        "title": title,
+        "meaning": meaning,
+        "keirin": keirin,
+    }
 
 
 def pct(value: float) -> str:
@@ -218,10 +284,12 @@ def build_hakase_copy(
 
     if grade == "S":
         action_options = [
-            f"ワシの赤鉛筆はここで止まった。{axis_name}から素直に入る。",
-            f"ここはひねりすぎると外す番組じゃ。{axis_name}の頭を厚く見る。",
-            f"新聞を三度見ても、最後は{axis_name}に戻る。軸はここ。",
-            f"偏屈なワシでも、この並びは逆らいにくい。{axis_name}中心。",
+            f"吾輩の赤鉛筆はここで止まった。{axis_name}から素直に入る。",
+            f"ここで妙な小細工をすると、かえって外す。{axis_name}の頭を厚く見る。",
+            f"出走表を三度見ても、最後は{axis_name}に戻る。軸はここである。",
+            f"疑い深い吾輩でも、この並びには逆らいにくい。{axis_name}中心。",
+            f"{axis_name}の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
+            f"人気の有無より、脚の筋が通っている。吾輩は{axis_name}を先に置く。",
         ]
     elif grade == "A":
         action_options = [
@@ -229,57 +297,116 @@ def build_hakase_copy(
             f"本線は{axis_name}。ただし相手は一枚だけ慎重に拾う。",
             f"ここは買い目を広げすぎるより、{axis_name}から絞る方が面白い。",
             f"地味だが悪くない。{axis_name}の脚を信じて組み立てる。",
+            f"大声で叫ぶほどではないが、{axis_name}の形はよい。こういう静かな番組を拾いたい。",
+            f"{axis_name}を軸に据える。相手は欲を出さず、流れに合う者だけ残す。",
         ]
     elif action == "注目":
         action_options = [
             f"{axis_name}は買い材料あり。ただし、勝負札を切るなら相手確認がいる。",
-            f"軸候補は{axis_name}。ワシなら見送りにせず、まずここを覗く。",
+            f"軸候補は{axis_name}。吾輩なら見送りにせず、まずここを覗く。",
             f"荒れ目も残るが、{axis_name}の存在は軽く扱えん。",
             f"派手な勝負ではない。{axis_name}を中心に様子を見る一戦。",
+            f"うまい汁だけ吸おうとすると痛い目を見る。とはいえ{axis_name}は消せない。",
+            f"ここは鼻息を荒くしない。{axis_name}から入り、相手で値段を作る。",
         ]
     else:
         action_options = [
             f"強くは押さないが、{axis_name}の数字は捨てにくい。",
             f"ここは渋い。買うなら{axis_name}から薄く、無理はしない。",
-            f"ワシなら大勝負は避ける。それでも{axis_name}は候補に残す。",
+            f"吾輩なら大勝負は避ける。それでも{axis_name}は候補に残す。",
             f"迷う番組じゃ。軸を置くなら{axis_name}、ただし深追い禁物。",
+            f"胸を張って買いとは言わない。ただ、{axis_name}を外して眺めるのも落ち着かない。",
+            f"見送り寄りの目で見ても、{axis_name}だけは紙面の端に残った。",
         ]
     action_reason = stable_choice(key, action_options, 1)
 
     lead_options = [
         f"朝から出走表を眺めていたが、{venue}のこの番組はじわじわ味が出る。",
-        f"茶をすすりながら見直した。こういうレースは人気より脚の置き場じゃ。",
-        f"ワシは派手な穴だけ追う年寄りではない。残る脚を持つ者から見る。",
-        f"何度も紙に書いたが、最後に残ったのはこの並びだった。",
-        f"競輪しか趣味がないせいで、こういう細かい差が気になって仕方ない。",
+        f"ぬるい茶を前にして見直した。こういうレースは人気より脚の置き場である。",
+        f"吾輩は派手な穴だけを追う男ではない。残る脚を持つ者から見る。",
+        f"何度も紙片に書いたが、最後に残ったのはこの並びだった。",
+        f"競輪ばかり見ていると、こういう細かい差が気になって仕方ない。",
+        f"{venue}の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。",
+        f"世間は忙しいが、吾輩の一日は出走表で始まる。この一戦は足を止めて見たい。",
+        f"数字は無口だが、時々こちらをじっと見る。今日のこの番組がそれである。",
+        f"妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。",
     ]
     lead = stable_choice(key, lead_options, 2)
 
     if schedule == "ミッドナイト":
-        time_line = "夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。"
+        time_options = [
+            "夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。",
+            "ミッドナイトは欲が顔を出しやすい。吾輩は眠気より指数を信じる。",
+            "夜更けの競輪は妙に荒く見える。そこで一度、軸の強さへ戻る。",
+        ]
     elif schedule == "ナイター":
-        time_line = "ナイターは流れが一変することもある。だからこそ軸の安定感を重く見る。"
+        time_options = [
+            "ナイターは流れが一変することもある。だからこそ軸の安定感を重く見る。",
+            "灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。",
+            "ナイターの空気に浮かされず、番組の骨を見たい。",
+        ]
     elif start:
-        time_line = "早めの時間帯は変に欲を出さず、形が見えるところから入る。"
+        time_options = [
+            "早めの時間帯は変に欲を出さず、形が見えるところから入る。",
+            "日中の番組は淡々とした顔をしている。こういう時ほど基本が効く。",
+            "まだ場が荒れきる前なら、素直な脚順を軽く扱わない。",
+        ]
     else:
-        time_line = "時間帯の色は薄いが、番組の骨格ははっきりしている。"
+        time_options = [
+            "時間帯の色は薄いが、番組の骨格ははっきりしている。",
+            "発走時刻に頼らず見ても、狙いどころはぼんやりしていない。",
+            "時計の情報は少ない。ならば脚と並びをまっすぐ見る。",
+        ]
+    time_line = stable_choice(key, time_options, 3)
 
     if gap12 >= 8:
-        gap_line = f"{axis_name}と{second_name}の差は数字以上に見える。ワシならここを太く取る。"
+        gap_options = [
+            f"{axis_name}と{second_name}の差は数字以上に見える。吾輩ならここを太く取る。",
+            f"{second_name}も悪くない。だが主役の椅子は、今日は{axis_name}の方へ寄っている。",
+            f"軸と相手の差がはっきり出た。ここで迷うと、かえって買い目が濁る。",
+        ]
     elif gap12 >= 5:
-        gap_line = f"{second_name}も悪くないが、軸の座りは{axis_name}が上。ここを見落とすと悔いが残る。"
+        gap_options = [
+            f"{second_name}も悪くないが、軸の座りは{axis_name}が上。ここを見落とすと悔いが残る。",
+            f"差は絶対ではない。それでも一番手に置くなら、吾輩は{axis_name}を選ぶ。",
+            f"{second_name}の食い込みは見る。だが予想の芯まで渡すほどではない。",
+        ]
     else:
-        gap_line = f"{second_name}との差は大きくない。だから相手の順番まで雑に決めてはいけない。"
+        gap_options = [
+            f"{second_name}との差は大きくない。だから相手の順番まで雑に決めてはいけない。",
+            f"ここは紙一重である。軸を決めても、相手を粗末に扱うと痛い。",
+            f"数字は接近している。こういう日は一着だけでなく、二着三着の顔つきまで見る。",
+        ]
+    gap_line = stable_choice(key, gap_options, 4)
 
     if chaos >= 58:
-        chaos_line = f"ただし混戦の匂いはある。{third_name}まで拾って、欲張りすぎない。"
+        chaos_options = [
+            f"ただし混戦の匂いはある。{third_name}まで拾って、欲張りすぎない。",
+            f"荒れる芽は残る。{third_name}を軽く見ると、あとで渋い顔になる。",
+            f"ここは波風が立つ。吾輩は深追いせず、拾う所だけ拾う。",
+        ]
     elif chaos >= 45:
-        chaos_line = f"乱れる余地は少しある。一本釣りより、相手をきれいに押さえる方がワシ好み。"
+        chaos_options = [
+            f"乱れる余地は少しある。一本釣りより、相手をきれいに押さえる方が吾輩好み。",
+            f"穏やかに見えて、小さな揺れはある。相手の順番を丁寧に置きたい。",
+            f"大荒れとは言わないが、決め打ちだけでは少し窮屈だ。",
+        ]
     else:
-        chaos_line = f"荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。"
+        chaos_options = [
+            f"荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。",
+            f"変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。",
+            f"穴の影は濃くない。吾輩はここで無理に物語を作らない。",
+        ]
+    chaos_line = stable_choice(key, chaos_options, 5)
 
-    style_line = f"{axis_name}は{axis_line}タイプ。ここは脚の出しどころが合う。"
-    story = " ".join([lead, time_line, style_line, gap_line, chaos_line])
+    style_options = [
+        f"{axis_name}は{axis_line}タイプ。ここは脚の出しどころが合う。",
+        f"{axis_name}の脚質なら、流れが少し早くても我慢が利く。",
+        f"脚の使い方を見ると、{axis_name}はこの並びで窮屈になりにくい。",
+        f"{axis_name}は自分の仕事を知っている。こういう選手は予想の土台にしやすい。",
+    ]
+    style_line = stable_choice(key, style_options, 6)
+    story = "\n".join([lead, time_line, style_line, gap_line, chaos_line])
 
     reasons = [
         action_reason,
@@ -490,7 +617,13 @@ def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[s
     return stats, previous
 
 
-def build_note(date: str, predictions: list[dict[str, Any]], stats: dict[str, Any], previous: dict[str, Any]) -> tuple[str, str]:
+def build_note(
+    date: str,
+    predictions: list[dict[str, Any]],
+    stats: dict[str, Any],
+    previous: dict[str, Any],
+    proverb: dict[str, str],
+) -> tuple[str, str]:
     top = predictions[0] if predictions else {}
     first_label = f"{top.get('venue', '本日の競輪')}{top.get('race_no', '')}R"
     first_start = top.get("start_time") or ""
@@ -498,10 +631,15 @@ def build_note(date: str, predictions: list[dict[str, Any]], stats: dict[str, An
     lines = [
         title,
         "",
-        "どうも、鉄脚博士です。",
-        "競輪しか趣味がない、少し偏屈な年寄りです。",
+        "吾輩は鉄脚博士である。",
+        "現代にまぎれて競輪ばかり眺めている、少し偏屈な男です。",
         f"今日は展開、脚質、指数、直近の数字を見て、勝負候補を{len(predictions)}本に絞りました。",
-        "買い目だけではなく、ワシがどこで赤鉛筆を止めたのかも書きます。",
+        "買い目だけではなく、吾輩がどこで赤鉛筆を止めたのかも書きます。",
+        "",
+        "【本日のことわざ】",
+        proverb["title"],
+        f"意味: {proverb['meaning']}",
+        f"競輪で言えば: {proverb['keirin']}",
         "",
         "先に数字を出します。盛りません。",
         "",
@@ -616,13 +754,15 @@ def main() -> int:
 
     stats, previous = evaluate_history(out_dir, target_date)
     stats_dict = stats.as_dict()
-    title, note = build_note(target_date, predictions, stats_dict, previous)
+    proverb = daily_proverb(target_date)
+    title, note = build_note(target_date, predictions, stats_dict, previous, proverb)
     payload = {
         "generated_at": datetime.now(JST).isoformat(timespec="seconds"),
         "source": BASE_URL,
         "date": target_date,
         "date_label": date_label(target_date),
         "note_title": title,
+        "daily_proverb": proverb,
         "stats": stats_dict,
         "previous": previous,
         "predictions": predictions,
