@@ -1,6 +1,7 @@
 param(
     [string]$OutDir = "",
-    [string]$SourceJsonUrl = "https://raw.githubusercontent.com/snarfnet/KeirinPredictor/main/generated/tekkyaku/latest.json"
+    [string]$SourceJsonUrl = "https://raw.githubusercontent.com/snarfnet/KeirinPredictor/main/generated/tekkyaku/latest.json",
+    [string]$MailConfigPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -8,8 +9,12 @@ $ErrorActionPreference = "Stop"
 
 $desktop = [Environment]::GetFolderPath("Desktop")
 $folderName = -join ([char[]](0x7af6, 0x8f2a, 0x4e88, 0x60f3))
+$defaultSubjectPrefix = -join ([char[]](0x9244, 0x811a, 0x535a, 0x58eb, 0x306e, 0x7af6, 0x8f2a, 0x4e88, 0x60f3))
 if ([string]::IsNullOrWhiteSpace($OutDir)) {
     $OutDir = Join-Path $desktop $folderName
+}
+if ([string]::IsNullOrWhiteSpace($MailConfigPath)) {
+    $MailConfigPath = Join-Path $OutDir "mail_config.json"
 }
 
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
@@ -124,6 +129,98 @@ function Get-LocalFallbackNote {
     return $null
 }
 
+function Ensure-MailConfigSample {
+    $samplePath = Join-Path $OutDir "mail_config.sample.json"
+
+    $sample = [ordered]@{
+        enabled = $false
+        smtp_host = "smtp.gmail.com"
+        smtp_port = 587
+        smtp_user = "your-gmail-address@gmail.com"
+        smtp_password = "gmail-app-password"
+        from = "your-gmail-address@gmail.com"
+        to = @("send-to@example.com")
+        subject_prefix = $defaultSubjectPrefix
+        attach_text_file = $true
+    } | ConvertTo-Json -Depth 4
+    [IO.File]::WriteAllText($samplePath, $sample, $utf8Bom)
+}
+
+function Send-NoteMailIfConfigured {
+    param(
+        [string]$Note,
+        [string]$Date,
+        [string]$Title,
+        [string]$ArchivePath
+    )
+
+    Ensure-MailConfigSample
+    if (-not (Test-Path $MailConfigPath)) {
+        Write-ExportLog ("mail skipped: config not found: {0}" -f $MailConfigPath)
+        return
+    }
+
+    $config = [IO.File]::ReadAllText($MailConfigPath, [Text.Encoding]::UTF8) | ConvertFrom-Json
+    if (-not $config.enabled) {
+        Write-ExportLog "mail skipped: config disabled"
+        return
+    }
+
+    $hostName = [string]$config.smtp_host
+    $port = [int]$config.smtp_port
+    $user = [string]$config.smtp_user
+    $password = [string]$config.smtp_password
+    $from = [string]$config.from
+    $subjectPrefix = [string]$config.subject_prefix
+    if ([string]::IsNullOrWhiteSpace($subjectPrefix)) {
+        $subjectPrefix = $defaultSubjectPrefix
+    }
+
+    if ([string]::IsNullOrWhiteSpace($hostName) -or
+        [string]::IsNullOrWhiteSpace($user) -or
+        [string]::IsNullOrWhiteSpace($password) -or
+        [string]::IsNullOrWhiteSpace($from) -or
+        $null -eq $config.to) {
+        throw "mail config is incomplete"
+    }
+
+    $message = New-Object Net.Mail.MailMessage
+    $message.From = $from
+    foreach ($address in @($config.to)) {
+        if (-not [string]::IsNullOrWhiteSpace([string]$address)) {
+            $message.To.Add([string]$address)
+        }
+    }
+    if ($message.To.Count -eq 0) {
+        throw "mail config has no recipient"
+    }
+
+    $message.Subject = ("{0} {1}" -f $subjectPrefix, $Date)
+    $message.SubjectEncoding = [Text.Encoding]::UTF8
+    $message.BodyEncoding = [Text.Encoding]::UTF8
+    $message.Body = $Note
+    if (-not [string]::IsNullOrWhiteSpace($Title)) {
+        $message.Body = $Title + [Environment]::NewLine + [Environment]::NewLine + $Note
+    }
+    if ($config.attach_text_file -and (Test-Path $ArchivePath)) {
+        $attachment = New-Object Net.Mail.Attachment($ArchivePath)
+        $message.Attachments.Add($attachment) | Out-Null
+    }
+
+    $client = New-Object Net.Mail.SmtpClient($hostName, $port)
+    $client.EnableSsl = $true
+    $client.Credentials = New-Object Net.NetworkCredential($user, $password)
+
+    try {
+        $client.Send($message)
+        $recipients = (@($config.to) -join ", ")
+        Write-ExportLog ("mail sent: {0}" -f $recipients)
+    } finally {
+        $message.Dispose()
+        $client.Dispose()
+    }
+}
+
 try {
     Sync-RepoBestEffort
     try {
@@ -162,6 +259,7 @@ try {
     [IO.File]::WriteAllText($statusPath, $status, $utf8Bom)
 
     Write-ExportLog ("exported note: {0}" -f $archivePath)
+    Send-NoteMailIfConfigured -Note $note -Date $date -Title $title -ArchivePath $archivePath
     Write-Output $archivePath
     exit 0
 } catch {
