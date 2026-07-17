@@ -169,7 +169,7 @@ function Send-NoteMailIfConfigured {
     $hostName = [string]$config.smtp_host
     $port = [int]$config.smtp_port
     $user = [string]$config.smtp_user
-    $password = [string]$config.smtp_password
+    $password = ([string]$config.smtp_password) -replace "\s+", ""
     $from = [string]$config.from
     $subjectPrefix = [string]$config.subject_prefix
     if ([string]::IsNullOrWhiteSpace($subjectPrefix)) {
@@ -259,7 +259,11 @@ try {
     [IO.File]::WriteAllText($statusPath, $status, $utf8Bom)
 
     Write-ExportLog ("exported note: {0}" -f $archivePath)
-    Send-NoteMailIfConfigured -Note $note -Date $date -Title $title -ArchivePath $archivePath
+    try {
+        Send-NoteMailIfConfigured -Note $note -Date $date -Title $title -ArchivePath $archivePath
+    } catch {
+        Write-ExportLog ("mail failed: {0}" -f $_.Exception.Message)
+    }
     Write-Output $archivePath
     exit 0
 } catch {
