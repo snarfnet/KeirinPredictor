@@ -65,6 +65,50 @@ PROVERBS = [
         "堅く見える軸でも飛ぶ日はあります。だから吾輩は、当たった日より外れた日の理由をよく見ます。",
     ),
 ]
+VENUE_CODE_NAMES = {
+    "11": "函館",
+    "12": "青森",
+    "13": "いわき平",
+    "21": "弥彦",
+    "22": "前橋",
+    "23": "取手",
+    "24": "宇都宮",
+    "25": "大宮",
+    "26": "西武園",
+    "27": "京王閣",
+    "28": "立川",
+    "31": "松戸",
+    "34": "川崎",
+    "35": "平塚",
+    "36": "小田原",
+    "37": "伊東",
+    "38": "静岡",
+    "42": "名古屋",
+    "43": "岐阜",
+    "44": "大垣",
+    "45": "豊橋",
+    "46": "富山",
+    "47": "松阪",
+    "48": "四日市",
+    "51": "福井",
+    "53": "奈良",
+    "54": "向日町",
+    "55": "和歌山",
+    "56": "岸和田",
+    "61": "玉野",
+    "62": "広島",
+    "63": "防府",
+    "71": "高松",
+    "73": "小松島",
+    "74": "高知",
+    "75": "松山",
+    "81": "小倉",
+    "83": "久留米",
+    "84": "武雄",
+    "85": "佐世保",
+    "86": "別府",
+    "87": "熊本",
+}
 
 
 def fetch_json(file_name: str, required: bool = True) -> Any:
@@ -99,6 +143,16 @@ def compact_date_label(value: str) -> str:
         return f"{dt.month}/{dt.day}"
     except ValueError:
         return value
+
+
+def venue_label(venue: Any, venue_cd: Any = None) -> str:
+    raw = str(venue or "").strip()
+    code = str(venue_cd or "").strip()
+    if raw in VENUE_CODE_NAMES:
+        return VENUE_CODE_NAMES[raw]
+    if code in VENUE_CODE_NAMES:
+        return VENUE_CODE_NAMES[code]
+    return raw
 
 
 def daily_proverb(value: str) -> dict[str, str]:
@@ -678,7 +732,14 @@ def build_note(
     lines += [
         "",
         "## ここから先は",
-        f"本日の一押し全{len(predictions)}本、買い目候補、見解です。",
+        f"有料部分では、本日の一押し全{len(predictions)}本の買い目候補と見解を出します。",
+        "",
+        "対象レース:",
+    ]
+    for idx, pick in enumerate(predictions, 1):
+        lines.append(f"・{idx}. {pick.get('venue')} {pick.get('race_no')}R")
+    lines += [
+        "",
         "ここから先は有料部分です。価格は200円です。",
         "",
         "【本日の一押し一覧】",
@@ -741,6 +802,7 @@ def main() -> int:
     target_date, races = pick_races(entries_data, args.date)
     for race in races:
         race.setdefault("date", target_date)
+        race["venue"] = venue_label(race.get("venue"), race.get("venue_cd"))
 
     picks = []
     for race in races:
