@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-20T06:22:51+09:00",
+  "generated_at": "2026-07-20T08:29:41+09:00",
   "source": "https://snarfnet.github.io/keirin-data",
   "date": "20260720",
   "date_label": "2026年7月20日",
@@ -871,7 +871,7 @@
       ],
       "axis_name": "十文字悠真",
       "axis_win_estimate": 60.0,
-      "chaos_score": 27.1,
+      "chaos_score": 23.7,
       "grade": "S",
       "action_label": "買い",
       "action_reason": "ここで妙な小細工をすると、かえって外す。十文字悠真の頭を厚く見る。",
@@ -889,11 +889,12 @@
         {
           "umaban": 5,
           "name": "十文字悠真",
-          "score": 136.8,
-          "win_probability": 60.9,
+          "score": 138.2,
+          "win_probability": 63.1,
           "style": "逃",
           "signals": [
             "近況上位",
+            "コメント前向き",
             "勝率上位",
             "3着内安定"
           ]
@@ -901,10 +902,11 @@
         {
           "umaban": 4,
           "name": "西澤優聖",
-          "score": 128.6,
-          "win_probability": 18.3,
+          "score": 130.0,
+          "win_probability": 18.9,
           "style": "逃",
           "signals": [
+            "コメント前向き",
             "勝率上位",
             "3着内安定"
           ]
@@ -913,7 +915,7 @@
           "umaban": 2,
           "name": "藤野一良",
           "score": 124.1,
-          "win_probability": 9.4,
+          "win_probability": 7.9,
           "style": "追",
           "signals": []
         },
@@ -921,17 +923,19 @@
           "umaban": 6,
           "name": "村本慎吾",
           "score": 121.7,
-          "win_probability": 6.5,
+          "win_probability": 5.5,
           "style": "追",
           "signals": []
         },
         {
-          "umaban": 3,
-          "name": "中川拓也",
-          "score": 114.9,
-          "win_probability": 2.4,
-          "style": "両",
-          "signals": []
+          "umaban": 1,
+          "name": "舟山佑京",
+          "score": 115.8,
+          "win_probability": 2.3,
+          "style": "逃",
+          "signals": [
+            "コメント前向き"
+          ]
         }
       ],
       "rank": 8
@@ -1083,11 +1087,12 @@
         {
           "umaban": 3,
           "name": "吉川敬介",
-          "score": 167.5,
-          "win_probability": 99.2,
+          "score": 168.9,
+          "win_probability": 99.3,
           "style": "逃",
           "signals": [
             "近況上位",
+            "コメント前向き",
             "勝率上位",
             "3着内安定"
           ]
@@ -1096,18 +1101,19 @@
           "umaban": 1,
           "name": "岸川哲也",
           "score": 132.4,
-          "win_probability": 0.6,
+          "win_probability": 0.5,
           "style": "両",
           "signals": []
         },
         {
           "umaban": 4,
           "name": "三浦大輝",
-          "score": 121.6,
+          "score": 123.0,
           "win_probability": 0.1,
           "style": "逃",
           "signals": [
-            "場相性あり"
+            "場相性あり",
+            "コメント前向き"
           ]
         },
         {
