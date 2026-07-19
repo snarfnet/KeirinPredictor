@@ -1418,19 +1418,10 @@ struct FocusRaceStrip: View {
     }
 
     private func previousDayRecords(from records: [PredictionRecord]) -> [PredictionRecord] {
-        let today = yyyymmdd(Date())
         let yesterday = yyyymmdd(Date().addingTimeInterval(-86400))
-        let exact = records.filter { $0.date == yesterday }
-        if !exact.isEmpty { return exact.sorted { $0.raceNo < $1.raceNo } }
-
-        guard let latestPastDate = records
-            .map(\.date)
-            .filter({ !$0.isEmpty && $0 < today })
-            .max()
-        else {
-            return []
-        }
-        return records.filter { $0.date == latestPastDate }.sorted { $0.raceNo < $1.raceNo }
+        return records
+            .filter { $0.date == yesterday }
+            .sorted { $0.raceNo < $1.raceNo }
     }
 
     private func isAnyHit(_ record: PredictionRecord) -> Bool {
