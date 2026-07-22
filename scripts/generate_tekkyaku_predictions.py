@@ -572,13 +572,12 @@ def pick_races(entries_data: dict[str, Any], target_date: str | None) -> tuple[s
         selected = [r for r in races if (r.get("date") or entries_data.get("date")) == target_date and r.get("entries")]
         return target_date, selected
     today = today_string()
-    candidates = sorted([d for d in days if d >= today]) or [entries_data.get("date") or today]
+    candidates = sorted(d for d in days if d >= today)
     for day in candidates:
         selected = [r for r in races if (r.get("date") or day) == day and r.get("entries")]
         if selected:
             return day, selected
-    day = entries_data.get("date") or today
-    return day, [r for r in races if r.get("entries")]
+    return today, []
 
 
 def result_for_date(date: str) -> dict[str, list[int]]:
@@ -800,6 +799,8 @@ def main() -> int:
     player_stats = fetch_json("player_stats.json")
     venue_stats = fetch_json("venue_stats.json")
     target_date, races = pick_races(entries_data, args.date)
+    if not races:
+        raise RuntimeError(f"No entry races available for {target_date}")
     for race in races:
         race.setdefault("date", target_date)
         race["venue"] = venue_label(race.get("venue"), race.get("venue_cd"))

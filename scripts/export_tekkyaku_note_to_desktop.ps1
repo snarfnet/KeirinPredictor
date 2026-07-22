@@ -233,12 +233,16 @@ try {
     $note = [string]$json.note_markdown
     $date = [string]$json.date
     $title = [string]$json.note_title
+    $expectedDate = Get-Date -Format "yyyyMMdd"
 
     if ([string]::IsNullOrWhiteSpace($note)) {
         throw "note_markdown is empty"
     }
     if ([string]::IsNullOrWhiteSpace($date)) {
-        $date = Get-Date -Format "yyyyMMdd"
+        throw "note date is empty"
+    }
+    if ($date -ne $expectedDate) {
+        throw ("stale note rejected: expected {0}, got {1}" -f $expectedDate, $date)
     }
 
     $archivePath = Join-Path $OutDir ("keirin_note_{0}.txt" -f $date)
@@ -271,6 +275,12 @@ try {
     $fallback = Get-LocalFallbackNote
     if (-not [string]::IsNullOrWhiteSpace($fallback)) {
         $date = Get-Date -Format "yyyyMMdd"
+        $expectedLabel = Get-Date -Format "yyyy年M月d日"
+        if (-not $fallback.Contains($expectedLabel)) {
+            Write-ExportLog ("fallback skipped: note is not for {0}" -f $expectedLabel)
+            Write-Error $_
+            exit 1
+        }
         $archivePath = Join-Path $OutDir ("keirin_note_{0}_fallback.txt" -f $date)
         $latestPath = Join-Path $OutDir "latest_note.txt"
         [IO.File]::WriteAllText($archivePath, $fallback, $utf8Bom)
