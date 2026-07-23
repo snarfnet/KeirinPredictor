@@ -109,6 +109,18 @@ VENUE_CODE_NAMES = {
     "86": "別府",
     "87": "熊本",
 }
+BANK_LENGTH_OVERRIDES = {
+    "前橋": 335,
+    "松戸": 333,
+    "小田原": 333,
+    "伊東": 333,
+    "富山": 333,
+    "奈良": 333,
+    "防府": 333,
+    "宇都宮": 500,
+    "大宮": 500,
+    "高知": 500,
+}
 
 
 def fetch_json(file_name: str, required: bool = True) -> Any:
@@ -215,6 +227,54 @@ def style_fit(style: str, venue: str, venue_stats: dict[str, Any]) -> float:
     if style_key == "差" and bank >= 400:
         bonus += 1.6
     return bonus
+
+
+def bank_profile(
+    venue: str,
+    axis: dict[str, Any],
+    venue_stats: dict[str, Any],
+    venue_details: dict[str, Any],
+) -> dict[str, Any]:
+    stats = venue_stats.get(venue) or {}
+    details = venue_details.get(venue) or {}
+    bank = int(details.get("bank") or stats.get("bank") or BANK_LENGTH_OVERRIDES.get(venue, 400))
+    races = int(stats.get("races") or 0)
+    km = stats.get("km") or {}
+    rates = {key: float(km.get(key) or 0.0) for key in ("差", "捲", "逃")}
+
+    if bank <= 335:
+        character = "一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。"
+    elif bank >= 500:
+        character = "一周が長い長走路。最後まで脚を残す配分が問われやすい。"
+    else:
+        character = "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。"
+
+    axis_name = str(axis.get("name") or "軸候補")
+    style = str(axis.get("style") or "")
+    style_key = "逃" if "逃" in style else "捲" if "捲" in style or "両" in style else "差"
+    strongest = max(rates, key=rates.get) if any(rates.values()) else ""
+    axis_rate = rates.get(style_key, 0.0)
+
+    if strongest and style_key == strongest:
+        insight = f"集計上は{strongest}が最も多い。{axis_name}の脚質とバンク傾向が重なる点を買う。"
+    elif strongest and axis_rate:
+        insight = f"集計上は{strongest}が最多。{axis_name}は{style_key}タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+    elif strongest:
+        insight = f"集計上は{strongest}が最も多い。{axis_name}の位置取りと仕掛けどころを重く見る。"
+    else:
+        insight = f"{axis_name}の脚質と、周長に合う仕掛けどころを重く見る。"
+
+    return {
+        "bank": bank,
+        "races": races,
+        "rates": {key: round(value * 100, 1) for key, value in rates.items()},
+        "opened_year": details.get("opened_year"),
+        "straight_m": details.get("straight_m"),
+        "max_cant": details.get("max_cant"),
+        "character": details.get("character") or character,
+        "sources": details.get("sources") or [],
+        "insight": insight,
+    }
 
 
 def comment_bonus(comment: str | None) -> tuple[float, str | None]:
@@ -478,7 +538,12 @@ def build_hakase_copy(
     return action_reason, story, reasons[:7]
 
 
-def analyze_race(race: dict[str, Any], player_stats: dict[str, Any], venue_stats: dict[str, Any]) -> dict[str, Any] | None:
+def analyze_race(
+    race: dict[str, Any],
+    player_stats: dict[str, Any],
+    venue_stats: dict[str, Any],
+    venue_details: dict[str, Any],
+) -> dict[str, Any] | None:
     entries = race.get("entries") or []
     if len(entries) < 3:
         return None
@@ -528,6 +593,7 @@ def analyze_race(race: dict[str, Any], player_stats: dict[str, Any], venue_stats
         grade,
         action,
     )
+    bank = bank_profile(str(race.get("venue") or ""), axis, venue_stats, venue_details)
 
     start_time = race.get("start_time") or ""
     return {
@@ -549,6 +615,7 @@ def analyze_race(race: dict[str, Any], player_stats: dict[str, Any], venue_stats
         "action_label": action,
         "action_reason": action_reason,
         "story": story,
+        "bank_profile": bank,
         "quality": round(axis_win * 2 + {"S": 24, "A": 16, "B": 8}.get(grade, 0) + (40 if action == "買い" else 0) - max(0, chaos - 55) * 1.4, 2),
         "reasons": reasons[:6],
         "top_entries": [
@@ -763,6 +830,31 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
     shown = reasons[:4 if paid else 2]
     reason_text = "\n".join(f"  - {r}" for r in shown) or "  - 出走表と指数を確認してから最終判断"
     story = pick.get("story") or "数字だけでは味気ないが、ここは軸の脚を素直に見る。"
+    bank = pick.get("bank_profile") or {}
+    bank_rates = bank.get("rates") or {}
+    bank_lines = []
+    if bank:
+        bank_lines = [
+            f"🚴{pick.get('venue')}競輪場の特徴",
+            f"・{bank.get('bank')}mバンク。",
+        ]
+        if bank.get("opened_year"):
+            bank_lines.append(f"・{int(bank.get('opened_year'))}年開設。")
+        if bank.get("straight_m"):
+            bank_lines.append(f"・みなし直線は{float(bank.get('straight_m')):g}m。")
+        if bank.get("max_cant"):
+            bank_lines.append(f"・最大カントは{bank.get('max_cant')}。")
+        bank_lines.append(f"・{bank.get('character')}")
+        if bank.get("races"):
+            bank_lines.append(
+                f"・過去{int(bank.get('races')):,}レースの決まり手: "
+                f"差し{float(bank_rates.get('差') or 0):.1f}% / "
+                f"捲り{float(bank_rates.get('捲') or 0):.1f}% / "
+                f"逃げ{float(bank_rates.get('逃') or 0):.1f}%"
+            )
+        bank_lines.append(f"・博士の読み: {bank.get('insight')}")
+    bank_text = "\n".join(bank_lines)
+    bank_section = f"バンクメモ:\n{bank_text}" if bank_text else ""
     start = f" {pick.get('start_time')}発走" if pick.get("start_time") else ""
     return f"""
 {index}. {pick.get('venue')} {pick.get('race_no')}R{start}
@@ -773,6 +865,7 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
 ワイド候補: {combo(wide) if len(wide) >= 2 else "-"}
 博士の見立て:
 {story}
+{bank_section}
 理由:
 {reason_text}
 """.rstrip()
@@ -798,6 +891,7 @@ def main() -> int:
     entries_data = fetch_json("upcoming_entries.json", required=False) or fetch_json("today_entries.json")
     player_stats = fetch_json("player_stats.json")
     venue_stats = fetch_json("venue_stats.json")
+    venue_details = fetch_json("venue_details.json", required=False) or {}
     target_date, races = pick_races(entries_data, args.date)
     if not races:
         raise RuntimeError(f"No entry races available for {target_date}")
@@ -807,7 +901,7 @@ def main() -> int:
 
     picks = []
     for race in races:
-        analysis = analyze_race(race, player_stats, venue_stats)
+        analysis = analyze_race(race, player_stats, venue_stats, venue_details)
         if analysis:
             picks.append(analysis)
     picks.sort(key=lambda p: (-float(p["quality"]), int(p["race_no"])))
