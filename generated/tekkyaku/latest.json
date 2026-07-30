@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-07-30T08:31:07+09:00",
+  "generated_at": "2026-07-30T23:31:22+09:00",
   "source": "https://snarfnet.github.io/keirin-data",
   "date": "20260730",
   "date_label": "2026年7月30日",
-  "note_title": "鉄脚博士の競輪予想｜2026年7月30日 平塚1R 発走16:22 本日の一押し10本",
+  "note_title": "鉄脚博士の競輪予想｜2026年7月30日 伊東1R 発走20:50 本日の一押し10本",
   "daily_proverb": {
     "title": "備えあれば憂いなし",
     "meaning": "準備ができていれば、いざという時に慌てない。",
@@ -133,111 +133,6 @@
   },
   "predictions": [
     {
-      "race_id": "202607303501",
-      "date": "20260730",
-      "venue": "平塚",
-      "venue_cd": "35",
-      "race_no": 1,
-      "start_time": "16:22",
-      "schedule_label": "ナイター",
-      "prediction": [
-        1,
-        2,
-        3
-      ],
-      "trifecta": [
-        1,
-        2,
-        3
-      ],
-      "exacta": [
-        1,
-        2
-      ],
-      "wide": [
-        1,
-        2
-      ],
-      "axis_name": "森佑樹",
-      "axis_win_estimate": 60.0,
-      "chaos_score": 7.6,
-      "grade": "S",
-      "action_label": "買い",
-      "action_reason": "人気の有無より、脚の筋が通っている。吾輩は森佑樹を先に置く。",
-      "story": "朝から出走表を眺めていたが、平塚のこの番組はじわじわ味が出る。\n灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。\n森佑樹は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n軸と相手の差がはっきり出た。ここで迷うと、かえって買い目が濁る。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。",
-      "bank_profile": {
-        "bank": 400,
-        "races": 7334,
-        "rates": {
-          "差": 48.3,
-          "捲": 30.3,
-          "逃": 21.3
-        },
-        "opened_year": 1950,
-        "straight_m": 54.2,
-        "max_cant": "31度28分37秒",
-        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
-        "sources": [],
-        "insight": "集計上は差が最多。森佑樹は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
-      },
-      "quality": 184.0,
-      "reasons": [
-        "人気の有無より、脚の筋が通っている。吾輩は森佑樹を先に置く。",
-        "博士の軸は森佑樹",
-        "軸1着目安 60%",
-        "相手筆頭は猪野泰介、三番手は三登誉哲",
-        "軸と相手の差を評価",
-        "コメント前向き"
-      ],
-      "top_entries": [
-        {
-          "umaban": 1,
-          "name": "森佑樹",
-          "score": 129.3,
-          "win_probability": 77.6,
-          "style": "逃",
-          "signals": [
-            "コメント前向き"
-          ]
-        },
-        {
-          "umaban": 2,
-          "name": "猪野泰介",
-          "score": 115.7,
-          "win_probability": 10.5,
-          "style": "逃",
-          "signals": [
-            "コメント前向き"
-          ]
-        },
-        {
-          "umaban": 3,
-          "name": "三登誉哲",
-          "score": 112.9,
-          "win_probability": 7.0,
-          "style": "両",
-          "signals": []
-        },
-        {
-          "umaban": 4,
-          "name": "中野功史",
-          "score": 103.3,
-          "win_probability": 1.7,
-          "style": "両",
-          "signals": []
-        },
-        {
-          "umaban": 7,
-          "name": "南和夫",
-          "score": 101.0,
-          "win_probability": 1.2,
-          "style": "追",
-          "signals": []
-        }
-      ],
-      "rank": 1
-    },
-    {
       "race_id": "202607303701",
       "date": "20260730",
       "venue": "伊東",
@@ -248,12 +143,12 @@
       "prediction": [
         1,
         2,
-        5
+        7
       ],
       "trifecta": [
         1,
         2,
-        5
+        7
       ],
       "exacta": [
         1,
@@ -290,390 +185,59 @@
         "石井寛子の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
         "博士の軸は石井寛子",
         "軸1着目安 60%",
-        "相手筆頭は中嶋里美、三番手は星野しほ",
+        "相手筆頭は中嶋里美、三番手は佐藤友香",
         "軸と相手の差を評価",
-        "勝率上位"
+        "3着内安定"
       ],
       "top_entries": [
         {
           "umaban": 1,
           "name": "石井寛子",
-          "score": 144.0,
-          "win_probability": 99.9,
+          "score": 127.5,
+          "win_probability": 96.8,
           "style": "両",
           "signals": [
-            "勝率上位",
             "3着内安定"
           ]
         },
         {
           "umaban": 2,
           "name": "中嶋里美",
-          "score": 93.9,
-          "win_probability": 0.1,
+          "score": 96.7,
+          "win_probability": 1.1,
           "style": "両",
-          "signals": []
-        },
-        {
-          "umaban": 5,
-          "name": "星野しほ",
-          "score": 87.5,
-          "win_probability": 0.0,
-          "style": "追",
-          "signals": []
-        },
-        {
-          "umaban": 3,
-          "name": "高本美穂",
-          "score": 85.1,
-          "win_probability": 0.0,
-          "style": "追",
           "signals": []
         },
         {
           "umaban": 7,
           "name": "佐藤友香",
-          "score": 83.6,
-          "win_probability": 0.0,
-          "style": "追",
-          "signals": []
-        }
-      ],
-      "rank": 2
-    },
-    {
-      "race_id": "202607301201",
-      "date": "20260730",
-      "venue": "青森",
-      "venue_cd": "12",
-      "race_no": 1,
-      "start_time": "08:30",
-      "schedule_label": "デイ",
-      "prediction": [
-        3,
-        4,
-        1
-      ],
-      "trifecta": [
-        3,
-        4,
-        1
-      ],
-      "exacta": [
-        3,
-        4
-      ],
-      "wide": [
-        3,
-        4
-      ],
-      "axis_name": "邊見祐太",
-      "axis_win_estimate": 60.0,
-      "chaos_score": 0.0,
-      "grade": "S",
-      "action_label": "買い",
-      "action_reason": "疑い深い吾輩でも、この並びには逆らいにくい。邊見祐太中心。",
-      "story": "数字は無口だが、時々こちらをじっと見る。今日のこの番組がそれである。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n脚の使い方を見ると、邊見祐太はこの並びで窮屈になりにくい。\n邊見祐太と大越啓介の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。",
-      "bank_profile": {
-        "bank": 400,
-        "races": 6258,
-        "rates": {
-          "差": 53.3,
-          "捲": 28.3,
-          "逃": 18.4
-        },
-        "opened_year": 1950,
-        "straight_m": 58.9,
-        "max_cant": "32度15分07秒",
-        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
-        "sources": [],
-        "insight": "集計上は差が最多。邊見祐太は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
-      },
-      "quality": 184.0,
-      "reasons": [
-        "疑い深い吾輩でも、この並びには逆らいにくい。邊見祐太中心。",
-        "博士の軸は邊見祐太",
-        "軸1着目安 60%",
-        "相手筆頭は大越啓介、三番手は中秀平",
-        "軸と相手の差を評価",
-        "近況上位"
-      ],
-      "top_entries": [
-        {
-          "umaban": 3,
-          "name": "邊見祐太",
-          "score": 153.2,
-          "win_probability": 95.8,
-          "style": "逃",
-          "signals": [
-            "近況上位",
-            "コメント前向き",
-            "勝率上位",
-            "3着内安定"
-          ]
-        },
-        {
-          "umaban": 4,
-          "name": "大越啓介",
-          "score": 128.3,
-          "win_probability": 2.5,
+          "score": 93.0,
+          "win_probability": 0.6,
           "style": "追",
           "signals": [
-            "場相性あり"
-          ]
-        },
-        {
-          "umaban": 1,
-          "name": "中秀平",
-          "score": 120.0,
-          "win_probability": 0.7,
-          "style": "逃",
-          "signals": [
-            "コメント前向き",
-            "3着内安定"
-          ]
-        },
-        {
-          "umaban": 5,
-          "name": "鶴岡與之",
-          "score": 119.3,
-          "win_probability": 0.7,
-          "style": "追",
-          "signals": [
-            "場相性あり"
-          ]
-        },
-        {
-          "umaban": 2,
-          "name": "小田桐義継",
-          "score": 111.9,
-          "win_probability": 0.2,
-          "style": "追",
-          "signals": []
-        }
-      ],
-      "rank": 3
-    },
-    {
-      "race_id": "202607302101",
-      "date": "20260730",
-      "venue": "弥彦",
-      "venue_cd": "21",
-      "race_no": 1,
-      "start_time": "15:45",
-      "schedule_label": "デイ",
-      "prediction": [
-        3,
-        5,
-        2
-      ],
-      "trifecta": [
-        3,
-        5,
-        2
-      ],
-      "exacta": [
-        3,
-        5
-      ],
-      "wide": [
-        3,
-        5
-      ],
-      "axis_name": "楠野史尭",
-      "axis_win_estimate": 60.0,
-      "chaos_score": 14.3,
-      "grade": "S",
-      "action_label": "買い",
-      "action_reason": "ここで妙な小細工をすると、かえって外す。楠野史尭の頭を厚く見る。",
-      "story": "弥彦の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n楠野史尭は自力も追走も選べるタイプ。ここは脚の出しどころが合う。\n飯尾主税も悪くない。だが主役の椅子は、今日は楠野史尭の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
-      "bank_profile": {
-        "bank": 400,
-        "races": 6555,
-        "rates": {
-          "差": 55.5,
-          "捲": 27.2,
-          "逃": 17.2
-        },
-        "opened_year": 1950,
-        "straight_m": 63.1,
-        "max_cant": "32度24分17秒",
-        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
-        "sources": [],
-        "insight": "集計上は差が最多。楠野史尭は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。"
-      },
-      "quality": 184.0,
-      "reasons": [
-        "ここで妙な小細工をすると、かえって外す。楠野史尭の頭を厚く見る。",
-        "博士の軸は楠野史尭",
-        "軸1着目安 60%",
-        "相手筆頭は飯尾主税、三番手は伊藤奎",
-        "軸と相手の差を評価",
-        "近況上位"
-      ],
-      "top_entries": [
-        {
-          "umaban": 3,
-          "name": "楠野史尭",
-          "score": 145.8,
-          "win_probability": 69.2,
-          "style": "両",
-          "signals": [
-            "近況上位",
-            "場相性あり",
-            "コメント前向き",
-            "勝率上位"
-          ]
-        },
-        {
-          "umaban": 5,
-          "name": "飯尾主税",
-          "score": 134.0,
-          "win_probability": 12.6,
-          "style": "追",
-          "signals": [
-            "場相性あり"
-          ]
-        },
-        {
-          "umaban": 2,
-          "name": "伊藤奎",
-          "score": 130.8,
-          "win_probability": 7.9,
-          "style": "追",
-          "signals": []
-        },
-        {
-          "umaban": 1,
-          "name": "泉谷直哉",
-          "score": 129.4,
-          "win_probability": 6.4,
-          "style": "追",
-          "signals": []
-        },
-        {
-          "umaban": 7,
-          "name": "大木雅也",
-          "score": 119.6,
-          "win_probability": 1.6,
-          "style": "追",
-          "signals": [
-            "場相性あり"
-          ]
-        }
-      ],
-      "rank": 4
-    },
-    {
-      "race_id": "202607303502",
-      "date": "20260730",
-      "venue": "平塚",
-      "venue_cd": "35",
-      "race_no": 2,
-      "start_time": "16:46",
-      "schedule_label": "ナイター",
-      "prediction": [
-        7,
-        2,
-        3
-      ],
-      "trifecta": [
-        7,
-        2,
-        3
-      ],
-      "exacta": [
-        7,
-        2
-      ],
-      "wide": [
-        7,
-        2
-      ],
-      "axis_name": "佐藤魁皇",
-      "axis_win_estimate": 60.0,
-      "chaos_score": 11.6,
-      "grade": "S",
-      "action_label": "買い",
-      "action_reason": "佐藤魁皇の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
-      "story": "妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\nナイターは流れが一変することもある。だからこそ軸の安定感を重く見る。\n佐藤魁皇の脚質なら、流れが少し早くても我慢が利く。\n鈴木広人も悪くない。だが主役の椅子は、今日は佐藤魁皇の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
-      "bank_profile": {
-        "bank": 400,
-        "races": 7334,
-        "rates": {
-          "差": 48.3,
-          "捲": 30.3,
-          "逃": 21.3
-        },
-        "opened_year": 1950,
-        "straight_m": 54.2,
-        "max_cant": "31度28分37秒",
-        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
-        "sources": [],
-        "insight": "集計上は差が最多。佐藤魁皇は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
-      },
-      "quality": 184.0,
-      "reasons": [
-        "佐藤魁皇の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
-        "博士の軸は佐藤魁皇",
-        "軸1着目安 60%",
-        "相手筆頭は鈴木広人、三番手は南部亮太",
-        "軸と相手の差を評価",
-        "コメント前向き"
-      ],
-      "top_entries": [
-        {
-          "umaban": 7,
-          "name": "佐藤魁皇",
-          "score": 139.7,
-          "win_probability": 70.2,
-          "style": "逃",
-          "signals": [
-            "コメント前向き",
-            "勝率上位",
-            "3着内安定"
-          ]
-        },
-        {
-          "umaban": 2,
-          "name": "鈴木広人",
-          "score": 131.5,
-          "win_probability": 21.1,
-          "style": "両",
-          "signals": [
-            "場相性あり",
             "勝率上位"
           ]
         },
         {
           "umaban": 3,
-          "name": "南部亮太",
-          "score": 120.5,
-          "win_probability": 4.2,
+          "name": "高本美穂",
+          "score": 92.5,
+          "win_probability": 0.6,
           "style": "追",
-          "signals": []
-        },
-        {
-          "umaban": 6,
-          "name": "佐藤康恭",
-          "score": 117.2,
-          "win_probability": 2.6,
-          "style": "両",
           "signals": [
-            "場相性あり",
-            "コメント前向き"
+            "勝率上位"
           ]
         },
         {
           "umaban": 5,
-          "name": "大澤哉太",
-          "score": 109.2,
-          "win_probability": 0.8,
-          "style": "両",
+          "name": "星野しほ",
+          "score": 91.8,
+          "win_probability": 0.5,
+          "style": "追",
           "signals": []
         }
       ],
-      "rank": 5
+      "rank": 1
     },
     {
       "race_id": "202607304302",
@@ -686,12 +250,12 @@
       "prediction": [
         3,
         2,
-        1
+        7
       ],
       "trifecta": [
         3,
         2,
-        1
+        7
       ],
       "exacta": [
         3,
@@ -703,7 +267,7 @@
       ],
       "axis_name": "岸川哲也",
       "axis_win_estimate": 60.0,
-      "chaos_score": 16.7,
+      "chaos_score": 24.9,
       "grade": "S",
       "action_label": "買い",
       "action_reason": "疑い深い吾輩でも、この並びには逆らいにくい。岸川哲也中心。",
@@ -728,172 +292,54 @@
         "疑い深い吾輩でも、この並びには逆らいにくい。岸川哲也中心。",
         "博士の軸は岸川哲也",
         "軸1着目安 60%",
-        "相手筆頭は岡崎克政、三番手は加藤大輔",
-        "軸と相手の差を評価",
-        "コメント前向き"
+        "相手筆頭は岡崎克政、三番手は木本賢二",
+        "軸と相手の差を評価"
       ],
       "top_entries": [
         {
           "umaban": 3,
           "name": "岸川哲也",
-          "score": 132.9,
-          "win_probability": 70.7,
+          "score": 126.9,
+          "win_probability": 61.1,
           "style": "両",
-          "signals": [
-            "コメント前向き"
-          ]
+          "signals": []
         },
         {
           "umaban": 2,
           "name": "岡崎克政",
-          "score": 123.8,
-          "win_probability": 18.5,
+          "score": 118.0,
+          "win_probability": 16.5,
           "style": "逃",
-          "signals": [
-            "コメント前向き"
-          ]
-        },
-        {
-          "umaban": 1,
-          "name": "加藤大輔",
-          "score": 116.7,
-          "win_probability": 6.4,
-          "style": "追",
           "signals": []
         },
         {
           "umaban": 7,
           "name": "木本賢二",
-          "score": 109.2,
-          "win_probability": 2.2,
+          "score": 113.8,
+          "win_probability": 9.0,
           "style": "追",
           "signals": [
             "場相性あり"
-          ]
-        },
-        {
-          "umaban": 4,
-          "name": "竜門孝宗",
-          "score": 105.1,
-          "win_probability": 1.2,
-          "style": "追",
-          "signals": []
-        }
-      ],
-      "rank": 6
-    },
-    {
-      "race_id": "202607303503",
-      "date": "20260730",
-      "venue": "平塚",
-      "venue_cd": "35",
-      "race_no": 3,
-      "start_time": "17:12",
-      "schedule_label": "ナイター",
-      "prediction": [
-        4,
-        7,
-        2
-      ],
-      "trifecta": [
-        4,
-        7,
-        2
-      ],
-      "exacta": [
-        4,
-        7
-      ],
-      "wide": [
-        4,
-        7
-      ],
-      "axis_name": "吉田恵利",
-      "axis_win_estimate": 60.0,
-      "chaos_score": 0.0,
-      "grade": "S",
-      "action_label": "買い",
-      "action_reason": "出走表を三度見ても、最後は吉田恵利に戻る。軸はここである。",
-      "story": "何度も紙片に書いたが、最後に残ったのはこの並びだった。\n灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。\n吉田恵利の脚質なら、流れが少し早くても我慢が利く。\n軸と相手の差がはっきり出た。ここで迷うと、かえって買い目が濁る。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。",
-      "bank_profile": {
-        "bank": 400,
-        "races": 7334,
-        "rates": {
-          "差": 48.3,
-          "捲": 30.3,
-          "逃": 21.3
-        },
-        "opened_year": 1950,
-        "straight_m": 54.2,
-        "max_cant": "31度28分37秒",
-        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
-        "sources": [],
-        "insight": "集計上は差が最多。吉田恵利は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。"
-      },
-      "quality": 184.0,
-      "reasons": [
-        "出走表を三度見ても、最後は吉田恵利に戻る。軸はここである。",
-        "博士の軸は吉田恵利",
-        "軸1着目安 60%",
-        "相手筆頭は栗山百花、三番手は鈴木彩夏",
-        "軸と相手の差を評価",
-        "近況上位"
-      ],
-      "top_entries": [
-        {
-          "umaban": 4,
-          "name": "吉田恵利",
-          "score": 123.7,
-          "win_probability": 92.5,
-          "style": "両",
-          "signals": [
-            "近況上位",
-            "コメント前向き"
-          ]
-        },
-        {
-          "umaban": 7,
-          "name": "栗山百花",
-          "score": 99.4,
-          "win_probability": 2.6,
-          "style": "両",
-          "signals": [
-            "コメント前向き",
-            "3着内安定"
-          ]
-        },
-        {
-          "umaban": 2,
-          "name": "鈴木彩夏",
-          "score": 97.3,
-          "win_probability": 1.9,
-          "style": "追",
-          "signals": [
-            "場相性あり"
-          ]
-        },
-        {
-          "umaban": 6,
-          "name": "安東莉奈",
-          "score": 92.6,
-          "win_probability": 1.0,
-          "style": "追",
-          "signals": [
-            "コメント前向き"
           ]
         },
         {
           "umaban": 1,
-          "name": "浜地晴帆",
-          "score": 92.4,
-          "win_probability": 0.9,
-          "style": "両",
-          "signals": [
-            "コメント前向き"
-          ]
+          "name": "加藤大輔",
+          "score": 113.5,
+          "win_probability": 8.5,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 4,
+          "name": "竜門孝宗",
+          "score": 106.4,
+          "win_probability": 3.0,
+          "style": "追",
+          "signals": []
         }
       ],
-      "rank": 7
+      "rank": 2
     },
     {
       "race_id": "202607305503",
@@ -905,29 +351,29 @@
       "schedule_label": "デイ",
       "prediction": [
         3,
-        2,
+        5,
         1
       ],
       "trifecta": [
         3,
-        2,
+        5,
         1
       ],
       "exacta": [
         3,
-        2
+        5
       ],
       "wide": [
         3,
-        2
+        5
       ],
       "axis_name": "船山真生",
       "axis_win_estimate": 60.0,
-      "chaos_score": 0.0,
+      "chaos_score": 19.7,
       "grade": "S",
       "action_label": "買い",
       "action_reason": "ここで妙な小細工をすると、かえって外す。船山真生の頭を厚く見る。",
-      "story": "和歌山の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n船山真生は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n吉堂将規も悪くない。だが主役の椅子は、今日は船山真生の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
+      "story": "和歌山の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n船山真生は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n森安崇之も悪くない。だが主役の椅子は、今日は船山真生の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
       "bank_profile": {
         "bank": 400,
         "races": 3032,
@@ -948,7 +394,7 @@
         "ここで妙な小細工をすると、かえって外す。船山真生の頭を厚く見る。",
         "博士の軸は船山真生",
         "軸1着目安 60%",
-        "相手筆頭は吉堂将規、三番手は根藤浩二",
+        "相手筆頭は森安崇之、三番手は根藤浩二",
         "軸と相手の差を評価",
         "場相性あり"
       ],
@@ -956,54 +402,156 @@
         {
           "umaban": 3,
           "name": "船山真生",
-          "score": 158.1,
-          "win_probability": 93.0,
+          "score": 142.4,
+          "win_probability": 62.2,
           "style": "逃",
           "signals": [
             "場相性あり",
-            "コメント前向き",
-            "勝率上位",
             "3着内安定"
           ]
         },
         {
-          "umaban": 2,
-          "name": "吉堂将規",
-          "score": 133.5,
-          "win_probability": 2.5,
-          "style": "逃",
-          "signals": [
-            "コメント前向き"
-          ]
-        },
-        {
-          "umaban": 1,
-          "name": "根藤浩二",
-          "score": 131.8,
-          "win_probability": 1.9,
-          "style": "両",
-          "signals": []
-        },
-        {
           "umaban": 5,
           "name": "森安崇之",
-          "score": 127.5,
-          "win_probability": 1.0,
+          "score": 131.8,
+          "win_probability": 13.1,
           "style": "追",
           "signals": []
         },
         {
+          "umaban": 1,
+          "name": "根藤浩二",
+          "score": 128.6,
+          "win_probability": 8.2,
+          "style": "両",
+          "signals": []
+        },
+        {
+          "umaban": 7,
+          "name": "飯田憲司",
+          "score": 126.6,
+          "win_probability": 6.1,
+          "style": "両",
+          "signals": []
+        },
+        {
+          "umaban": 2,
+          "name": "吉堂将規",
+          "score": 125.2,
+          "win_probability": 5.0,
+          "style": "逃",
+          "signals": []
+        }
+      ],
+      "rank": 3
+    },
+    {
+      "race_id": "202607302104",
+      "date": "20260730",
+      "venue": "弥彦",
+      "venue_cd": "21",
+      "race_no": 4,
+      "start_time": "16:59",
+      "schedule_label": "ナイター",
+      "prediction": [
+        4,
+        3,
+        1
+      ],
+      "trifecta": [
+        4,
+        3,
+        1
+      ],
+      "exacta": [
+        4,
+        3
+      ],
+      "wide": [
+        4,
+        3
+      ],
+      "axis_name": "大塚城",
+      "axis_win_estimate": 60.0,
+      "chaos_score": 9.4,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "吾輩の赤鉛筆はここで止まった。大塚城から素直に入る。",
+      "story": "ぬるい茶を前にして見直した。こういうレースは人気より脚の置き場である。\nナイターの空気に浮かされず、番組の骨を見たい。\n大塚城の脚質なら、流れが少し早くても我慢が利く。\n大塚城と上田隼の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 6555,
+        "rates": {
+          "差": 55.5,
+          "捲": 27.2,
+          "逃": 17.2
+        },
+        "opened_year": 1950,
+        "straight_m": 63.1,
+        "max_cant": "32度24分17秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。大塚城は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 184.0,
+      "reasons": [
+        "吾輩の赤鉛筆はここで止まった。大塚城から素直に入る。",
+        "博士の軸は大塚城",
+        "軸1着目安 60%",
+        "相手筆頭は上田隼、三番手は大崎和也",
+        "軸と相手の差を評価",
+        "近況上位"
+      ],
+      "top_entries": [
+        {
           "umaban": 4,
-          "name": "竹内優也",
-          "score": 127.5,
-          "win_probability": 1.0,
+          "name": "大塚城",
+          "score": 143.1,
+          "win_probability": 66.9,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 3,
+          "name": "上田隼",
+          "score": 132.9,
+          "win_probability": 16.9,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 1,
+          "name": "大崎和也",
+          "score": 124.6,
+          "win_probability": 5.5,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 5,
+          "name": "高橋大輝",
+          "score": 120.2,
+          "win_probability": 3.0,
           "style": "両",
           "signals": [
             "場相性あり"
           ]
+        },
+        {
+          "umaban": 6,
+          "name": "勝谷勝治",
+          "score": 119.7,
+          "win_probability": 2.8,
+          "style": "両",
+          "signals": []
         }
       ],
-      "rank": 8
+      "rank": 4
     },
     {
       "race_id": "202607303504",
@@ -1033,7 +581,7 @@
       ],
       "axis_name": "木村優駿",
       "axis_win_estimate": 60.0,
-      "chaos_score": 0.0,
+      "chaos_score": 16.6,
       "grade": "S",
       "action_label": "買い",
       "action_reason": "吾輩の赤鉛筆はここで止まった。木村優駿から素直に入る。",
@@ -1066,31 +614,29 @@
         {
           "umaban": 5,
           "name": "木村優駿",
-          "score": 150.3,
-          "win_probability": 93.5,
+          "score": 134.5,
+          "win_probability": 66.6,
           "style": "逃",
           "signals": [
             "近況上位",
-            "勝率上位",
             "3着内安定"
           ]
         },
         {
           "umaban": 2,
           "name": "坂木田雄介",
-          "score": 126.2,
-          "win_probability": 2.7,
+          "score": 124.5,
+          "win_probability": 15.1,
           "style": "逃",
           "signals": [
-            "場相性あり",
-            "コメント前向き"
+            "場相性あり"
           ]
         },
         {
           "umaban": 7,
           "name": "興呂木雄治",
-          "score": 124.3,
-          "win_probability": 2.0,
+          "score": 119.0,
+          "win_probability": 6.8,
           "style": "両",
           "signals": [
             "場相性あり"
@@ -1099,59 +645,481 @@
         {
           "umaban": 1,
           "name": "田川翔琉",
-          "score": 119.2,
-          "win_probability": 1.0,
+          "score": 116.3,
+          "win_probability": 4.6,
           "style": "逃",
-          "signals": [
-            "コメント前向き"
-          ]
+          "signals": []
         },
         {
           "umaban": 3,
           "name": "伊藤大理",
-          "score": 116.5,
-          "win_probability": 0.6,
+          "score": 116.3,
+          "win_probability": 4.5,
           "style": "追",
           "signals": [
             "場相性あり"
           ]
         }
       ],
-      "rank": 9
+      "rank": 5
     },
     {
-      "race_id": "202607303704",
+      "race_id": "202607304304",
       "date": "20260730",
-      "venue": "伊東",
-      "venue_cd": "37",
+      "venue": "岐阜",
+      "venue_cd": "43",
       "race_no": 4,
-      "start_time": "21:50",
-      "schedule_label": "ミッドナイト",
+      "start_time": "12:22",
+      "schedule_label": "デイ",
       "prediction": [
+        3,
         1,
-        6,
         4
       ],
       "trifecta": [
+        3,
         1,
-        6,
         4
       ],
       "exacta": [
-        1,
-        6
+        3,
+        1
       ],
       "wide": [
+        3,
+        1
+      ],
+      "axis_name": "滿田光紀",
+      "axis_win_estimate": 60.0,
+      "chaos_score": 0.0,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "ここで妙な小細工をすると、かえって外す。滿田光紀の頭を厚く見る。",
+      "story": "吾輩は派手な穴だけを追う男ではない。残る脚を持つ者から見る。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n脚の使い方を見ると、滿田光紀はこの並びで窮屈になりにくい。\n大中拓磨も悪くない。だが主役の椅子は、今日は滿田光紀の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 8036,
+        "rates": {
+          "差": 46.0,
+          "捲": 31.0,
+          "逃": 23.0
+        },
+        "opened_year": 1949,
+        "straight_m": 59.3,
+        "max_cant": "32度15分07秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。滿田光紀は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 184.0,
+      "reasons": [
+        "ここで妙な小細工をすると、かえって外す。滿田光紀の頭を厚く見る。",
+        "博士の軸は滿田光紀",
+        "軸1着目安 60%",
+        "相手筆頭は大中拓磨、三番手は臼井昌巨",
+        "軸と相手の差を評価",
+        "近況上位"
+      ],
+      "top_entries": [
+        {
+          "umaban": 3,
+          "name": "滿田光紀",
+          "score": 151.6,
+          "win_probability": 98.2,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 1,
+          "name": "大中拓磨",
+          "score": 115.1,
+          "win_probability": 0.5,
+          "style": "逃",
+          "signals": []
+        },
+        {
+          "umaban": 4,
+          "name": "臼井昌巨",
+          "score": 114.5,
+          "win_probability": 0.4,
+          "style": "両",
+          "signals": []
+        },
+        {
+          "umaban": 5,
+          "name": "松本大地",
+          "score": 113.7,
+          "win_probability": 0.4,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 2,
+          "name": "土居佑次",
+          "score": 112.1,
+          "win_probability": 0.3,
+          "style": "逃",
+          "signals": []
+        }
+      ],
+      "rank": 6
+    },
+    {
+      "race_id": "202607305504",
+      "date": "20260730",
+      "venue": "和歌山",
+      "venue_cd": "55",
+      "race_no": 4,
+      "start_time": "12:08",
+      "schedule_label": "デイ",
+      "prediction": [
+        3,
+        2,
+        7
+      ],
+      "trifecta": [
+        3,
+        2,
+        7
+      ],
+      "exacta": [
+        3,
+        2
+      ],
+      "wide": [
+        3,
+        2
+      ],
+      "axis_name": "西浦仙哉",
+      "axis_win_estimate": 60.0,
+      "chaos_score": 11.6,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "ここで妙な小細工をすると、かえって外す。西浦仙哉の頭を厚く見る。",
+      "story": "和歌山の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n西浦仙哉は自力も追走も選べるタイプ。ここは脚の出しどころが合う。\n浦川尊明も悪くない。だが主役の椅子は、今日は西浦仙哉の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 3032,
+        "rates": {
+          "差": 47.4,
+          "捲": 28.0,
+          "逃": 23.9
+        },
+        "opened_year": 1949,
+        "straight_m": 59.9,
+        "max_cant": "32度15分07秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。西浦仙哉は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 184.0,
+      "reasons": [
+        "ここで妙な小細工をすると、かえって外す。西浦仙哉の頭を厚く見る。",
+        "博士の軸は西浦仙哉",
+        "軸1着目安 60%",
+        "相手筆頭は浦川尊明、三番手は藤田周磨",
+        "軸と相手の差を評価",
+        "近況上位"
+      ],
+      "top_entries": [
+        {
+          "umaban": 3,
+          "name": "西浦仙哉",
+          "score": 141.9,
+          "win_probability": 69.5,
+          "style": "両",
+          "signals": [
+            "近況上位",
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 2,
+          "name": "浦川尊明",
+          "score": 127.9,
+          "win_probability": 9.3,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 7,
+          "name": "藤田周磨",
+          "score": 127.5,
+          "win_probability": 8.8,
+          "style": "逃",
+          "signals": []
+        },
+        {
+          "umaban": 4,
+          "name": "野上竜太",
+          "score": 125.3,
+          "win_probability": 6.4,
+          "style": "逃",
+          "signals": []
+        },
+        {
+          "umaban": 6,
+          "name": "葛西雄太郎",
+          "score": 118.9,
+          "win_probability": 2.5,
+          "style": "両",
+          "signals": []
+        }
+      ],
+      "rank": 7
+    },
+    {
+      "race_id": "202607301205",
+      "date": "20260730",
+      "venue": "青森",
+      "venue_cd": "12",
+      "race_no": 5,
+      "start_time": "09:53",
+      "schedule_label": "デイ",
+      "prediction": [
+        5,
+        1,
+        2
+      ],
+      "trifecta": [
+        5,
+        1,
+        2
+      ],
+      "exacta": [
+        5,
+        1
+      ],
+      "wide": [
+        5,
+        1
+      ],
+      "axis_name": "渡邉拓",
+      "axis_win_estimate": 60.0,
+      "chaos_score": 22.2,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "疑い深い吾輩でも、この並びには逆らいにくい。渡邉拓中心。",
+      "story": "競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n渡邉拓は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n渡邉拓と山本恵太郎の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 6258,
+        "rates": {
+          "差": 53.3,
+          "捲": 28.3,
+          "逃": 18.4
+        },
+        "opened_year": 1950,
+        "straight_m": 58.9,
+        "max_cant": "32度15分07秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。渡邉拓は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 184.0,
+      "reasons": [
+        "疑い深い吾輩でも、この並びには逆らいにくい。渡邉拓中心。",
+        "博士の軸は渡邉拓",
+        "軸1着目安 60%",
+        "相手筆頭は山本恵太郎、三番手は増成富夫",
+        "軸と相手の差を評価",
+        "近況上位"
+      ],
+      "top_entries": [
+        {
+          "umaban": 5,
+          "name": "渡邉拓",
+          "score": 132.7,
+          "win_probability": 61.1,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 1,
+          "name": "山本恵太郎",
+          "score": 121.3,
+          "win_probability": 12.6,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 2,
+          "name": "増成富夫",
+          "score": 120.6,
+          "win_probability": 11.4,
+          "style": "逃",
+          "signals": [
+            "近況上位"
+          ]
+        },
+        {
+          "umaban": 3,
+          "name": "山本淳",
+          "score": 114.9,
+          "win_probability": 5.2,
+          "style": "両",
+          "signals": []
+        },
+        {
+          "umaban": 7,
+          "name": "鳥丸晃順",
+          "score": 113.3,
+          "win_probability": 4.1,
+          "style": "追",
+          "signals": []
+        }
+      ],
+      "rank": 8
+    },
+    {
+      "race_id": "202607302605",
+      "date": "20260730",
+      "venue": "西武園",
+      "venue_cd": "26",
+      "race_no": 5,
+      "start_time": "22:00",
+      "schedule_label": "ミッドナイト",
+      "prediction": [
+        3,
+        2,
+        1
+      ],
+      "trifecta": [
+        3,
+        2,
+        1
+      ],
+      "exacta": [
+        3,
+        2
+      ],
+      "wide": [
+        3,
+        2
+      ],
+      "axis_name": "赤塚悠人",
+      "axis_win_estimate": 60.0,
+      "chaos_score": 10.4,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "ここで妙な小細工をすると、かえって外す。赤塚悠人の頭を厚く見る。",
+      "story": "妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n赤塚悠人は自力も追走も選べるタイプ。ここは脚の出しどころが合う。\n長沼謙太も悪くない。だが主役の椅子は、今日は赤塚悠人の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 6581,
+        "rates": {
+          "差": 43.7,
+          "捲": 29.3,
+          "逃": 27.0
+        },
+        "opened_year": 1950,
+        "straight_m": 47.6,
+        "max_cant": "29度26分54秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。赤塚悠人は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 184.0,
+      "reasons": [
+        "ここで妙な小細工をすると、かえって外す。赤塚悠人の頭を厚く見る。",
+        "博士の軸は赤塚悠人",
+        "軸1着目安 60%",
+        "相手筆頭は長沼謙太、三番手は布居大地",
+        "軸と相手の差を評価",
+        "近況上位"
+      ],
+      "top_entries": [
+        {
+          "umaban": 3,
+          "name": "赤塚悠人",
+          "score": 140.5,
+          "win_probability": 76.3,
+          "style": "両",
+          "signals": [
+            "近況上位",
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 2,
+          "name": "長沼謙太",
+          "score": 127.4,
+          "win_probability": 11.1,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 1,
+          "name": "布居大地",
+          "score": 124.9,
+          "win_probability": 7.7,
+          "style": "逃",
+          "signals": [
+            "近況上位"
+          ]
+        },
+        {
+          "umaban": 6,
+          "name": "黒田篤",
+          "score": 115.5,
+          "win_probability": 1.9,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 4,
+          "name": "宮西翼",
+          "score": 114.6,
+          "win_probability": 1.7,
+          "style": "両",
+          "signals": []
+        }
+      ],
+      "rank": 9
+    },
+    {
+      "race_id": "202607303706",
+      "date": "20260730",
+      "venue": "伊東",
+      "venue_cd": "37",
+      "race_no": 6,
+      "start_time": "22:30",
+      "schedule_label": "ミッドナイト",
+      "prediction": [
+        7,
         1,
         6
       ],
-      "axis_name": "下岡優季",
+      "trifecta": [
+        7,
+        1,
+        6
+      ],
+      "exacta": [
+        7,
+        1
+      ],
+      "wide": [
+        7,
+        1
+      ],
+      "axis_name": "真木寛斗",
       "axis_win_estimate": 60.0,
-      "chaos_score": 16.0,
+      "chaos_score": 15.2,
       "grade": "S",
       "action_label": "買い",
-      "action_reason": "疑い深い吾輩でも、この並びには逆らいにくい。下岡優季中心。",
-      "story": "ぬるい茶を前にして見直した。こういうレースは人気より脚の置き場である。\n夜更けの競輪は妙に荒く見える。そこで一度、軸の強さへ戻る。\n脚の使い方を見ると、下岡優季はこの並びで窮屈になりにくい。\n下岡優季と阿久津浩之の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。",
+      "action_reason": "ここで妙な小細工をすると、かえって外す。真木寛斗の頭を厚く見る。",
+      "story": "伊東の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n真木寛斗は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n中島将尊も悪くない。だが主役の椅子は、今日は真木寛斗の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。",
       "bank_profile": {
         "bank": 333,
         "races": 7393,
@@ -1165,69 +1133,65 @@
         "max_cant": "34度41分09秒",
         "character": "一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。",
         "sources": [],
-        "insight": "集計上は差が最多。下岡優季は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+        "insight": "集計上は差が最多。真木寛斗は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
       },
       "quality": 184.0,
       "reasons": [
-        "疑い深い吾輩でも、この並びには逆らいにくい。下岡優季中心。",
-        "博士の軸は下岡優季",
+        "ここで妙な小細工をすると、かえって外す。真木寛斗の頭を厚く見る。",
+        "博士の軸は真木寛斗",
         "軸1着目安 60%",
-        "相手筆頭は阿久津浩之、三番手は三住博昭",
+        "相手筆頭は中島将尊、三番手は堀航輝",
         "軸と相手の差を評価",
         "近況上位"
       ],
       "top_entries": [
         {
-          "umaban": 1,
-          "name": "下岡優季",
-          "score": 131.4,
-          "win_probability": 60.3,
+          "umaban": 7,
+          "name": "真木寛斗",
+          "score": 139.9,
+          "win_probability": 66.1,
           "style": "逃",
           "signals": [
-            "近況上位"
+            "近況上位",
+            "場相性あり",
+            "3着内安定"
           ]
+        },
+        {
+          "umaban": 1,
+          "name": "中島将尊",
+          "score": 129.9,
+          "win_probability": 16.9,
+          "style": "両",
+          "signals": []
         },
         {
           "umaban": 6,
-          "name": "阿久津浩之",
-          "score": 118.7,
-          "win_probability": 11.0,
+          "name": "堀航輝",
+          "score": 123.7,
+          "win_probability": 7.2,
           "style": "逃",
-          "signals": [
-            "場相性あり"
-          ]
+          "signals": []
         },
         {
           "umaban": 4,
-          "name": "三住博昭",
-          "score": 117.8,
-          "win_probability": 9.8,
-          "style": "追",
-          "signals": [
-            "場相性あり"
-          ]
-        },
-        {
-          "umaban": 2,
-          "name": "山田晃久",
-          "score": 117.6,
-          "win_probability": 9.6,
+          "name": "堂村知哉",
+          "score": 117.5,
+          "win_probability": 3.1,
           "style": "追",
           "signals": []
         },
         {
-          "umaban": 7,
-          "name": "門脇翼",
-          "score": 111.1,
-          "win_probability": 4.0,
-          "style": "逃",
-          "signals": [
-            "場相性あり"
-          ]
+          "umaban": 5,
+          "name": "高峰賢治",
+          "score": 116.2,
+          "win_probability": 2.6,
+          "style": "追",
+          "signals": []
         }
       ],
       "rank": 10
     }
   ],
-  "note_markdown": "鉄脚博士の競輪予想｜2026年7月30日 平塚1R 発走16:22 本日の一押し10本\n\n吾輩は鉄脚博士である。\n現代にまぎれて競輪ばかり眺めている、少し偏屈な男です。\n今日は展開、脚質、指数、直近の数字を見て、勝負候補を10本に絞りました。\n買い目だけではなく、吾輩がどこで赤鉛筆を止めたのかも書きます。\n\n【本日のことわざ】\n備えあれば憂いなし\n意味: 準備ができていれば、いざという時に慌てない。\n競輪で言えば: 出走表、脚質、場の相性を先に見ておけば、締切前に妙な欲で手が震えません。\n\n先に数字を出します。盛りません。\n\n【現在の的中率】\n集計対象: 鉄脚博士の予想から結果が出た390レース\n1着的中: 202/390（51.8%）\n3連単: 19/390（4.9%）\n2車単: 65/390（16.7%）\nワイド: 180/390（46.2%）\n\n※的中を保証するものではありません。\n※車券購入は20歳以上です。無理のない範囲で楽しんでください。\n※有料部分は200円です。\n\n【前日的中実績】\n2026年7月29日の的中: 7/10\n・伊東 3R 1着的中 / 予 6-7-1 → 結 6-2-5\n・玉野 3R ワイド的中 / 予 7-1-3 → 結 7-5-1\n・西武園 6R ワイド的中 / 予 3-1-4 → 結 1-2-3\n・平塚 6R 2車単的中 / 予 3-1-5 → 結 3-1-2\n・伊東 7R 1着的中 / 予 4-6-1 → 結 4-1-2\n・広島 7R ワイド的中 / 予 1-2-5 → 結 1-5-2\n・西武園 8R ワイド的中 / 予 3-4-5 → 結 3-2-4\n\nさて、今日も素直に見ます。\n無料部分では上位2本だけ出します。残りの一押し、買い目候補、理由は有料部分です。\n\n\n1. 平塚 1R 16:22発走\n判定: 買い S\n予想: 1-2-3\n3連単候補: 1-2-3\n2車単候補: 1-2\nワイド候補: 1-2\n博士の見立て:\n朝から出走表を眺めていたが、平塚のこの番組はじわじわ味が出る。\n灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。\n森佑樹は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n軸と相手の差がはっきり出た。ここで迷うと、かえって買い目が濁る。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\nバンクメモ:\n🚴平塚競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は54.2m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,334レースの決まり手: 差し48.3% / 捲り30.3% / 逃げ21.3%\n・博士の読み: 集計上は差が最多。森佑樹は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 人気の有無より、脚の筋が通っている。吾輩は森佑樹を先に置く。\n  - 博士の軸は森佑樹\n\n2. 伊東 1R 20:50発走\n判定: 買い S\n予想: 1-2-5\n3連単候補: 1-2-5\n2車単候補: 1-2\nワイド候補: 1-2\n博士の見立て:\n吾輩は派手な穴だけを追う男ではない。残る脚を持つ者から見る。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n石井寛子の脚質なら、流れが少し早くても我慢が利く。\n中嶋里美も悪くない。だが主役の椅子は、今日は石井寛子の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴伊東競輪場の特徴\n・333mバンク。\n・1950年開設。\n・みなし直線は46.6m。\n・最大カントは34度41分09秒。\n・一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。\n・過去7,393レースの決まり手: 差し42.4% / 捲り30.4% / 逃げ27.3%\n・博士の読み: 集計上は差が最多。石井寛子は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 石井寛子の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n  - 博士の軸は石井寛子\n\n## ここから先は\n有料部分では、本日の一押し全10本の買い目候補と見解を出します。\n\n対象レース:\n・1. 平塚 1R\n・2. 伊東 1R\n・3. 青森 1R\n・4. 弥彦 1R\n・5. 平塚 2R\n・6. 岐阜 2R\n・7. 平塚 3R\n・8. 和歌山 3R\n・9. 平塚 4R\n・10. 伊東 4R\n\nここから先は有料部分です。価格は200円です。\n\n【本日の一押し一覧】\n\n1. 平塚 1R 16:22発走\n判定: 買い S\n予想: 1-2-3\n3連単候補: 1-2-3\n2車単候補: 1-2\nワイド候補: 1-2\n博士の見立て:\n朝から出走表を眺めていたが、平塚のこの番組はじわじわ味が出る。\n灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。\n森佑樹は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n軸と相手の差がはっきり出た。ここで迷うと、かえって買い目が濁る。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\nバンクメモ:\n🚴平塚競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は54.2m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,334レースの決まり手: 差し48.3% / 捲り30.3% / 逃げ21.3%\n・博士の読み: 集計上は差が最多。森佑樹は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 人気の有無より、脚の筋が通っている。吾輩は森佑樹を先に置く。\n  - 博士の軸は森佑樹\n  - 軸1着目安 60%\n  - 相手筆頭は猪野泰介、三番手は三登誉哲\n\n2. 伊東 1R 20:50発走\n判定: 買い S\n予想: 1-2-5\n3連単候補: 1-2-5\n2車単候補: 1-2\nワイド候補: 1-2\n博士の見立て:\n吾輩は派手な穴だけを追う男ではない。残る脚を持つ者から見る。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n石井寛子の脚質なら、流れが少し早くても我慢が利く。\n中嶋里美も悪くない。だが主役の椅子は、今日は石井寛子の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴伊東競輪場の特徴\n・333mバンク。\n・1950年開設。\n・みなし直線は46.6m。\n・最大カントは34度41分09秒。\n・一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。\n・過去7,393レースの決まり手: 差し42.4% / 捲り30.4% / 逃げ27.3%\n・博士の読み: 集計上は差が最多。石井寛子は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 石井寛子の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n  - 博士の軸は石井寛子\n  - 軸1着目安 60%\n  - 相手筆頭は中嶋里美、三番手は星野しほ\n\n3. 青森 1R 08:30発走\n判定: 買い S\n予想: 3-4-1\n3連単候補: 3-4-1\n2車単候補: 3-4\nワイド候補: 3-4\n博士の見立て:\n数字は無口だが、時々こちらをじっと見る。今日のこの番組がそれである。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n脚の使い方を見ると、邊見祐太はこの並びで窮屈になりにくい。\n邊見祐太と大越啓介の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴青森競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は58.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去6,258レースの決まり手: 差し53.3% / 捲り28.3% / 逃げ18.4%\n・博士の読み: 集計上は差が最多。邊見祐太は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 疑い深い吾輩でも、この並びには逆らいにくい。邊見祐太中心。\n  - 博士の軸は邊見祐太\n  - 軸1着目安 60%\n  - 相手筆頭は大越啓介、三番手は中秀平\n\n4. 弥彦 1R 15:45発走\n判定: 買い S\n予想: 3-5-2\n3連単候補: 3-5-2\n2車単候補: 3-5\nワイド候補: 3-5\n博士の見立て:\n弥彦の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n楠野史尭は自力も追走も選べるタイプ。ここは脚の出しどころが合う。\n飯尾主税も悪くない。だが主役の椅子は、今日は楠野史尭の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴弥彦競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は63.1m。\n・最大カントは32度24分17秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去6,555レースの決まり手: 差し55.5% / 捲り27.2% / 逃げ17.2%\n・博士の読み: 集計上は差が最多。楠野史尭は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - ここで妙な小細工をすると、かえって外す。楠野史尭の頭を厚く見る。\n  - 博士の軸は楠野史尭\n  - 軸1着目安 60%\n  - 相手筆頭は飯尾主税、三番手は伊藤奎\n\n5. 平塚 2R 16:46発走\n判定: 買い S\n予想: 7-2-3\n3連単候補: 7-2-3\n2車単候補: 7-2\nワイド候補: 7-2\n博士の見立て:\n妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\nナイターは流れが一変することもある。だからこそ軸の安定感を重く見る。\n佐藤魁皇の脚質なら、流れが少し早くても我慢が利く。\n鈴木広人も悪くない。だが主役の椅子は、今日は佐藤魁皇の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴平塚競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は54.2m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,334レースの決まり手: 差し48.3% / 捲り30.3% / 逃げ21.3%\n・博士の読み: 集計上は差が最多。佐藤魁皇は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 佐藤魁皇の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n  - 博士の軸は佐藤魁皇\n  - 軸1着目安 60%\n  - 相手筆頭は鈴木広人、三番手は南部亮太\n\n6. 岐阜 2R 11:26発走\n判定: 買い S\n予想: 3-2-1\n3連単候補: 3-2-1\n2車単候補: 3-2\nワイド候補: 3-2\n博士の見立て:\n競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n脚の使い方を見ると、岸川哲也はこの並びで窮屈になりにくい。\n岸川哲也と岡崎克政の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴岐阜競輪場の特徴\n・400mバンク。\n・1949年開設。\n・みなし直線は59.3m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去8,036レースの決まり手: 差し46.0% / 捲り31.0% / 逃げ23.0%\n・博士の読み: 集計上は差が最多。岸川哲也は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 疑い深い吾輩でも、この並びには逆らいにくい。岸川哲也中心。\n  - 博士の軸は岸川哲也\n  - 軸1着目安 60%\n  - 相手筆頭は岡崎克政、三番手は加藤大輔\n\n7. 平塚 3R 17:12発走\n判定: 買い S\n予想: 4-7-2\n3連単候補: 4-7-2\n2車単候補: 4-7\nワイド候補: 4-7\n博士の見立て:\n何度も紙片に書いたが、最後に残ったのはこの並びだった。\n灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。\n吉田恵利の脚質なら、流れが少し早くても我慢が利く。\n軸と相手の差がはっきり出た。ここで迷うと、かえって買い目が濁る。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\nバンクメモ:\n🚴平塚競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は54.2m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,334レースの決まり手: 差し48.3% / 捲り30.3% / 逃げ21.3%\n・博士の読み: 集計上は差が最多。吉田恵利は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 出走表を三度見ても、最後は吉田恵利に戻る。軸はここである。\n  - 博士の軸は吉田恵利\n  - 軸1着目安 60%\n  - 相手筆頭は栗山百花、三番手は鈴木彩夏\n\n8. 和歌山 3R 11:40発走\n判定: 買い S\n予想: 3-2-1\n3連単候補: 3-2-1\n2車単候補: 3-2\nワイド候補: 3-2\n博士の見立て:\n和歌山の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n船山真生は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n吉堂将規も悪くない。だが主役の椅子は、今日は船山真生の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴和歌山競輪場の特徴\n・400mバンク。\n・1949年開設。\n・みなし直線は59.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去3,032レースの決まり手: 差し47.4% / 捲り28.0% / 逃げ23.9%\n・博士の読み: 集計上は差が最多。船山真生は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - ここで妙な小細工をすると、かえって外す。船山真生の頭を厚く見る。\n  - 博士の軸は船山真生\n  - 軸1着目安 60%\n  - 相手筆頭は吉堂将規、三番手は根藤浩二\n\n9. 平塚 4R 17:38発走\n判定: 買い S\n予想: 5-2-7\n3連単候補: 5-2-7\n2車単候補: 5-2\nワイド候補: 5-2\n博士の見立て:\nぬるい茶を前にして見直した。こういうレースは人気より脚の置き場である。\nナイターの空気に浮かされず、番組の骨を見たい。\n木村優駿の脚質なら、流れが少し早くても我慢が利く。\n木村優駿と坂木田雄介の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴平塚競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は54.2m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,334レースの決まり手: 差し48.3% / 捲り30.3% / 逃げ21.3%\n・博士の読み: 集計上は差が最多。木村優駿は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 吾輩の赤鉛筆はここで止まった。木村優駿から素直に入る。\n  - 博士の軸は木村優駿\n  - 軸1着目安 60%\n  - 相手筆頭は坂木田雄介、三番手は興呂木雄治\n\n10. 伊東 4R 21:50発走\n判定: 買い S\n予想: 1-6-4\n3連単候補: 1-6-4\n2車単候補: 1-6\nワイド候補: 1-6\n博士の見立て:\nぬるい茶を前にして見直した。こういうレースは人気より脚の置き場である。\n夜更けの競輪は妙に荒く見える。そこで一度、軸の強さへ戻る。\n脚の使い方を見ると、下岡優季はこの並びで窮屈になりにくい。\n下岡優季と阿久津浩之の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴伊東競輪場の特徴\n・333mバンク。\n・1950年開設。\n・みなし直線は46.6m。\n・最大カントは34度41分09秒。\n・一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。\n・過去7,393レースの決まり手: 差し42.4% / 捲り30.4% / 逃げ27.3%\n・博士の読み: 集計上は差が最多。下岡優季は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 疑い深い吾輩でも、この並びには逆らいにくい。下岡優季中心。\n  - 博士の軸は下岡優季\n  - 軸1着目安 60%\n  - 相手筆頭は阿久津浩之、三番手は三住博昭\n\n【最後に】\n的中率はそのまま載せています。良い日も悪い日も数字を見て、予想精度を少しずつ上げていきます。\n\n#競輪予想 #鉄脚博士 #本日の一押し"
+  "note_markdown": "鉄脚博士の競輪予想｜2026年7月30日 伊東1R 発走20:50 本日の一押し10本\n\n吾輩は鉄脚博士である。\n現代にまぎれて競輪ばかり眺めている、少し偏屈な男です。\n今日は展開、脚質、指数、直近の数字を見て、勝負候補を10本に絞りました。\n買い目だけではなく、吾輩がどこで赤鉛筆を止めたのかも書きます。\n\n【本日のことわざ】\n備えあれば憂いなし\n意味: 準備ができていれば、いざという時に慌てない。\n競輪で言えば: 出走表、脚質、場の相性を先に見ておけば、締切前に妙な欲で手が震えません。\n\n先に数字を出します。盛りません。\n\n【現在の的中率】\n集計対象: 鉄脚博士の予想から結果が出た390レース\n1着的中: 202/390（51.8%）\n3連単: 19/390（4.9%）\n2車単: 65/390（16.7%）\nワイド: 180/390（46.2%）\n\n※的中を保証するものではありません。\n※車券購入は20歳以上です。無理のない範囲で楽しんでください。\n※有料部分は200円です。\n\n【前日的中実績】\n2026年7月29日の的中: 7/10\n・伊東 3R 1着的中 / 予 6-7-1 → 結 6-2-5\n・玉野 3R ワイド的中 / 予 7-1-3 → 結 7-5-1\n・西武園 6R ワイド的中 / 予 3-1-4 → 結 1-2-3\n・平塚 6R 2車単的中 / 予 3-1-5 → 結 3-1-2\n・伊東 7R 1着的中 / 予 4-6-1 → 結 4-1-2\n・広島 7R ワイド的中 / 予 1-2-5 → 結 1-5-2\n・西武園 8R ワイド的中 / 予 3-4-5 → 結 3-2-4\n\nさて、今日も素直に見ます。\n無料部分では上位2本だけ出します。残りの一押し、買い目候補、理由は有料部分です。\n\n\n1. 伊東 1R 20:50発走\n判定: 買い S\n予想: 1-2-7\n3連単候補: 1-2-7\n2車単候補: 1-2\nワイド候補: 1-2\n博士の見立て:\n吾輩は派手な穴だけを追う男ではない。残る脚を持つ者から見る。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n石井寛子の脚質なら、流れが少し早くても我慢が利く。\n中嶋里美も悪くない。だが主役の椅子は、今日は石井寛子の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴伊東競輪場の特徴\n・333mバンク。\n・1950年開設。\n・みなし直線は46.6m。\n・最大カントは34度41分09秒。\n・一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。\n・過去7,393レースの決まり手: 差し42.4% / 捲り30.4% / 逃げ27.3%\n・博士の読み: 集計上は差が最多。石井寛子は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 石井寛子の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n  - 博士の軸は石井寛子\n\n2. 岐阜 2R 11:26発走\n判定: 買い S\n予想: 3-2-7\n3連単候補: 3-2-7\n2車単候補: 3-2\nワイド候補: 3-2\n博士の見立て:\n競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n脚の使い方を見ると、岸川哲也はこの並びで窮屈になりにくい。\n岸川哲也と岡崎克政の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴岐阜競輪場の特徴\n・400mバンク。\n・1949年開設。\n・みなし直線は59.3m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去8,036レースの決まり手: 差し46.0% / 捲り31.0% / 逃げ23.0%\n・博士の読み: 集計上は差が最多。岸川哲也は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 疑い深い吾輩でも、この並びには逆らいにくい。岸川哲也中心。\n  - 博士の軸は岸川哲也\n\n## ここから先は\n有料部分では、本日の一押し全10本の買い目候補と見解を出します。\n\n対象レース:\n・1. 伊東 1R\n・2. 岐阜 2R\n・3. 和歌山 3R\n・4. 弥彦 4R\n・5. 平塚 4R\n・6. 岐阜 4R\n・7. 和歌山 4R\n・8. 青森 5R\n・9. 西武園 5R\n・10. 伊東 6R\n\nここから先は有料部分です。価格は200円です。\n\n【本日の一押し一覧】\n\n1. 伊東 1R 20:50発走\n判定: 買い S\n予想: 1-2-7\n3連単候補: 1-2-7\n2車単候補: 1-2\nワイド候補: 1-2\n博士の見立て:\n吾輩は派手な穴だけを追う男ではない。残る脚を持つ者から見る。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n石井寛子の脚質なら、流れが少し早くても我慢が利く。\n中嶋里美も悪くない。だが主役の椅子は、今日は石井寛子の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴伊東競輪場の特徴\n・333mバンク。\n・1950年開設。\n・みなし直線は46.6m。\n・最大カントは34度41分09秒。\n・一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。\n・過去7,393レースの決まり手: 差し42.4% / 捲り30.4% / 逃げ27.3%\n・博士の読み: 集計上は差が最多。石井寛子は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 石井寛子の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n  - 博士の軸は石井寛子\n  - 軸1着目安 60%\n  - 相手筆頭は中嶋里美、三番手は佐藤友香\n\n2. 岐阜 2R 11:26発走\n判定: 買い S\n予想: 3-2-7\n3連単候補: 3-2-7\n2車単候補: 3-2\nワイド候補: 3-2\n博士の見立て:\n競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n脚の使い方を見ると、岸川哲也はこの並びで窮屈になりにくい。\n岸川哲也と岡崎克政の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴岐阜競輪場の特徴\n・400mバンク。\n・1949年開設。\n・みなし直線は59.3m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去8,036レースの決まり手: 差し46.0% / 捲り31.0% / 逃げ23.0%\n・博士の読み: 集計上は差が最多。岸川哲也は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 疑い深い吾輩でも、この並びには逆らいにくい。岸川哲也中心。\n  - 博士の軸は岸川哲也\n  - 軸1着目安 60%\n  - 相手筆頭は岡崎克政、三番手は木本賢二\n\n3. 和歌山 3R 11:40発走\n判定: 買い S\n予想: 3-5-1\n3連単候補: 3-5-1\n2車単候補: 3-5\nワイド候補: 3-5\n博士の見立て:\n和歌山の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n船山真生は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n森安崇之も悪くない。だが主役の椅子は、今日は船山真生の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴和歌山競輪場の特徴\n・400mバンク。\n・1949年開設。\n・みなし直線は59.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去3,032レースの決まり手: 差し47.4% / 捲り28.0% / 逃げ23.9%\n・博士の読み: 集計上は差が最多。船山真生は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - ここで妙な小細工をすると、かえって外す。船山真生の頭を厚く見る。\n  - 博士の軸は船山真生\n  - 軸1着目安 60%\n  - 相手筆頭は森安崇之、三番手は根藤浩二\n\n4. 弥彦 4R 16:59発走\n判定: 買い S\n予想: 4-3-1\n3連単候補: 4-3-1\n2車単候補: 4-3\nワイド候補: 4-3\n博士の見立て:\nぬるい茶を前にして見直した。こういうレースは人気より脚の置き場である。\nナイターの空気に浮かされず、番組の骨を見たい。\n大塚城の脚質なら、流れが少し早くても我慢が利く。\n大塚城と上田隼の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴弥彦競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は63.1m。\n・最大カントは32度24分17秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去6,555レースの決まり手: 差し55.5% / 捲り27.2% / 逃げ17.2%\n・博士の読み: 集計上は差が最多。大塚城は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 吾輩の赤鉛筆はここで止まった。大塚城から素直に入る。\n  - 博士の軸は大塚城\n  - 軸1着目安 60%\n  - 相手筆頭は上田隼、三番手は大崎和也\n\n5. 平塚 4R 17:38発走\n判定: 買い S\n予想: 5-2-7\n3連単候補: 5-2-7\n2車単候補: 5-2\nワイド候補: 5-2\n博士の見立て:\nぬるい茶を前にして見直した。こういうレースは人気より脚の置き場である。\nナイターの空気に浮かされず、番組の骨を見たい。\n木村優駿の脚質なら、流れが少し早くても我慢が利く。\n木村優駿と坂木田雄介の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴平塚競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は54.2m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,334レースの決まり手: 差し48.3% / 捲り30.3% / 逃げ21.3%\n・博士の読み: 集計上は差が最多。木村優駿は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 吾輩の赤鉛筆はここで止まった。木村優駿から素直に入る。\n  - 博士の軸は木村優駿\n  - 軸1着目安 60%\n  - 相手筆頭は坂木田雄介、三番手は興呂木雄治\n\n6. 岐阜 4R 12:22発走\n判定: 買い S\n予想: 3-1-4\n3連単候補: 3-1-4\n2車単候補: 3-1\nワイド候補: 3-1\n博士の見立て:\n吾輩は派手な穴だけを追う男ではない。残る脚を持つ者から見る。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n脚の使い方を見ると、滿田光紀はこの並びで窮屈になりにくい。\n大中拓磨も悪くない。だが主役の椅子は、今日は滿田光紀の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴岐阜競輪場の特徴\n・400mバンク。\n・1949年開設。\n・みなし直線は59.3m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去8,036レースの決まり手: 差し46.0% / 捲り31.0% / 逃げ23.0%\n・博士の読み: 集計上は差が最多。滿田光紀は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - ここで妙な小細工をすると、かえって外す。滿田光紀の頭を厚く見る。\n  - 博士の軸は滿田光紀\n  - 軸1着目安 60%\n  - 相手筆頭は大中拓磨、三番手は臼井昌巨\n\n7. 和歌山 4R 12:08発走\n判定: 買い S\n予想: 3-2-7\n3連単候補: 3-2-7\n2車単候補: 3-2\nワイド候補: 3-2\n博士の見立て:\n和歌山の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n西浦仙哉は自力も追走も選べるタイプ。ここは脚の出しどころが合う。\n浦川尊明も悪くない。だが主役の椅子は、今日は西浦仙哉の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴和歌山競輪場の特徴\n・400mバンク。\n・1949年開設。\n・みなし直線は59.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去3,032レースの決まり手: 差し47.4% / 捲り28.0% / 逃げ23.9%\n・博士の読み: 集計上は差が最多。西浦仙哉は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - ここで妙な小細工をすると、かえって外す。西浦仙哉の頭を厚く見る。\n  - 博士の軸は西浦仙哉\n  - 軸1着目安 60%\n  - 相手筆頭は浦川尊明、三番手は藤田周磨\n\n8. 青森 5R 09:53発走\n判定: 買い S\n予想: 5-1-2\n3連単候補: 5-1-2\n2車単候補: 5-1\nワイド候補: 5-1\n博士の見立て:\n競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n渡邉拓は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n渡邉拓と山本恵太郎の差は数字以上に見える。吾輩ならここを太く取る。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\nバンクメモ:\n🚴青森競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は58.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去6,258レースの決まり手: 差し53.3% / 捲り28.3% / 逃げ18.4%\n・博士の読み: 集計上は差が最多。渡邉拓は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - 疑い深い吾輩でも、この並びには逆らいにくい。渡邉拓中心。\n  - 博士の軸は渡邉拓\n  - 軸1着目安 60%\n  - 相手筆頭は山本恵太郎、三番手は増成富夫\n\n9. 西武園 5R 22:00発走\n判定: 買い S\n予想: 3-2-1\n3連単候補: 3-2-1\n2車単候補: 3-2\nワイド候補: 3-2\n博士の見立て:\n妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n赤塚悠人は自力も追走も選べるタイプ。ここは脚の出しどころが合う。\n長沼謙太も悪くない。だが主役の椅子は、今日は赤塚悠人の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴西武園競輪場の特徴\n・400mバンク。\n・1950年開設。\n・みなし直線は47.6m。\n・最大カントは29度26分54秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去6,581レースの決まり手: 差し43.7% / 捲り29.3% / 逃げ27.0%\n・博士の読み: 集計上は差が最多。赤塚悠人は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - ここで妙な小細工をすると、かえって外す。赤塚悠人の頭を厚く見る。\n  - 博士の軸は赤塚悠人\n  - 軸1着目安 60%\n  - 相手筆頭は長沼謙太、三番手は布居大地\n\n10. 伊東 6R 22:30発走\n判定: 買い S\n予想: 7-1-6\n3連単候補: 7-1-6\n2車単候補: 7-1\nワイド候補: 7-1\n博士の見立て:\n伊東の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n真木寛斗は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n中島将尊も悪くない。だが主役の椅子は、今日は真木寛斗の方へ寄っている。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\nバンクメモ:\n🚴伊東競輪場の特徴\n・333mバンク。\n・1950年開設。\n・みなし直線は46.6m。\n・最大カントは34度41分09秒。\n・一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。\n・過去7,393レースの決まり手: 差し42.4% / 捲り30.4% / 逃げ27.3%\n・博士の読み: 集計上は差が最多。真木寛斗は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n理由:\n  - ここで妙な小細工をすると、かえって外す。真木寛斗の頭を厚く見る。\n  - 博士の軸は真木寛斗\n  - 軸1着目安 60%\n  - 相手筆頭は中島将尊、三番手は堀航輝\n\n【最後に】\n的中率はそのまま載せています。良い日も悪い日も数字を見て、予想精度を少しずつ上げていきます。\n\n#競輪予想 #鉄脚博士 #本日の一押し"
 }
