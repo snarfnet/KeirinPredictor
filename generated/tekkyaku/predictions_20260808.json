@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-08T08:07:04+09:00",
+  "generated_at": "2026-08-08T22:12:12+09:00",
   "source": "https://snarfnet.github.io/keirin-data",
   "date": "20260808",
   "date_label": "2026年8月8日",
@@ -190,7 +190,7 @@
       ],
       "axis_name": "利川寛太",
       "axis_win_estimate": 60.0,
-      "chaos_score": 14.2,
+      "chaos_score": 14.5,
       "grade": "S",
       "action_label": "買い",
       "action_reason": "ここで妙な小細工をすると、かえって外す。利川寛太の頭を厚く見る。",
@@ -224,7 +224,7 @@
           "umaban": 5,
           "name": "利川寛太",
           "score": 136.4,
-          "win_probability": 71.8,
+          "win_probability": 71.5,
           "style": "逃",
           "signals": [
             "場相性あり",
@@ -235,7 +235,7 @@
           "umaban": 7,
           "name": "山崎岳志",
           "score": 125.7,
-          "win_probability": 14.8,
+          "win_probability": 14.9,
           "style": "追",
           "signals": []
         },
@@ -243,7 +243,7 @@
           "umaban": 3,
           "name": "中野真吾",
           "score": 120.4,
-          "win_probability": 6.8,
+          "win_probability": 6.9,
           "style": "逃",
           "signals": [
             "コメント前向き"
@@ -252,16 +252,16 @@
         {
           "umaban": 4,
           "name": "井上将志",
-          "score": 115.5,
-          "win_probability": 3.3,
+          "score": 116.4,
+          "win_probability": 3.8,
           "style": "両",
           "signals": []
         },
         {
           "umaban": 1,
           "name": "山出裕幸",
-          "score": 110.8,
-          "win_probability": 1.7,
+          "score": 110.3,
+          "win_probability": 1.6,
           "style": "追",
           "signals": []
         }
@@ -329,8 +329,8 @@
         {
           "umaban": 2,
           "name": "中村嶺央",
-          "score": 174.3,
-          "win_probability": 78.7,
+          "score": 174.4,
+          "win_probability": 81.1,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -343,7 +343,7 @@
           "umaban": 7,
           "name": "横溝貫太",
           "score": 161.6,
-          "win_probability": 12.1,
+          "win_probability": 12.3,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -355,8 +355,8 @@
         {
           "umaban": 1,
           "name": "沢田桂太郎",
-          "score": 154.1,
-          "win_probability": 4.0,
+          "score": 151.4,
+          "win_probability": 2.8,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -369,7 +369,7 @@
           "umaban": 6,
           "name": "渡邉拓",
           "score": 150.9,
-          "win_probability": 2.5,
+          "win_probability": 2.6,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -381,8 +381,8 @@
         {
           "umaban": 3,
           "name": "高橋奏多",
-          "score": 150.2,
-          "win_probability": 2.3,
+          "score": 143.9,
+          "win_probability": 0.9,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -449,17 +449,16 @@
         "軸1着目安 60%",
         "相手筆頭は八尋英輔、三番手は入江航太",
         "軸と相手の差を評価",
-        "近況上位"
+        "コメント前向き"
       ],
       "top_entries": [
         {
           "umaban": 1,
           "name": "西本健三郎",
-          "score": 154.7,
-          "win_probability": 85.3,
+          "score": 152.1,
+          "win_probability": 80.5,
           "style": "逃",
           "signals": [
-            "近況上位",
             "コメント前向き",
             "勝率上位",
             "3着内安定"
@@ -468,8 +467,8 @@
         {
           "umaban": 3,
           "name": "八尋英輔",
-          "score": 136.6,
-          "win_probability": 6.0,
+          "score": 135.9,
+          "win_probability": 7.5,
           "style": "追",
           "signals": [
             "場相性あり"
@@ -479,7 +478,7 @@
           "umaban": 7,
           "name": "入江航太",
           "score": 134.7,
-          "win_probability": 4.6,
+          "win_probability": 6.2,
           "style": "逃",
           "signals": [
             "コメント前向き",
@@ -489,8 +488,8 @@
         {
           "umaban": 5,
           "name": "台和紀",
-          "score": 132.9,
-          "win_probability": 3.5,
+          "score": 133.1,
+          "win_probability": 4.9,
           "style": "追",
           "signals": [
             "近況上位"
@@ -500,7 +499,7 @@
           "umaban": 2,
           "name": "船曳義之",
           "score": 117.0,
-          "win_probability": 0.3,
+          "win_probability": 0.5,
           "style": "追",
           "signals": []
         }
@@ -562,50 +561,54 @@
         "軸1着目安 60%",
         "相手筆頭は真崎章徳、三番手は近藤直幹",
         "軸と相手の差を評価",
-        "勝率上位"
+        "コメント前向き"
       ],
       "top_entries": [
         {
           "umaban": 1,
           "name": "戸田康平",
-          "score": 133.4,
-          "win_probability": 90.6,
+          "score": 135.9,
+          "win_probability": 92.8,
           "style": "逃",
           "signals": [
+            "コメント前向き",
             "勝率上位"
           ]
         },
         {
           "umaban": 3,
           "name": "真崎章徳",
-          "score": 116.3,
-          "win_probability": 7.3,
+          "score": 117.0,
+          "win_probability": 5.8,
           "style": "逃",
           "signals": [
-            "場相性あり"
+            "場相性あり",
+            "コメント前向き"
           ]
         },
         {
           "umaban": 5,
           "name": "近藤直幹",
           "score": 99.0,
-          "win_probability": 0.6,
+          "win_probability": 0.4,
           "style": "追",
           "signals": []
+        },
+        {
+          "umaban": 4,
+          "name": "安坂洋一",
+          "score": 98.0,
+          "win_probability": 0.4,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
         },
         {
           "umaban": 2,
           "name": "大竹慎吾",
-          "score": 97.4,
-          "win_probability": 0.5,
-          "style": "追",
-          "signals": []
-        },
-        {
-          "umaban": 6,
-          "name": "戸ノ下太郎",
           "score": 96.9,
-          "win_probability": 0.4,
+          "win_probability": 0.3,
           "style": "追",
           "signals": []
         }
@@ -640,7 +643,7 @@
       ],
       "axis_name": "滿田光紀",
       "axis_win_estimate": 60.0,
-      "chaos_score": 7.5,
+      "chaos_score": 0.0,
       "grade": "S",
       "action_label": "買い",
       "action_reason": "人気の有無より、脚の筋が通っている。吾輩は滿田光紀を先に置く。",
@@ -673,8 +676,8 @@
         {
           "umaban": 2,
           "name": "滿田光紀",
-          "score": 177.7,
-          "win_probability": 79.3,
+          "score": 175.5,
+          "win_probability": 79.9,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -686,8 +689,8 @@
         {
           "umaban": 1,
           "name": "伊藤京介",
-          "score": 164.4,
-          "win_probability": 11.2,
+          "score": 162.9,
+          "win_probability": 12.5,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -699,11 +702,10 @@
         {
           "umaban": 3,
           "name": "吉川敬介",
-          "score": 161.1,
-          "win_probability": 6.9,
+          "score": 155.2,
+          "win_probability": 4.0,
           "style": "逃",
           "signals": [
-            "近況上位",
             "コメント前向き",
             "勝率上位",
             "3着内安定"
@@ -713,7 +715,7 @@
           "umaban": 7,
           "name": "長川達哉",
           "score": 149.1,
-          "win_probability": 1.2,
+          "win_probability": 1.7,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -725,7 +727,7 @@
           "umaban": 6,
           "name": "西原裕太郎",
           "score": 148.4,
-          "win_probability": 1.1,
+          "win_probability": 1.5,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -798,8 +800,8 @@
         {
           "umaban": 7,
           "name": "安達光伸",
-          "score": 164.3,
-          "win_probability": 99.2,
+          "score": 165.7,
+          "win_probability": 99.4,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -811,8 +813,8 @@
         {
           "umaban": 4,
           "name": "阿久津修",
-          "score": 125.4,
-          "win_probability": 0.3,
+          "score": 124.4,
+          "win_probability": 0.2,
           "style": "追",
           "signals": [
             "場相性あり"
@@ -821,7 +823,7 @@
         {
           "umaban": 3,
           "name": "大畑裕貴",
-          "score": 122.7,
+          "score": 122.3,
           "win_probability": 0.2,
           "style": "両",
           "signals": [
@@ -832,7 +834,7 @@
         {
           "umaban": 1,
           "name": "疋田敏",
-          "score": 116.8,
+          "score": 117.0,
           "win_probability": 0.1,
           "style": "追",
           "signals": []
@@ -840,7 +842,7 @@
         {
           "umaban": 2,
           "name": "野村純宏",
-          "score": 116.3,
+          "score": 115.0,
           "win_probability": 0.1,
           "style": "追",
           "signals": [
@@ -878,7 +880,7 @@
       ],
       "axis_name": "中西勇",
       "axis_win_estimate": 60.0,
-      "chaos_score": 24.4,
+      "chaos_score": 22.6,
       "grade": "S",
       "action_label": "買い",
       "action_reason": "吾輩の赤鉛筆はここで止まった。中西勇から素直に入る。",
@@ -904,22 +906,25 @@
         "博士の軸は中西勇",
         "軸1着目安 60%",
         "相手筆頭は伊藤翼、三番手は福地晶",
-        "軸と相手の差を評価"
+        "軸と相手の差を評価",
+        "コメント前向き"
       ],
       "top_entries": [
         {
           "umaban": 1,
           "name": "中西勇",
-          "score": 138.3,
-          "win_probability": 64.6,
+          "score": 139.5,
+          "win_probability": 66.7,
           "style": "逃",
-          "signals": []
+          "signals": [
+            "コメント前向き"
+          ]
         },
         {
           "umaban": 7,
           "name": "伊藤翼",
           "score": 129.4,
-          "win_probability": 17.4,
+          "win_probability": 15.1,
           "style": "両",
           "signals": [
             "場相性あり"
@@ -928,15 +933,17 @@
         {
           "umaban": 4,
           "name": "福地晶",
-          "score": 125.1,
-          "win_probability": 9.2,
+          "score": 126.5,
+          "win_probability": 9.8,
           "style": "逃",
-          "signals": []
+          "signals": [
+            "コメント前向き"
+          ]
         },
         {
           "umaban": 2,
           "name": "船倉卓郎",
-          "score": 119.4,
+          "score": 120.4,
           "win_probability": 4.0,
           "style": "追",
           "signals": []
@@ -944,10 +951,12 @@
         {
           "umaban": 5,
           "name": "川本琢也",
-          "score": 119.3,
-          "win_probability": 3.9,
+          "score": 119.9,
+          "win_probability": 3.7,
           "style": "両",
-          "signals": []
+          "signals": [
+            "コメント前向き"
+          ]
         }
       ],
       "rank": 7
@@ -1013,8 +1022,8 @@
         {
           "umaban": 3,
           "name": "岩辺陸",
-          "score": 156.9,
-          "win_probability": 92.8,
+          "score": 157.5,
+          "win_probability": 94.1,
           "style": "逃",
           "signals": [
             "コメント前向き",
@@ -1025,34 +1034,33 @@
         {
           "umaban": 4,
           "name": "寺師幸成",
-          "score": 134.6,
-          "win_probability": 3.5,
+          "score": 133.2,
+          "win_probability": 2.7,
           "style": "逃",
           "signals": [
-            "近況上位",
             "コメント前向き"
           ]
         },
         {
           "umaban": 1,
           "name": "坂口卓士",
-          "score": 129.5,
-          "win_probability": 1.6,
+          "score": 127.6,
+          "win_probability": 1.2,
           "style": "追",
           "signals": []
         },
         {
           "umaban": 7,
           "name": "落合達彦",
-          "score": 127.0,
-          "win_probability": 1.1,
+          "score": 127.5,
+          "win_probability": 1.2,
           "style": "追",
           "signals": []
         },
         {
           "umaban": 5,
           "name": "佐々木孝司",
-          "score": 123.8,
+          "score": 123.7,
           "win_probability": 0.7,
           "style": "逃",
           "signals": [
@@ -1124,7 +1132,7 @@
           "umaban": 1,
           "name": "伊藤歩登",
           "score": 145.6,
-          "win_probability": 82.9,
+          "win_probability": 81.8,
           "style": "逃",
           "signals": [
             "近況上位",
@@ -1136,8 +1144,8 @@
         {
           "umaban": 2,
           "name": "溝口葵",
-          "score": 132.2,
-          "win_probability": 11.4,
+          "score": 132.9,
+          "win_probability": 12.6,
           "style": "逃",
           "signals": [
             "コメント前向き"
@@ -1146,24 +1154,24 @@
         {
           "umaban": 3,
           "name": "戸伏康夫",
-          "score": 121.1,
-          "win_probability": 2.2,
+          "score": 121.2,
+          "win_probability": 2.3,
           "style": "追",
           "signals": []
         },
         {
           "umaban": 7,
           "name": "山田晃久",
-          "score": 119.4,
-          "win_probability": 1.8,
+          "score": 120.0,
+          "win_probability": 1.9,
           "style": "追",
           "signals": []
         },
         {
           "umaban": 5,
           "name": "中野智公",
-          "score": 114.8,
-          "win_probability": 0.9,
+          "score": 114.0,
+          "win_probability": 0.8,
           "style": "追",
           "signals": []
         }
@@ -1231,8 +1239,8 @@
         {
           "umaban": 1,
           "name": "岩元杏奈",
-          "score": 119.1,
-          "win_probability": 91.0,
+          "score": 120.8,
+          "win_probability": 93.0,
           "style": "両",
           "signals": [
             "場相性あり",
@@ -1243,16 +1251,16 @@
         {
           "umaban": 6,
           "name": "三森彩桜",
-          "score": 96.4,
-          "win_probability": 3.2,
+          "score": 95.5,
+          "win_probability": 2.3,
           "style": "追",
           "signals": []
         },
         {
           "umaban": 3,
           "name": "安東莉奈",
-          "score": 92.5,
-          "win_probability": 1.8,
+          "score": 93.0,
+          "win_probability": 1.6,
           "style": "追",
           "signals": [
             "コメント前向き"
@@ -1261,8 +1269,8 @@
         {
           "umaban": 4,
           "name": "黒河内由実",
-          "score": 90.7,
-          "win_probability": 1.4,
+          "score": 90.9,
+          "win_probability": 1.1,
           "style": "追",
           "signals": [
             "場相性あり",
@@ -1273,7 +1281,7 @@
           "umaban": 5,
           "name": "藤原亜衣里",
           "score": 90.5,
-          "win_probability": 1.4,
+          "win_probability": 1.1,
           "style": "追",
           "signals": []
         }
