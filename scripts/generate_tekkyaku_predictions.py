@@ -1001,10 +1001,10 @@ def build_note(
     lines += [
         "",
         "さて、今日も素直に見ます。",
-        "無料部分では上位2本だけ出します。残りの一押し、買い目候補、理由は有料部分です。",
+        "無料部分では上位1本だけ出します。残りの一押し、買い目候補、理由は有料部分です。",
         "",
     ]
-    for idx, pick in enumerate(predictions[:2], 1):
+    for idx, pick in enumerate(predictions[:1], 1):
         lines.append(note_block(idx, pick, paid=False))
     lines += [
         "",
