@@ -64,6 +64,81 @@ PROVERBS = [
         "どんな名人でも失敗することがある。",
         "堅く見える軸でも飛ぶ日はあります。だから吾輩は、当たった日より外れた日の理由をよく見ます。",
     ),
+    (
+        "継続は力なり",
+        "小さな努力でも、続ければ確かな力になる。",
+        "一度の万車券より、毎日の検証が予想を育てます。吾輩は外れた印も消しません。",
+    ),
+    (
+        "千里の道も一歩から",
+        "大きな目標も、最初の小さな一歩から始まる。",
+        "回収率を上げる道も一レースずつです。まずは買う理由を数字で言える番組から始めます。",
+    ),
+    (
+        "過ぎたるは猶及ばざるが如し",
+        "やりすぎは、足りないことと同じくらい良くない。",
+        "買い目を増やしすぎれば、当たっても財布が痩せます。必要な線だけ残すのが博士流です。",
+    ),
+    (
+        "能ある鷹は爪を隠す",
+        "本当に力のある者は、むやみに実力を見せびらかさない。",
+        "派手なコメントより、静かに数字を積む選手が怖い。出走表の奥を見ます。",
+    ),
+    (
+        "三人寄れば文殊の知恵",
+        "複数の考えを合わせれば、良い知恵が生まれる。",
+        "脚質、直近成績、バンク傾向。この三つを合わせて初めて買い目に筋が通ります。",
+    ),
+    (
+        "案ずるより産むが易し",
+        "始める前に心配するより、実際にやる方が案外たやすい。",
+        "迷い続けるより、買う条件と見送る条件を先に決める。そうすれば赤鉛筆はぶれません。",
+    ),
+    (
+        "風が吹けば桶屋が儲かる",
+        "一見無関係な出来事も、巡り巡って影響し合う。",
+        "風向き、ライン、仕掛けの順番。競輪は小さな変化が最後の着順まで動かします。",
+    ),
+    (
+        "井の中の蛙大海を知らず",
+        "狭い世界だけを見ていると、広い世界を理解できない。",
+        "一場の成績だけで決めず、周長別の相性や遠征成績まで広げて見ます。",
+    ),
+    (
+        "七転び八起き",
+        "何度失敗しても、くじけず立ち上がる。",
+        "外れは恥ではありません。同じ外し方を繰り返す方が恥です。吾輩は翌朝また表を開きます。",
+    ),
+    (
+        "善は急げ",
+        "良いと思ったことは、ためらわず早く実行する。",
+        "良い番組を見つけても締切後では紙くずです。ただし確認だけは急がず済ませます。",
+    ),
+    (
+        "後悔先に立たず",
+        "終わったあとで悔やんでも、取り返せない。",
+        "締切前の衝動買いは、結果を見てから必ず重くなります。買う根拠を一行書けるか確かめます。",
+    ),
+    (
+        "郷に入っては郷に従え",
+        "新しい土地では、その土地の習慣に従うのがよい。",
+        "333m、400m、500mでは仕掛けも変わります。選手の力だけでなく、バンクの作法に従います。",
+    ),
+    (
+        "一寸先は闇",
+        "ほんの少し先のことでも、何が起きるか分からない。",
+        "強い軸にも落車や牽制があります。確率は信じても、絶対という言葉は使いません。",
+    ),
+    (
+        "塵も積もれば山となる",
+        "小さなものでも、積み重なれば大きくなる。",
+        "100円の差も百日続けば大きい。的中数だけでなく、払戻と購入額を毎日残します。",
+    ),
+    (
+        "覆水盆に返らず",
+        "一度起きたことは、元には戻せない。",
+        "外れた車券は戻りません。追い上げで取り返そうとせず、次の番組は別勘定にします。",
+    ),
 ]
 VENUE_CODE_NAMES = {
     "11": "函館",
@@ -179,6 +254,29 @@ def daily_proverb(value: str) -> dict[str, str]:
         "meaning": meaning,
         "keirin": keirin,
     }
+
+
+def daily_fortune(value: str, predictions: list[dict[str, Any]]) -> str:
+    fortunes = [
+        "大吉。数字の芯が見えやすい日。迷ったら本線を丁寧に。",
+        "中吉。前半は慎重、後半に勝負の勘が冴えます。",
+        "小吉。欲張らず二車の関係を素直に見ると吉。",
+        "吉。人気より直近の脚を信じると、赤鉛筆が落ち着きます。",
+        "末吉。穴を追うより、見送る勇気が次の福を呼びます。",
+        "中吉。バンクとの相性に目を向けると、思わぬ筋が見えます。",
+        "吉。締切前のひらめきより、最初に立てた根拠を大切に。",
+        "小吉。相手を広げすぎず、二着候補を一枚ずつ吟味する日。",
+        "大吉。直近成績と鉄脚指数が重なる番組に福があります。",
+        "吉。朝の一戦は冷静に、夜の一戦は欲を抑えるとよし。",
+        "中吉。逃げと差しの割合を見比べると、展開の扉が開きます。",
+        "末吉。今日は当てるより、負けを小さくする知恵が光ります。",
+    ]
+    top = predictions[0] if predictions else {}
+    lucky_number = (top.get("prediction") or [None])[0]
+    venue = str(top.get("venue") or "本日の一戦")
+    base = stable_choice(value, fortunes, 11)
+    lucky = f"ラッキー車番は{lucky_number}番、注目会場は{venue}。" if lucky_number else f"注目会場は{venue}。"
+    return f"{base} {lucky}"
 
 
 def pct(value: float) -> str:
@@ -749,11 +847,13 @@ class HitStats:
     trifecta: int = 0
     exacta: int = 0
     wide: int = 0
+    payout: int = 0
 
     def as_dict(self) -> dict[str, Any]:
         def rate(value: int) -> float:
             return round(value / self.total * 100, 1) if self.total else 0.0
 
+        investment = self.total * 300
         return {
             "completed": self.total,
             "win_count": self.win,
@@ -764,13 +864,17 @@ class HitStats:
             "exacta_rate": rate(self.exacta),
             "wide_count": self.wide,
             "wide_rate": rate(self.wide),
+            "investment": investment,
+            "payout": self.payout,
+            "profit": self.payout - investment,
+            "return_rate": round(self.payout / investment * 100, 1) if investment else 0.0,
         }
 
 
 def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[str, Any]]:
     stats = HitStats()
     previous_date = (datetime.strptime(current_date, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
-    previous = {"date": previous_date, "total": 0, "hits": []}
+    previous = {"date": previous_date, "total": 0, "payout": 0, "hits": []}
     for path in sorted(out_dir.glob("predictions_*.json")):
         match = re.search(r"predictions_(\d{8})\.json$", path.name)
         if not match:
@@ -791,7 +895,10 @@ def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[s
             pred = [int(v) for v in pick.get("prediction", [])[:3]]
             if not actual or len(pred) < 3 or len(actual) < 3:
                 continue
+            payback_hits = winning_paybacks(pred, result.get("paybacks") or [])
+            race_payout = sum(int(item.get("payout") or 0) for item in payback_hits)
             stats.total += 1
+            stats.payout += race_payout
             if pred[0] == actual[0]:
                 stats.win += 1
             if pred[:3] == actual[:3]:
@@ -802,7 +909,7 @@ def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[s
                 stats.wide += 1
             if date == previous_date:
                 previous["total"] += 1
-                payback_hits = winning_paybacks(pred, result.get("paybacks") or [])
+                previous["payout"] += race_payout
                 if payback_hits:
                     previous["hits"].append({
                         "venue": pick.get("venue", ""),
@@ -822,6 +929,11 @@ def build_note(
     proverb: dict[str, str],
 ) -> tuple[str, str]:
     top = predictions[0] if predictions else {}
+    fortune = daily_fortune(date, predictions)
+    previous_investment = int(previous.get("total") or 0) * 300
+    previous_payout = int(previous.get("payout") or 0)
+    previous_profit = previous_payout - previous_investment
+    previous_return = round(previous_payout / previous_investment * 100, 1) if previous_investment else 0.0
     first_label = f"{top.get('venue', '本日の競輪')}{top.get('race_no', '')}R"
     first_start = top.get("start_time") or ""
     title = f"鉄脚博士の競輪予想｜{date_label(date)} {first_label}{(' 発走' + first_start) if first_start else ''} 本日の一押し{len(predictions)}本"
@@ -838,6 +950,8 @@ def build_note(
         f"意味: {proverb['meaning']}",
         f"競輪で言えば: {proverb['keirin']}",
         "",
+        f"博士流今日の占い: {fortune}",
+        "",
         "先に数字を出します。盛りません。",
         "",
         "【現在の的中率】",
@@ -847,6 +961,12 @@ def build_note(
         f"3連単: {stats['trifecta_count']}/{stats['completed']}（{pct(stats['trifecta_rate'])}）",
         f"2車単: {stats['exacta_count']}/{stats['completed']}（{pct(stats['exacta_rate'])}）",
         f"ワイド: {stats['wide_count']}/{stats['completed']}（{pct(stats['wide_rate'])}）",
+        "",
+        "【100円ずつ買った場合の収支】",
+        "",
+        "購入条件: 各レースの3連単・2車単・ワイドを各100円（1レース300円）",
+        f"前日: 購入額 {previous_investment:,}円 / 払戻額 {previous_payout:,}円 / 収支 {previous_profit:+,}円 / 回収率 {previous_return:.1f}%",
+        f"通算: 購入額 {int(stats['investment']):,}円 / 払戻額 {int(stats['payout']):,}円 / 収支 {int(stats['profit']):+,}円 / 回収率 {float(stats['return_rate']):.1f}%",
         "",
         "【前日的中実績】",
         "",
