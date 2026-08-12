@@ -581,6 +581,7 @@ def build_hakase_copy(
 
     reasons = [
         action_reason,
+        *data_lines[:3],
         f"博士の軸は{axis_name}",
         f"軸1着目安 {axis_win:.0f}%",
         f"相手筆頭は{second_name}、三番手は{third_name}",
@@ -842,6 +843,7 @@ def build_note(
         "先に数字を出します。盛りません。",
         "",
         "【現在の的中率】",
+        "",
         f"集計対象: 鉄脚博士の予想から結果が出た{stats['completed']}レース",
         f"1着的中: {stats['win_count']}/{stats['completed']}（{pct(stats['win_rate'])}）",
         f"3連単: {stats['trifecta_count']}/{stats['completed']}（{pct(stats['trifecta_rate'])}）",
@@ -849,6 +851,7 @@ def build_note(
         f"ワイド: {stats['wide_count']}/{stats['completed']}（{pct(stats['wide_rate'])}）",
         "",
         "【前日的中実績】",
+        "",
     ]
     if previous["total"] == 0:
         lines.append("前日分はまだ集計中です。結果がそろい次第、ここへ入れます。")
@@ -864,7 +867,12 @@ def build_note(
                 )
             else:
                 result_label = "1着一致（車券的中なし）"
-            lines.append(f"・{hit['venue']} {hit['race_no']}R {result_label} / 予 {combo(hit['predicted'])} → 結 {combo(hit['actual'])}")
+            lines += [
+                f"・{hit['venue']} {hit['race_no']}R　{result_label}",
+                f"　予想: {combo(hit['predicted'])}",
+                f"　結果: {combo(hit['actual'])}",
+                "",
+            ]
         if len(previous["hits"]) > 8:
             lines.append(f"・ほか{len(previous['hits']) - 8}件")
 
@@ -898,7 +906,7 @@ def build_note(
         "【最後に】",
         "的中率はそのまま載せています。良い日も悪い日も数字を見て、予想精度を少しずつ上げていきます。",
         "",
-        "#競輪予想 #鉄脚博士 #本日の一押し",
+        "#競輪 #競輪予想 #鉄脚博士 #本日の一押し #競輪好き #競輪データ #データ予想 #車券予想 #3連単予想 #2車単予想 #ワイド予想 #競輪場 #競輪ファン #今日の競輪 #KEIRIN",
     ]
     return title, "\n".join(lines)
 
@@ -908,8 +916,8 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
     exacta = pick.get("exacta") or []
     wide = pick.get("wide") or []
     reasons = pick.get("reasons") or []
-    shown = reasons[:4 if paid else 2]
-    reason_text = "\n".join(f"  - {r}" for r in shown) or "  - 出走表と指数を確認してから最終判断"
+    shown = reasons[:6 if paid else 4]
+    reason_text = "\n".join(f"・{r}" for r in shown) or "・出走表と指数を確認してから最終判断"
     story = pick.get("story") or "数字だけでは味気ないが、ここは軸の脚を素直に見る。"
     bank = pick.get("bank_profile") or {}
     bank_rates = bank.get("rates") or {}
@@ -919,8 +927,6 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
             f"🚴{pick.get('venue')}競輪場の特徴",
             f"・{bank.get('bank')}mバンク。",
         ]
-        if bank.get("opened_year"):
-            bank_lines.append(f"・{int(bank.get('opened_year'))}年開設。")
         if bank.get("straight_m"):
             bank_lines.append(f"・みなし直線は{float(bank.get('straight_m')):g}m。")
         if bank.get("max_cant"):
@@ -944,10 +950,15 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
 3連単候補: {combo(pred)}
 2車単候補: {combo(exacta) if len(exacta) >= 2 else "-"}
 ワイド候補: {combo(wide) if len(wide) >= 2 else "-"}
+
 博士の見立て:
+
 {story}
+
 {bank_section}
+
 理由:
+
 {reason_text}
 """.rstrip()
 
