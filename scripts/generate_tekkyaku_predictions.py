@@ -647,15 +647,39 @@ def pick_races(entries_data: dict[str, Any], target_date: str | None) -> tuple[s
     return today, []
 
 
-def result_for_date(date: str) -> dict[str, list[int]]:
+def result_for_date(date: str) -> dict[str, dict[str, Any]]:
     data = fetch_json(f"results_{date}.json", required=False)
     if not data:
         return {}
-    out: dict[str, list[int]] = {}
+    out: dict[str, dict[str, Any]] = {}
     for result in data.get("results") or []:
         finishers = sorted(result.get("finishers") or [], key=lambda f: int(f.get("rank") or 99))
-        out[result.get("race_id", "")] = [int(f.get("umaban") or 0) for f in finishers[:3]]
+        out[result.get("race_id", "")] = {
+            "finishers": [int(f.get("umaban") or 0) for f in finishers[:3]],
+            "paybacks": result.get("paybacks") or [],
+        }
     return out
+
+
+def winning_paybacks(predicted: list[int], paybacks: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    combinations = {
+        "3連単": "-".join(str(v) for v in predicted[:3]),
+        "2車単": "-".join(str(v) for v in predicted[:2]),
+        "ワイド": "-".join(str(v) for v in sorted(predicted[:2])),
+    }
+    hits = []
+    for ticket_type in ("3連単", "2車単", "ワイド"):
+        expected = combinations[ticket_type]
+        for item in paybacks:
+            if str(item.get("type") or "") != ticket_type:
+                continue
+            raw = str(item.get("combination") or "").replace(" ", "").replace("=", "-")
+            parts = [part for part in re.split(r"[^0-9]+", raw) if part]
+            actual = "-".join(sorted(parts, key=int)) if ticket_type == "ワイド" else "-".join(parts)
+            if actual == expected:
+                hits.append({"type": ticket_type, "payout": int(item.get("payout") or 0)})
+                break
+    return hits
 
 
 @dataclass
@@ -702,7 +726,8 @@ def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[s
         if not actuals:
             continue
         for pick in data.get("predictions") or []:
-            actual = actuals.get(pick.get("race_id"))
+            result = actuals.get(pick.get("race_id")) or {}
+            actual = result.get("finishers") or []
             pred = [int(v) for v in pick.get("prediction", [])[:3]]
             if not actual or len(pred) < 3 or len(actual) < 3:
                 continue
@@ -717,20 +742,14 @@ def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[s
                 stats.wide += 1
             if date == previous_date:
                 previous["total"] += 1
-                labels = []
-                if pred[:3] == actual[:3]:
-                    labels.append("3連単的中")
-                if pred[:2] == actual[:2]:
-                    labels.append("2車単的中")
-                if set(pred[:2]).issubset(set(actual[:3])):
-                    labels.append("ワイド的中")
-                if pred[0] == actual[0]:
-                    labels.append("1着的中")
-                if labels:
+                payback_hits = winning_paybacks(pred, result.get("paybacks") or [])
+                win_only = pred[0] == actual[0] and not payback_hits
+                if payback_hits or win_only:
                     previous["hits"].append({
                         "venue": pick.get("venue", ""),
                         "race_no": pick.get("race_no", 0),
-                        "label": labels[0],
+                        "paybacks": payback_hits,
+                        "win_only": win_only,
                         "predicted": pred,
                         "actual": actual,
                     })
@@ -782,8 +801,15 @@ def build_note(
         lines.append(f"{date_label(previous['date'])}は的中なし。外れも隠さず載せます。")
     else:
         lines.append(f"{date_label(previous['date'])}の的中: {len(previous['hits'])}/{previous['total']}")
+        lines.append("※払戻金は100円購入時の金額です。")
         for hit in previous["hits"][:8]:
-            lines.append(f"・{hit['venue']} {hit['race_no']}R {hit['label']} / 予 {combo(hit['predicted'])} → 結 {combo(hit['actual'])}")
+            if hit.get("paybacks"):
+                result_label = " / ".join(
+                    f"{item['type']}的中 {int(item['payout']):,}円" for item in hit["paybacks"]
+                )
+            else:
+                result_label = "1着一致（車券的中なし）"
+            lines.append(f"・{hit['venue']} {hit['race_no']}R {result_label} / 予 {combo(hit['predicted'])} → 結 {combo(hit['actual'])}")
         if len(previous["hits"]) > 8:
             lines.append(f"・ほか{len(previous['hits']) - 8}件")
 
