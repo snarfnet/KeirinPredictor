@@ -803,13 +803,11 @@ def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[s
             if date == previous_date:
                 previous["total"] += 1
                 payback_hits = winning_paybacks(pred, result.get("paybacks") or [])
-                win_only = pred[0] == actual[0] and not payback_hits
-                if payback_hits or win_only:
+                if payback_hits:
                     previous["hits"].append({
                         "venue": pick.get("venue", ""),
                         "race_no": pick.get("race_no", 0),
                         "paybacks": payback_hits,
-                        "win_only": win_only,
                         "predicted": pred,
                         "actual": actual,
                     })
@@ -861,12 +859,9 @@ def build_note(
         lines.append(f"{date_label(previous['date'])}の的中: {len(previous['hits'])}/{previous['total']}")
         lines.append("※払戻金は100円購入時の金額です。")
         for hit in previous["hits"][:8]:
-            if hit.get("paybacks"):
-                result_label = " / ".join(
-                    f"{item['type']}的中 {int(item['payout']):,}円" for item in hit["paybacks"]
-                )
-            else:
-                result_label = "1着一致（車券的中なし）"
+            result_label = " / ".join(
+                f"{item['type']}的中 {int(item['payout']):,}円" for item in hit["paybacks"]
+            )
             lines += [
                 f"・{hit['venue']} {hit['race_no']}R　{result_label}",
                 f"　予想: {combo(hit['predicted'])}",
