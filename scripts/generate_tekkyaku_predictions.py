@@ -982,12 +982,10 @@ def build_note(
             result_label = " / ".join(
                 f"{item['type']}的中 {int(item['payout']):,}円" for item in hit["paybacks"]
             )
-            lines += [
-                f"・{hit['venue']} {hit['race_no']}R　{result_label}",
-                f"　予想: {combo(hit['predicted'])}",
-                f"　結果: {combo(hit['actual'])}",
-                "",
-            ]
+            lines.append(
+                f"・{hit['venue']} {hit['race_no']}R　{result_label}　"
+                f"☆予想: {combo(hit['predicted'])}　→ 結果: {combo(hit['actual'])}"
+            )
         if len(previous["hits"]) > 8:
             lines.append(f"・ほか{len(previous['hits']) - 8}件")
 
