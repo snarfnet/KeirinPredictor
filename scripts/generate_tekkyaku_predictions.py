@@ -966,7 +966,6 @@ def build_note(
         "",
         "購入条件: 各レースの3連単・2車単・ワイドを各100円（1レース300円）",
         f"前日: 購入額 {previous_investment:,}円 / 払戻額 {previous_payout:,}円 / 収支 {previous_profit:+,}円 / 回収率 {previous_return:.1f}%",
-        f"通算: 購入額 {int(stats['investment']):,}円 / 払戻額 {int(stats['payout']):,}円 / 収支 {int(stats['profit']):+,}円 / 回収率 {float(stats['return_rate']):.1f}%",
         "",
         "【前日的中実績】",
         "",
