@@ -375,6 +375,60 @@ def style_phrase(style: str) -> str:
     return "流れに合わせて脚を出せる"
 
 
+def factual_prediction_lines(
+    venue: str,
+    axis: dict[str, Any],
+    second: dict[str, Any],
+    gap12: float,
+    player_stats: dict[str, Any],
+    bank: dict[str, Any],
+) -> list[str]:
+    axis_name = str(axis.get("name") or "軸候補")
+    second_name = str(second.get("name") or "相手候補")
+    stat = player_stats.get(axis_name) or {}
+    lines: list[str] = []
+
+    recent_ranks = [int(v) for v in (stat.get("rr") or []) if str(v).isdigit()]
+    score = float(axis.get("score") or 0)
+    facts = []
+    if score:
+        facts.append(f"競走得点{score:.2f}")
+    if recent_ranks:
+        recent_wins = sum(rank == 1 for rank in recent_ranks)
+        recent_top3 = sum(rank <= 3 for rank in recent_ranks)
+        facts.append(
+            f"直近{len(recent_ranks)}走は1着{recent_wins}回・3着内{recent_top3}回、平均{sum(recent_ranks) / len(recent_ranks):.1f}着"
+        )
+    style = str(stat.get("s") or axis.get("style") or "")
+    if style:
+        facts.append(f"脚質は{style}型")
+    if facts:
+        lines.append(f"{axis_name}は" + "、".join(facts) + "。ここを軸評価の土台にした。")
+
+    kimarite = [str(v) for v in (stat.get("rk") or []) if v]
+    if kimarite:
+        counts = {key: kimarite.count(key) for key in ("逃", "捲", "差") if kimarite.count(key)}
+        if counts:
+            breakdown = "・".join(f"{key}{value}回" for key, value in counts.items())
+            lines.append(f"直近の決まり手記録は{breakdown}。どの形で勝ち切っているかも指数へ入れた。")
+
+    axis_score = float(axis.get("tekkyaku_score") or 0)
+    second_score = float(second.get("tekkyaku_score") or 0)
+    lines.append(
+        f"鉄脚指数は{axis_name}{axis_score:.1f}、{second_name}{second_score:.1f}で差は{gap12:.1f}。相手筆頭は{second_name}とした。"
+    )
+
+    rates = bank.get("rates") or {}
+    strongest = max(("差", "捲", "逃"), key=lambda key: float(rates.get(key) or 0))
+    strongest_rate = float(rates.get(strongest) or 0)
+    if strongest_rate:
+        lines.append(
+            f"{venue}は{int(bank.get('bank') or 400)}m、みなし直線{float(bank.get('straight_m') or 0):g}m。"
+            f"過去集計では{strongest}が{strongest_rate:.1f}%で最多、この傾向と脚質の噛み合わせまで見た。"
+        )
+    return lines
+
+
 def build_hakase_copy(
     race: dict[str, Any],
     axis: dict[str, Any],
@@ -385,6 +439,8 @@ def build_hakase_copy(
     axis_win: float,
     grade: str,
     action: str,
+    player_stats: dict[str, Any],
+    bank: dict[str, Any],
 ) -> tuple[str, str, list[str]]:
     key = f"{race.get('race_id', '')}-{axis.get('name', '')}"
     axis_name = axis.get("name", "")
@@ -520,7 +576,8 @@ def build_hakase_copy(
         f"{axis_name}は自分の仕事を知っている。こういう選手は予想の土台にしやすい。",
     ]
     style_line = stable_choice(key, style_options, 6)
-    story = "\n".join([lead, time_line, style_line, gap_line, chaos_line])
+    data_lines = factual_prediction_lines(venue, axis, second, gap12, player_stats, bank)
+    story = "\n".join([lead, time_line, *data_lines, style_line, chaos_line])
 
     reasons = [
         action_reason,
@@ -582,6 +639,7 @@ def analyze_race(
     else:
         grade = "候"
         action = "押さえ"
+    bank = bank_profile(str(race.get("venue") or ""), axis, venue_stats, venue_details)
     action_reason, story, reasons = build_hakase_copy(
         race,
         axis,
@@ -592,8 +650,9 @@ def analyze_race(
         axis_win,
         grade,
         action,
+        player_stats,
+        bank,
     )
-    bank = bank_profile(str(race.get("venue") or ""), axis, venue_stats, venue_details)
 
     start_time = race.get("start_time") or ""
     return {
@@ -788,10 +847,6 @@ def build_note(
         f"3連単: {stats['trifecta_count']}/{stats['completed']}（{pct(stats['trifecta_rate'])}）",
         f"2車単: {stats['exacta_count']}/{stats['completed']}（{pct(stats['exacta_rate'])}）",
         f"ワイド: {stats['wide_count']}/{stats['completed']}（{pct(stats['wide_rate'])}）",
-        "",
-        "※的中を保証するものではありません。",
-        "※車券購入は20歳以上です。無理のない範囲で楽しんでください。",
-        "※有料部分は200円です。",
         "",
         "【前日的中実績】",
     ]
