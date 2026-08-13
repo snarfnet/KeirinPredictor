@@ -85,6 +85,35 @@ function Sync-RepoBestEffort {
     }
 }
 
+function Sync-GeneratorBestEffort {
+    try {
+        $git = Get-Command git -ErrorAction Stop
+        $relativeGenerator = "scripts/generate_tekkyaku_predictions.py"
+        $previousErrorAction = $ErrorActionPreference
+        $ErrorActionPreference = "Continue"
+        $fetchOutput = & $git.Source -C $repoRoot fetch origin main 2>&1
+        $fetchExitCode = $LASTEXITCODE
+        if ($fetchExitCode -eq 0) {
+            $restoreOutput = & $git.Source -C $repoRoot restore --source origin/main -- $relativeGenerator 2>&1
+            $restoreExitCode = $LASTEXITCODE
+        } else {
+            $restoreOutput = @()
+            $restoreExitCode = 1
+        }
+        $ErrorActionPreference = $previousErrorAction
+
+        if ($fetchExitCode -eq 0 -and $restoreExitCode -eq 0) {
+            Write-ExportLog "prediction generator synced from origin/main"
+        } else {
+            $details = (($fetchOutput + $restoreOutput) | Out-String).Trim()
+            Write-ExportLog ("prediction generator sync skipped or failed: {0}" -f $details)
+        }
+    } catch {
+        $ErrorActionPreference = "Stop"
+        Write-ExportLog ("prediction generator sync skipped or failed: {0}" -f $_.Exception.Message)
+    }
+}
+
 function Get-LocalGeneratedJsonText {
     $generator = Join-Path $repoRoot "scripts\generate_tekkyaku_predictions.py"
     if (-not (Test-Path $generator)) {
@@ -223,6 +252,7 @@ function Send-NoteMailIfConfigured {
 
 try {
     Sync-RepoBestEffort
+    Sync-GeneratorBestEffort
     try {
         $jsonText = Get-LocalGeneratedJsonText
     } catch {
