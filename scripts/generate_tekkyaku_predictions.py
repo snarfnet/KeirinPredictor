@@ -971,7 +971,7 @@ def build_note(
         f"2車単: {stats['exacta_count']}/{stats['completed']}（{pct(stats['exacta_rate'])}）",
         f"ワイド: {stats['wide_count']}/{stats['completed']}（{pct(stats['wide_rate'])}）",
         "",
-        "【100円ずつ買った場合の収支】",
+        "【前日のレースで100円ずつ買った場合の収支】",
         "",
         "購入条件: 各レースの3連単・2車単・ワイドを各100円（1レース300円）",
         f"前日: 購入額 {previous_investment:,}円 / 払戻額 {previous_payout:,}円 / 収支 {previous_profit:+,}円 / 回収率 {previous_return:.1f}%",
