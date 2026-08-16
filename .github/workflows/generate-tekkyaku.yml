@@ -23,7 +23,14 @@ jobs:
           python-version: "3.11"
 
       - name: Generate prediction JSON and note draft
-        run: python scripts/generate_tekkyaku_predictions.py --out generated/tekkyaku
+        shell: bash
+        run: |
+          if [ "${{ github.event.schedule }}" = "15 12 * * *" ]; then
+            target_date=$(TZ=Asia/Tokyo date -d tomorrow +%Y%m%d)
+            python scripts/generate_tekkyaku_predictions.py --date "$target_date" --out generated/tekkyaku
+          else
+            python scripts/generate_tekkyaku_predictions.py --out generated/tekkyaku
+          fi
 
       - name: Upload generated drafts
         uses: actions/upload-artifact@v4

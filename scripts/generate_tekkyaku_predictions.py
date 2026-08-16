@@ -718,6 +718,9 @@ def analyze_race(
         entry["win_probability"] = round(prob * 100, 1)
 
     prediction = [int(e["umaban"]) for e in scored[:3]]
+    frame_prediction = (
+        [int(e.get("waku") or e.get("umaban") or 0) for e in scored[:3]] if len(entries) >= 9 else []
+    )
     axis = scored[0]
     second = scored[1]
     third = scored[2]
@@ -764,8 +767,12 @@ def analyze_race(
         "schedule_label": schedule_label(start_time, int(race.get("race_no") or 0)),
         "prediction": prediction,
         "trifecta": prediction,
+        "trio": sorted(prediction),
         "exacta": prediction[:2],
+        "quinella": sorted(prediction[:2]),
         "wide": prediction[:2],
+        "frame_exacta": frame_prediction[:2],
+        "frame_quinella": sorted(frame_prediction[:2]),
         "axis_name": axis.get("name", ""),
         "axis_win_estimate": round(axis_win, 1),
         "chaos_score": round(chaos, 1),
@@ -779,6 +786,7 @@ def analyze_race(
         "top_entries": [
             {
                 "umaban": int(e.get("umaban") or 0),
+                "waku": int(e.get("waku") or e.get("umaban") or 0),
                 "name": e.get("name", ""),
                 "score": round(float(e.get("tekkyaku_score") or 0), 1),
                 "win_probability": e.get("win_probability", 0),
@@ -819,21 +827,40 @@ def result_for_date(date: str) -> dict[str, dict[str, Any]]:
     return out
 
 
-def winning_paybacks(predicted: list[int], paybacks: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    combinations = {
+def fallback_frame(umaban: int) -> int:
+    if umaban <= 3:
+        return umaban
+    return (umaban + 4) // 2
+
+
+def ticket_combinations(pick: dict[str, Any]) -> dict[str, str]:
+    predicted = [int(v) for v in (pick.get("prediction") or [])[:3]]
+    frames = [int(v) for v in (pick.get("frame_exacta") or [])[:2]]
+    if len(frames) < 2:
+        frames = [fallback_frame(v) for v in predicted[:2]]
+    return {
         "3連単": "-".join(str(v) for v in predicted[:3]),
+        "3連複": "-".join(str(v) for v in sorted(predicted[:3])),
         "2車単": "-".join(str(v) for v in predicted[:2]),
+        "2車複": "-".join(str(v) for v in sorted(predicted[:2])),
         "ワイド": "-".join(str(v) for v in sorted(predicted[:2])),
+        "2枠単": "-".join(str(v) for v in frames[:2]),
+        "2枠複": "-".join(str(v) for v in sorted(frames[:2])),
     }
+
+
+def winning_paybacks(pick: dict[str, Any], paybacks: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    combinations = ticket_combinations(pick)
     hits = []
-    for ticket_type in ("3連単", "2車単", "ワイド"):
+    unordered_types = {"3連複", "2車複", "ワイド", "2枠複"}
+    for ticket_type in ("3連単", "3連複", "2車単", "2車複", "ワイド", "2枠単", "2枠複"):
         expected = combinations[ticket_type]
         for item in paybacks:
             if str(item.get("type") or "") != ticket_type:
                 continue
             raw = str(item.get("combination") or "").replace(" ", "").replace("=", "-")
             parts = [part for part in re.split(r"[^0-9]+", raw) if part]
-            actual = "-".join(sorted(parts, key=int)) if ticket_type == "ワイド" else "-".join(parts)
+            actual = "-".join(sorted(parts, key=int)) if ticket_type in unordered_types else "-".join(parts)
             if actual == expected:
                 hits.append({"type": ticket_type, "payout": int(item.get("payout") or 0)})
                 break
@@ -845,25 +872,49 @@ class HitStats:
     total: int = 0
     win: int = 0
     trifecta: int = 0
+    trio: int = 0
     exacta: int = 0
+    quinella: int = 0
     wide: int = 0
+    frame_exacta: int = 0
+    frame_quinella: int = 0
+    ticket_counts: dict[str, int] | None = None
     payout: int = 0
 
     def as_dict(self) -> dict[str, Any]:
         def rate(value: int) -> float:
             return round(value / self.total * 100, 1) if self.total else 0.0
 
-        investment = self.total * 300
+        ticket_counts = self.ticket_counts or {}
+        investment = sum(int(value or 0) for value in ticket_counts.values()) * 100
+        def ticket_rate(ticket_type: str, hits: int) -> float:
+            count = int(ticket_counts.get(ticket_type) or 0)
+            return round(hits / count * 100, 1) if count else 0.0
         return {
             "completed": self.total,
             "win_count": self.win,
             "win_rate": rate(self.win),
             "trifecta_count": self.trifecta,
-            "trifecta_rate": rate(self.trifecta),
+            "trifecta_total": int(ticket_counts.get("3連単") or 0),
+            "trifecta_rate": ticket_rate("3連単", self.trifecta),
+            "trio_count": self.trio,
+            "trio_total": int(ticket_counts.get("3連複") or 0),
+            "trio_rate": ticket_rate("3連複", self.trio),
             "exacta_count": self.exacta,
-            "exacta_rate": rate(self.exacta),
+            "exacta_total": int(ticket_counts.get("2車単") or 0),
+            "exacta_rate": ticket_rate("2車単", self.exacta),
+            "quinella_count": self.quinella,
+            "quinella_total": int(ticket_counts.get("2車複") or 0),
+            "quinella_rate": ticket_rate("2車複", self.quinella),
             "wide_count": self.wide,
-            "wide_rate": rate(self.wide),
+            "wide_total": int(ticket_counts.get("ワイド") or 0),
+            "wide_rate": ticket_rate("ワイド", self.wide),
+            "frame_exacta_count": self.frame_exacta,
+            "frame_exacta_total": int(ticket_counts.get("2枠単") or 0),
+            "frame_exacta_rate": ticket_rate("2枠単", self.frame_exacta),
+            "frame_quinella_count": self.frame_quinella,
+            "frame_quinella_total": int(ticket_counts.get("2枠複") or 0),
+            "frame_quinella_rate": ticket_rate("2枠複", self.frame_quinella),
             "investment": investment,
             "payout": self.payout,
             "profit": self.payout - investment,
@@ -872,9 +923,9 @@ class HitStats:
 
 
 def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[str, Any]]:
-    stats = HitStats()
+    stats = HitStats(ticket_counts={})
     previous_date = (datetime.strptime(current_date, "%Y%m%d") - timedelta(days=1)).strftime("%Y%m%d")
-    previous = {"date": previous_date, "total": 0, "payout": 0, "wide_payout": 0, "hits": []}
+    previous = {"date": previous_date, "total": 0, "tickets": 0, "payout": 0, "wide_payout": 0, "hits": []}
     for path in sorted(out_dir.glob("predictions_*.json")):
         match = re.search(r"predictions_(\d{8})\.json$", path.name)
         if not match:
@@ -895,20 +946,35 @@ def evaluate_history(out_dir: Path, current_date: str) -> tuple[HitStats, dict[s
             pred = [int(v) for v in pick.get("prediction", [])[:3]]
             if not actual or len(pred) < 3 or len(actual) < 3:
                 continue
-            payback_hits = winning_paybacks(pred, result.get("paybacks") or [])
+            paybacks = result.get("paybacks") or []
+            offered_types = {str(item.get("type") or "") for item in paybacks}
+            payback_hits = winning_paybacks(pick, paybacks)
             race_payout = sum(int(item.get("payout") or 0) for item in payback_hits)
             stats.total += 1
             stats.payout += race_payout
+            for ticket_type in ticket_combinations(pick):
+                if ticket_type in offered_types:
+                    stats.ticket_counts[ticket_type] = int(stats.ticket_counts.get(ticket_type) or 0) + 1
             if pred[0] == actual[0]:
                 stats.win += 1
             if pred[:3] == actual[:3]:
                 stats.trifecta += 1
+            if set(pred[:3]) == set(actual[:3]):
+                stats.trio += 1
             if pred[:2] == actual[:2]:
                 stats.exacta += 1
+            if set(pred[:2]) == set(actual[:2]):
+                stats.quinella += 1
             if set(pred[:2]).issubset(set(actual[:3])):
                 stats.wide += 1
+            hit_types = {item["type"] for item in payback_hits}
+            if "2枠単" in hit_types:
+                stats.frame_exacta += 1
+            if "2枠複" in hit_types:
+                stats.frame_quinella += 1
             if date == previous_date:
                 previous["total"] += 1
+                previous["tickets"] += len(set(ticket_combinations(pick)) & offered_types)
                 previous["payout"] += race_payout
                 previous["wide_payout"] += sum(
                     int(item.get("payout") or 0) for item in payback_hits if item.get("type") == "ワイド"
@@ -933,7 +999,7 @@ def build_note(
 ) -> tuple[str, str]:
     top = predictions[0] if predictions else {}
     fortune = daily_fortune(date, predictions)
-    previous_investment = int(previous.get("total") or 0) * 300
+    previous_investment = int(previous.get("tickets") or 0) * 100
     previous_payout = int(previous.get("payout") or 0)
     previous_profit = previous_payout - previous_investment
     previous_return = round(previous_payout / previous_investment * 100, 1) if previous_investment else 0.0
@@ -967,13 +1033,17 @@ def build_note(
         "",
         f"集計対象: 鉄脚博士の予想から結果が出た{stats['completed']}レース",
         f"1着的中: {stats['win_count']}/{stats['completed']}（{pct(stats['win_rate'])}）",
-        f"3連単: {stats['trifecta_count']}/{stats['completed']}（{pct(stats['trifecta_rate'])}）",
-        f"2車単: {stats['exacta_count']}/{stats['completed']}（{pct(stats['exacta_rate'])}）",
-        f"ワイド: {stats['wide_count']}/{stats['completed']}（{pct(stats['wide_rate'])}）",
+        f"3連単: {stats['trifecta_count']}/{stats['trifecta_total']}（{pct(stats['trifecta_rate'])}）",
+        f"3連複: {stats['trio_count']}/{stats['trio_total']}（{pct(stats['trio_rate'])}）",
+        f"2車単: {stats['exacta_count']}/{stats['exacta_total']}（{pct(stats['exacta_rate'])}）",
+        f"2車複: {stats['quinella_count']}/{stats['quinella_total']}（{pct(stats['quinella_rate'])}）",
+        f"ワイド: {stats['wide_count']}/{stats['wide_total']}（{pct(stats['wide_rate'])}）",
+        f"2枠単: {stats['frame_exacta_count']}/{stats['frame_exacta_total']}（{pct(stats['frame_exacta_rate'])}）",
+        f"2枠複: {stats['frame_quinella_count']}/{stats['frame_quinella_total']}（{pct(stats['frame_quinella_rate'])}）",
         "",
         "【前日のレースで100円ずつ買った場合の収支】",
         "",
-        "購入条件: 各レースの3連単・2車単・ワイドを各100円（1レース300円）",
+        "購入条件: 各レースの3連単・3連複・2車単・2車複・ワイド・2枠単・2枠複を各100円（発売券種のみ）",
         f"前日: 購入額 {previous_investment:,}円 / 払戻額 {previous_payout:,}円 / 収支 {previous_profit:+,}円 / 回収率 {previous_return:.1f}%",
         f"ワイドのみ: 購入額 {previous_wide_investment:,}円 / 払戻額 {previous_wide_payout:,}円 / 収支 {previous_wide_profit:+,}円 / 回収率 {previous_wide_return:.1f}%",
         "",
@@ -1036,7 +1106,11 @@ def build_note(
 def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
     pred = pick.get("prediction") or []
     exacta = pick.get("exacta") or []
+    quinella = pick.get("quinella") or []
     wide = pick.get("wide") or []
+    trio = pick.get("trio") or []
+    frame_exacta = pick.get("frame_exacta") or []
+    frame_quinella = pick.get("frame_quinella") or []
     reasons = pick.get("reasons") or []
     shown = reasons[:6 if paid else 4]
     reason_text = "\n".join(f"・{r}" for r in shown) or "・出走表と指数を確認してから最終判断"
@@ -1070,8 +1144,12 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
 判定: {pick.get('action_label')} {pick.get('grade')}
 予想: {combo(pred)}
 3連単候補: {combo(pred)}
+3連複候補: {combo(trio) if len(trio) >= 3 else "-"}
 2車単候補: {combo(exacta) if len(exacta) >= 2 else "-"}
+2車複候補: {combo(quinella) if len(quinella) >= 2 else "-"}
 ワイド候補: {combo(wide) if len(wide) >= 2 else "-"}
+2枠単候補: {combo(frame_exacta) if len(frame_exacta) >= 2 else "発売なし"}
+2枠複候補: {combo(frame_quinella) if len(frame_quinella) >= 2 else "発売なし"}
 
 博士の見立て:
 
