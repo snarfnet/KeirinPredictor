@@ -726,7 +726,9 @@ def analyze_race(
     third = scored[2]
     gap12 = axis["tekkyaku_score"] - second["tekkyaku_score"]
     gap13 = axis["tekkyaku_score"] - third["tekkyaku_score"]
-    axis_win = min(float(axis["win_probability"]), 60.0)
+    gap23 = second["tekkyaku_score"] - third["tekkyaku_score"]
+    raw_axis_win = float(axis["win_probability"])
+    axis_win = min(raw_axis_win, 60.0)
     chaos = max(0.0, min(100.0, 58 - gap13 * 2.4 + (8 - gap12) * 2.0))
 
     if axis_win >= 34 and gap12 >= 5.5 and chaos < 48:
@@ -775,13 +777,16 @@ def analyze_race(
         "frame_quinella": sorted(frame_prediction[:2]),
         "axis_name": axis.get("name", ""),
         "axis_win_estimate": round(axis_win, 1),
+        "raw_axis_win_probability": round(raw_axis_win, 1),
+        "axis_gap": round(gap12, 1),
+        "opponent_gap": round(gap23, 1),
         "chaos_score": round(chaos, 1),
         "grade": grade,
         "action_label": action,
         "action_reason": action_reason,
         "story": story,
         "bank_profile": bank,
-        "quality": round(axis_win * 2 + {"S": 24, "A": 16, "B": 8}.get(grade, 0) + (40 if action == "買い" else 0) - max(0, chaos - 55) * 1.4, 2),
+        "quality": round(raw_axis_win * 1.5 + gap12 * 2.0 + gap23 * 1.5 - chaos * 0.5, 2),
         "reasons": reasons[:6],
         "top_entries": [
             {
@@ -811,6 +816,21 @@ def pick_races(entries_data: dict[str, Any], target_date: str | None) -> tuple[s
         if selected:
             return day, selected
     return today, []
+
+
+def is_strong_pick(pick: dict[str, Any]) -> bool:
+    chaos = pick.get("chaos_score")
+    return (
+        float(pick.get("axis_gap") or 0) >= 18.0
+        and float(pick.get("opponent_gap") or 0) >= 8.0
+        and float(chaos if chaos is not None else 100) <= 35.0
+    )
+
+
+def confidence_label(pick: dict[str, Any]) -> str:
+    if float(pick.get("axis_gap") or 0) >= 18.0 and float(pick.get("opponent_gap") or 0) >= 10.0:
+        return "鉄板級"
+    return "厳選"
 
 
 def result_for_date(date: str) -> dict[str, dict[str, Any]]:
@@ -1009,7 +1029,7 @@ def build_note(
     previous_wide_return = (
         round(previous_wide_payout / previous_wide_investment * 100, 1) if previous_wide_investment else 0.0
     )
-    first_label = f"{top.get('venue', '本日の競輪')}{top.get('race_no', '')}R"
+    first_label = f"{top.get('venue')}{top.get('race_no')}R" if top else "本日は見送り"
     first_start = top.get("start_time") or ""
     title = f"鉄脚博士の競輪予想｜{date_label(date)} {first_label}{(' 発走' + first_start) if first_start else ''} 本日の一押し{len(predictions)}本"
     lines = [
@@ -1017,7 +1037,7 @@ def build_note(
         "",
         "吾輩は鉄脚博士である。",
         "現代にまぎれて競輪ばかり眺めている、少し偏屈な男です。",
-        f"今日は展開、脚質、指数、直近の数字を見て、勝負候補を{len(predictions)}本に絞りました。",
+        f"今日は全レースを比較し、軸と相手の指数差が基準を超えた{len(predictions)}本だけに絞りました。",
         "買い目だけではなく、吾輩がどこで赤鉛筆を止めたのかも書きます。",
         "",
         "【本日のことわざ】",
@@ -1068,31 +1088,37 @@ def build_note(
         if len(previous["hits"]) > 8:
             lines.append(f"・ほか{len(previous['hits']) - 8}件")
 
-    lines += [
-        "",
-        "さて、今日も素直に見ます。",
-        "無料部分では上位1本だけ出します。残りの一押し、買い目候補、理由は有料部分です。",
-        "",
-    ]
-    for idx, pick in enumerate(predictions[:1], 1):
-        lines.append(note_block(idx, pick, paid=False))
-    lines += [
-        "",
-        "## ここから先は",
-        f"有料部分では、本日の一押し全{len(predictions)}本の買い目候補と見解を出します。",
-        "",
-        "対象レース:",
-    ]
-    for idx, pick in enumerate(predictions, 1):
-        lines.append(f"・{idx}. {pick.get('venue')} {pick.get('race_no')}R")
-    lines += [
-        "",
-        "ここから先は有料部分です。価格は200円です。",
-        "",
-        "【本日の一押し一覧】",
-    ]
-    for idx, pick in enumerate(predictions, 1):
-        lines.append(note_block(idx, pick, paid=True))
+    lines += ["", "さて、今日も素直に見ます。"]
+    if predictions:
+        lines += [
+            "本数を埋める予想はやめました。基準に届いたレースだけを出します。",
+            "無料部分では最上位1本だけ出します。残りの厳選候補、買い目、理由は有料部分です。",
+            "",
+        ]
+        lines.append(note_block(1, predictions[0], paid=False))
+    else:
+        lines += [
+            "本日は厳選基準を満たすレースがありません。無理に買い目を作らず、吾輩は見送ります。",
+            "",
+        ]
+    if predictions:
+        lines += [
+            "",
+            "## ここから先は",
+            f"有料部分では、本日の厳選{len(predictions)}本の買い目候補と見解を出します。",
+            "",
+            "対象レース:",
+        ]
+        for idx, pick in enumerate(predictions, 1):
+            lines.append(f"・{idx}. {pick.get('venue')} {pick.get('race_no')}R")
+        lines += [
+            "",
+            "ここから先は有料部分です。価格は200円です。",
+            "",
+            "【本日の厳選一覧】",
+        ]
+        for idx, pick in enumerate(predictions, 1):
+            lines.append(note_block(idx, pick, paid=True))
     lines += [
         "",
         "【最後に】",
@@ -1142,6 +1168,8 @@ def note_block(index: int, pick: dict[str, Any], paid: bool) -> str:
     return f"""
 {index}. {pick.get('venue')} {pick.get('race_no')}R{start}
 判定: {pick.get('action_label')} {pick.get('grade')}
+信頼区分: {pick.get('confidence_label', '厳選')}
+指数差: 軸差 {float(pick.get('axis_gap') or 0):.1f} / 相手差 {float(pick.get('opponent_gap') or 0):.1f}
 予想: {combo(pred)}
 3連単候補: {combo(pred)}
 3連複候補: {combo(trio) if len(trio) >= 3 else "-"}
@@ -1176,7 +1204,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--date", help="Target date as YYYYMMDD")
     parser.add_argument("--out", default="generated/tekkyaku")
-    parser.add_argument("--min-picks", type=int, default=10)
+    parser.add_argument("--max-picks", type=int, default=10)
+    parser.add_argument("--min-picks", type=int, help=argparse.SUPPRESS)
     args = parser.parse_args()
 
     out_dir = Path(args.out)
@@ -1197,9 +1226,11 @@ def main() -> int:
         if analysis:
             picks.append(analysis)
     picks.sort(key=lambda p: (-float(p["quality"]), int(p["race_no"])))
-    predictions = picks[: max(args.min_picks, min(len(picks), args.min_picks))]
+    max_picks = args.min_picks if args.min_picks is not None else args.max_picks
+    predictions = [pick for pick in picks if is_strong_pick(pick)][:max(0, max_picks)]
     for idx, pick in enumerate(predictions, 1):
         pick["rank"] = idx
+        pick["confidence_label"] = confidence_label(pick)
 
     stats, previous = evaluate_history(out_dir, target_date)
     stats_dict = stats.as_dict()
