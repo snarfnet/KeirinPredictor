@@ -1106,16 +1106,6 @@ def build_note(
     top = predictions[0] if predictions else {}
     market_count = sum(1 for pick in predictions if pick.get("market_data_available"))
     fortune = daily_fortune(date, predictions)
-    previous_investment = int(previous.get("tickets") or 0) * 100
-    previous_payout = int(previous.get("payout") or 0)
-    previous_profit = previous_payout - previous_investment
-    previous_return = round(previous_payout / previous_investment * 100, 1) if previous_investment else 0.0
-    previous_wide_investment = int(previous.get("total") or 0) * 100
-    previous_wide_payout = int(previous.get("wide_payout") or 0)
-    previous_wide_profit = previous_wide_payout - previous_wide_investment
-    previous_wide_return = (
-        round(previous_wide_payout / previous_wide_investment * 100, 1) if previous_wide_investment else 0.0
-    )
     first_label = f"{top.get('venue')}{top.get('race_no')}R" if top else "本日は見送り"
     first_start = top.get("start_time") or ""
     title = f"鉄脚博士の競輪予想｜{date_label(date)} {first_label}{(' 発走' + first_start) if first_start else ''} 本日の一押し{len(predictions)}本"
@@ -1152,12 +1142,6 @@ def build_note(
         f"ワイド: {stats['wide_count']}/{stats['wide_total']}（{pct(stats['wide_rate'])}）",
         f"2枠単: {stats['frame_exacta_count']}/{stats['frame_exacta_total']}（{pct(stats['frame_exacta_rate'])}）",
         f"2枠複: {stats['frame_quinella_count']}/{stats['frame_quinella_total']}（{pct(stats['frame_quinella_rate'])}）",
-        "",
-        "【前日のレースで100円ずつ買った場合の収支】",
-        "",
-        "購入条件: 各レースの3連単・3連複・2車単・2車複・ワイド・2枠単・2枠複を各100円（発売券種のみ）",
-        f"前日: 購入額 {previous_investment:,}円 / 払戻額 {previous_payout:,}円 / 収支 {previous_profit:+,}円 / 回収率 {previous_return:.1f}%",
-        f"ワイドのみ: 購入額 {previous_wide_investment:,}円 / 払戻額 {previous_wide_payout:,}円 / 収支 {previous_wide_profit:+,}円 / 回収率 {previous_wide_return:.1f}%",
         "",
         "【前日的中実績】",
         "",
