@@ -7,6 +7,8 @@ on:
     - cron: "15 12 * * *"
     # 07:30 JST: refresh current-day predictions in the morning.
     - cron: "30 22 * * *"
+    # 08:30 JST: retry after the odds collector has finished slower race days.
+    - cron: "30 23 * * *"
 
 permissions:
   contents: write
