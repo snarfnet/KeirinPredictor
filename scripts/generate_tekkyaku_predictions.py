@@ -694,11 +694,54 @@ def build_hakase_copy(
     return action_reason, story, reasons[:7]
 
 
+def standardized(values: list[float]) -> list[float]:
+    if not values:
+        return []
+    mean = sum(values) / len(values)
+    variance = sum((value - mean) ** 2 for value in values) / len(values)
+    deviation = math.sqrt(variance)
+    if deviation <= 1e-9:
+        return [0.0 for _ in values]
+    return [(value - mean) / deviation for value in values]
+
+
+def build_market_profile(race_odds: dict[str, Any]) -> dict[int, dict[str, float]]:
+    trifecta = race_odds.get("trifecta") or {}
+    position_weights: dict[int, list[float]] = {}
+    for raw_combo, raw_odds in trifecta.items():
+        numbers = [int(value) for value in re.findall(r"\d+", str(raw_combo))[:3]]
+        try:
+            odds = float(raw_odds)
+        except (TypeError, ValueError):
+            continue
+        if len(numbers) != 3 or odds <= 1.0:
+            continue
+        implied = 1.0 / odds
+        for position, number in enumerate(numbers):
+            position_weights.setdefault(number, [0.0, 0.0, 0.0])[position] += implied
+    if not position_weights:
+        return {}
+    totals = [sum(values[position] for values in position_weights.values()) for position in range(3)]
+    profile: dict[int, dict[str, float]] = {}
+    for number, values in position_weights.items():
+        first = values[0] / totals[0] if totals[0] else 0.0
+        second = values[1] / totals[1] if totals[1] else 0.0
+        third = values[2] / totals[2] if totals[2] else 0.0
+        profile[number] = {
+            "first_share": first,
+            "second_share": second,
+            "third_share": third,
+            "score": first * 0.55 + second * 0.30 + third * 0.15,
+        }
+    return profile
+
+
 def analyze_race(
     race: dict[str, Any],
     player_stats: dict[str, Any],
     venue_stats: dict[str, Any],
     venue_details: dict[str, Any],
+    race_odds: dict[str, Any] | None = None,
 ) -> dict[str, Any] | None:
     entries = race.get("entries") or []
     if len(entries) < 3:
@@ -713,11 +756,26 @@ def analyze_race(
         scored.append(item)
 
     scored.sort(key=lambda e: e["tekkyaku_score"], reverse=True)
+    model_order = [int(e.get("umaban") or 0) for e in scored]
+    market_profile = build_market_profile(race_odds or {})
+    if market_profile:
+        model_values = [float(e["tekkyaku_score"]) for e in scored]
+        market_values = [float(market_profile.get(int(e.get("umaban") or 0), {}).get("score") or 0) for e in scored]
+        model_z = standardized(model_values)
+        market_z = standardized(market_values)
+        for entry, model_value, market_value in zip(scored, model_z, market_z):
+            entry["base_tekkyaku_score"] = entry["tekkyaku_score"]
+            entry["tekkyaku_score"] = 100.0 + (model_value * 0.65 + market_value * 0.35) * 10.0
+        scored.sort(key=lambda e: e["tekkyaku_score"], reverse=True)
     probs = softmax_prob([e["tekkyaku_score"] for e in scored])
     for entry, prob in zip(scored, probs):
         entry["win_probability"] = round(prob * 100, 1)
 
     prediction = [int(e["umaban"]) for e in scored[:3]]
+    market_order = sorted(market_profile, key=lambda number: market_profile[number]["score"], reverse=True)
+    market_axis = market_order[0] if market_order else None
+    axis_agreement = bool(market_axis and prediction[0] == market_axis)
+    top3_agreement = len(set(prediction[:3]) & set(market_order[:3])) if market_order else 0
     frame_prediction = (
         [int(e.get("waku") or e.get("umaban") or 0) for e in scored[:3]] if len(entries) >= 9 else []
     )
@@ -757,6 +815,13 @@ def analyze_race(
         player_stats,
         bank,
     )
+    if market_order:
+        market_line = (
+            f"市場オッズの中心は{market_order[0]}番。博士の軸と"
+            f"{'一致' if axis_agreement else '不一致'}、上位3車の重なりは{top3_agreement}車。"
+        )
+        story = f"{story}\n{market_line}"
+        reasons = [market_line, *reasons]
 
     start_time = race.get("start_time") or ""
     return {
@@ -781,12 +846,25 @@ def analyze_race(
         "axis_gap": round(gap12, 1),
         "opponent_gap": round(gap23, 1),
         "chaos_score": round(chaos, 1),
+        "model_order": model_order[:5],
+        "market_order": market_order[:5],
+        "market_axis_agreement": axis_agreement,
+        "market_top3_agreement": top3_agreement,
+        "market_data_available": bool(market_order),
         "grade": grade,
         "action_label": action,
         "action_reason": action_reason,
         "story": story,
         "bank_profile": bank,
-        "quality": round(raw_axis_win * 1.5 + gap12 * 2.0 + gap23 * 1.5 - chaos * 0.5, 2),
+        "quality": round(
+            raw_axis_win * 1.2
+            + gap12 * 1.5
+            + gap23
+            - chaos * 0.4
+            + (18 if axis_agreement else 0)
+            + top3_agreement * 6,
+            2,
+        ),
         "reasons": reasons[:6],
         "top_entries": [
             {
@@ -827,10 +905,18 @@ def is_strong_pick(pick: dict[str, Any]) -> bool:
     )
 
 
+def is_consensus_pick(pick: dict[str, Any]) -> bool:
+    return bool(pick.get("market_axis_agreement")) and int(pick.get("market_top3_agreement") or 0) >= 2
+
+
 def confidence_label(pick: dict[str, Any]) -> str:
-    if float(pick.get("axis_gap") or 0) >= 18.0 and float(pick.get("opponent_gap") or 0) >= 10.0:
-        return "鉄板級"
-    return "厳選"
+    if is_strong_pick(pick) and is_consensus_pick(pick):
+        return "合議鉄板"
+    if is_consensus_pick(pick):
+        return "合議本線"
+    if is_strong_pick(pick):
+        return "博士本線"
+    return "比較上位"
 
 
 def result_for_date(date: str) -> dict[str, dict[str, Any]]:
@@ -1018,6 +1104,7 @@ def build_note(
     proverb: dict[str, str],
 ) -> tuple[str, str]:
     top = predictions[0] if predictions else {}
+    market_count = sum(1 for pick in predictions if pick.get("market_data_available"))
     fortune = daily_fortune(date, predictions)
     previous_investment = int(previous.get("tickets") or 0) * 100
     previous_payout = int(previous.get("payout") or 0)
@@ -1037,7 +1124,12 @@ def build_note(
         "",
         "吾輩は鉄脚博士である。",
         "現代にまぎれて競輪ばかり眺めている、少し偏屈な男です。",
-        f"今日は全レースを比較し、軸と相手の指数差が基準を超えた{len(predictions)}本だけに絞りました。",
+        f"今日は全レースを比較し、博士の指数と市場オッズを重ねて{len(predictions)}本に絞りました。",
+        (
+            f"市場オッズは{market_count}/{len(predictions)}レースで反映済みです。"
+            if market_count
+            else "早朝時点で当日オッズが未公開のため、この版は博士モデル単独です。オッズ取得後に再計算します。"
+        ),
         "買い目だけではなく、吾輩がどこで赤鉛筆を止めたのかも書きます。",
         "",
         "【本日のことわざ】",
@@ -1091,8 +1183,8 @@ def build_note(
     lines += ["", "さて、今日も素直に見ます。"]
     if predictions:
         lines += [
-            "本数を埋める予想はやめました。基準に届いたレースだけを出します。",
-            "無料部分では最上位1本だけ出します。残りの厳選候補、買い目、理由は有料部分です。",
+            "脚力、近況、バンク、ラインに、市場オッズの集合知を加えて順位を決めます。",
+            "無料部分では最上位1本だけ出します。残りの合議候補、買い目、理由は有料部分です。",
             "",
         ]
         lines.append(note_block(1, predictions[0], paid=False))
@@ -1213,6 +1305,7 @@ def main() -> int:
     player_stats = fetch_json("player_stats.json")
     venue_stats = fetch_json("venue_stats.json")
     venue_details = fetch_json("venue_details.json", required=False) or {}
+    odds_data = fetch_json("today_odds.json", required=False) or {}
     target_date, races = pick_races(entries_data, args.date)
     if not races:
         raise RuntimeError(f"No entry races available for {target_date}")
@@ -1220,14 +1313,30 @@ def main() -> int:
         race.setdefault("date", target_date)
         race["venue"] = venue_label(race.get("venue"), race.get("venue_cd"))
 
+    odds_by_race = {}
+    if str(odds_data.get("date") or "") == target_date:
+        odds_by_race = {str(item.get("race_id") or ""): item for item in odds_data.get("races") or []}
+
     picks = []
     for race in races:
-        analysis = analyze_race(race, player_stats, venue_stats, venue_details)
+        analysis = analyze_race(
+            race,
+            player_stats,
+            venue_stats,
+            venue_details,
+            odds_by_race.get(str(race.get("race_id") or "")),
+        )
         if analysis:
             picks.append(analysis)
     picks.sort(key=lambda p: (-float(p["quality"]), int(p["race_no"])))
     max_picks = args.min_picks if args.min_picks is not None else args.max_picks
-    predictions = [pick for pick in picks if is_strong_pick(pick)][:max(0, max_picks)]
+    max_picks = max(5, min(10, max_picks))
+    preferred = [pick for pick in picks if is_strong_pick(pick) or is_consensus_pick(pick)]
+    predictions = preferred[:max_picks]
+    if len(predictions) < 5:
+        selected_ids = {pick["race_id"] for pick in predictions}
+        predictions.extend(pick for pick in picks if pick["race_id"] not in selected_ids)
+        predictions = predictions[:5]
     for idx, pick in enumerate(predictions, 1):
         pick["rank"] = idx
         pick["confidence_label"] = confidence_label(pick)
@@ -1245,6 +1354,14 @@ def main() -> int:
         "daily_proverb": proverb,
         "stats": stats_dict,
         "previous": previous,
+        "selection": {
+            "method": "tekkyaku_market_consensus",
+            "model_weight": 0.65,
+            "market_weight": 0.35,
+            "odds_races": len(odds_by_race),
+            "minimum_picks": 5,
+            "maximum_picks": max_picks,
+        },
         "predictions": predictions,
         "note_markdown": note,
     }
