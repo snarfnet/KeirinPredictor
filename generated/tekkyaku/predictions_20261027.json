@@ -1,0 +1,1655 @@
+{
+  "generated_at": "2026-10-27T10:35:01+09:00",
+  "source": "https://snarfnet.github.io/keirin-data",
+  "date": "20261027",
+  "date_label": "2026年10月27日",
+  "note_title": "鉄脚博士の競輪予想｜2026年10月27日 和歌山5R 発走09:53 本日の一押し10本",
+  "daily_proverb": {
+    "title": "風が吹けば桶屋が儲かる",
+    "meaning": "一見無関係な出来事も、巡り巡って影響し合う。",
+    "keirin": "風向き、ライン、仕掛けの順番。競輪は小さな変化が最後の着順まで動かします。"
+  },
+  "stats": {
+    "completed": 1238,
+    "win_count": 746,
+    "win_rate": 60.3,
+    "trifecta_count": 74,
+    "trifecta_total": 1237,
+    "trifecta_rate": 6.0,
+    "trio_count": 207,
+    "trio_total": 1177,
+    "trio_rate": 17.6,
+    "exacta_count": 271,
+    "exacta_total": 1238,
+    "exacta_rate": 21.9,
+    "quinella_count": 364,
+    "quinella_total": 1238,
+    "quinella_rate": 29.4,
+    "wide_count": 618,
+    "wide_total": 1238,
+    "wide_rate": 49.9,
+    "frame_exacta_count": 2,
+    "frame_exacta_total": 53,
+    "frame_exacta_rate": 3.8,
+    "frame_quinella_count": 6,
+    "frame_quinella_total": 53,
+    "frame_quinella_rate": 11.3,
+    "investment": 623400,
+    "payout": 457000,
+    "profit": -166400,
+    "return_rate": 73.3
+  },
+  "previous": {
+    "date": "20261026",
+    "total": 10,
+    "tickets": 50,
+    "payout": 1700,
+    "wide_payout": 520,
+    "hits": [
+      {
+        "venue": "和歌山",
+        "race_no": 5,
+        "paybacks": [
+          {
+            "type": "2車単",
+            "payout": 130
+          },
+          {
+            "type": "2車複",
+            "payout": 110
+          },
+          {
+            "type": "ワイド",
+            "payout": 100
+          }
+        ],
+        "predicted": [
+          5,
+          7,
+          2
+        ],
+        "actual": [
+          5,
+          7,
+          3
+        ]
+      },
+      {
+        "venue": "名古屋",
+        "race_no": 10,
+        "paybacks": [
+          {
+            "type": "2車単",
+            "payout": 160
+          },
+          {
+            "type": "2車複",
+            "payout": 160
+          },
+          {
+            "type": "ワイド",
+            "payout": 130
+          }
+        ],
+        "predicted": [
+          5,
+          7,
+          4
+        ],
+        "actual": [
+          5,
+          7,
+          2
+        ]
+      },
+      {
+        "venue": "川崎",
+        "race_no": 6,
+        "paybacks": [
+          {
+            "type": "ワイド",
+            "payout": 160
+          }
+        ],
+        "predicted": [
+          1,
+          2,
+          4
+        ],
+        "actual": [
+          3,
+          2,
+          1
+        ]
+      },
+      {
+        "venue": "小松島",
+        "race_no": 11,
+        "paybacks": [
+          {
+            "type": "2車単",
+            "payout": 350
+          },
+          {
+            "type": "2車複",
+            "payout": 270
+          },
+          {
+            "type": "ワイド",
+            "payout": 130
+          }
+        ],
+        "predicted": [
+          1,
+          4,
+          2
+        ],
+        "actual": [
+          1,
+          4,
+          7
+        ]
+      }
+    ]
+  },
+  "selection": {
+    "method": "tekkyaku_market_consensus",
+    "model_weight": 0.65,
+    "market_weight": 0.35,
+    "odds_races": 60,
+    "minimum_picks": 5,
+    "maximum_picks": 10
+  },
+  "predictions": [
+    {
+      "race_id": "202610275505",
+      "date": "20261027",
+      "venue": "和歌山",
+      "venue_cd": "55",
+      "race_no": 5,
+      "start_time": "09:53",
+      "schedule_label": "デイ",
+      "prediction": [
+        7,
+        1,
+        4
+      ],
+      "trifecta": [
+        7,
+        1,
+        4
+      ],
+      "trio": [
+        1,
+        4,
+        7
+      ],
+      "exacta": [
+        7,
+        1
+      ],
+      "quinella": [
+        1,
+        7
+      ],
+      "wide": [
+        7,
+        1
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "中野楚樂",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 88.4,
+      "axis_gap": 22.6,
+      "opponent_gap": 0.6,
+      "chaos_score": 0.0,
+      "model_order": [
+        7,
+        4,
+        1,
+        2,
+        6
+      ],
+      "market_order": [
+        7,
+        2,
+        1,
+        3,
+        4
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 2,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "吾輩の赤鉛筆はここで止まった。中野楚樂から素直に入る。",
+      "story": "競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n中野楚樂は競走得点80.92、直近10走は1着8回・3着内10回、平均1.3着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃4回・捲4回・差2回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は中野楚樂123.0、岸川哲也100.4で差は22.6。相手筆頭は岸川哲也とした。\n和歌山は400m、みなし直線59.9m。過去集計では差が47.4%で最多、この傾向と脚質の噛み合わせまで見た。\n中野楚樂の脚質なら、流れが少し早くても我慢が利く。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\n市場オッズの中心は7番。博士の軸と一致、上位3車の重なりは2車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 3032,
+        "rates": {
+          "差": 47.4,
+          "捲": 28.0,
+          "逃": 23.9
+        },
+        "opened_year": 1949,
+        "straight_m": 59.9,
+        "max_cant": "32度15分07秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。中野楚樂は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 170.59,
+      "reasons": [
+        "市場オッズの中心は7番。博士の軸と一致、上位3車の重なりは2車。",
+        "吾輩の赤鉛筆はここで止まった。中野楚樂から素直に入る。",
+        "中野楚樂は競走得点80.92、直近10走は1着8回・3着内10回、平均1.3着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃4回・捲4回・差2回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は中野楚樂123.0、岸川哲也100.4で差は22.6。相手筆頭は岸川哲也とした。",
+        "博士の軸は中野楚樂"
+      ],
+      "top_entries": [
+        {
+          "umaban": 7,
+          "waku": 6,
+          "name": "中野楚樂",
+          "score": 123.0,
+          "win_probability": 88.4,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "岸川哲也",
+          "score": 100.4,
+          "win_probability": 3.2,
+          "style": "両",
+          "signals": [
+            "場相性あり",
+            "コメント前向き",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "内海雅夫",
+          "score": 99.8,
+          "win_probability": 2.9,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "小田桐義継",
+          "score": 98.1,
+          "win_probability": 2.3,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 6,
+          "waku": 6,
+          "name": "岡田大門",
+          "score": 93.5,
+          "win_probability": 1.2,
+          "style": "両",
+          "signals": []
+        }
+      ],
+      "rank": 1,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610274402",
+      "date": "20261027",
+      "venue": "大垣",
+      "venue_cd": "44",
+      "race_no": 2,
+      "start_time": "21:10",
+      "schedule_label": "ミッドナイト",
+      "prediction": [
+        1,
+        2,
+        3
+      ],
+      "trifecta": [
+        1,
+        2,
+        3
+      ],
+      "trio": [
+        1,
+        2,
+        3
+      ],
+      "exacta": [
+        1,
+        2
+      ],
+      "quinella": [
+        1,
+        2
+      ],
+      "wide": [
+        1,
+        2
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "梅川風子",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 86.0,
+      "axis_gap": 18.9,
+      "opponent_gap": 2.7,
+      "chaos_score": 0.0,
+      "model_order": [
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "market_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 3,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "出走表を三度見ても、最後は梅川風子に戻る。軸はここである。",
+      "story": "何度も紙片に書いたが、最後に残ったのはこの並びだった。\nミッドナイトは欲が顔を出しやすい。吾輩は眠気より指数を信じる。\n梅川風子は競走得点58.52、直近10走は1着9回・3着内9回、平均1.4着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃2回・捲7回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は梅川風子122.3、村田奈穂103.4で差は18.9。相手筆頭は村田奈穂とした。\n大垣は400m、みなし直線56m。過去集計では差が50.7%で最多、この傾向と脚質の噛み合わせまで見た。\n梅川風子は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 8167,
+        "rates": {
+          "差": 50.7,
+          "捲": 25.9,
+          "逃": 23.4
+        },
+        "opened_year": 1952,
+        "straight_m": 56.0,
+        "max_cant": "30度37分08秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。梅川風子は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 170.28,
+      "reasons": [
+        "市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。",
+        "出走表を三度見ても、最後は梅川風子に戻る。軸はここである。",
+        "梅川風子は競走得点58.52、直近10走は1着9回・3着内9回、平均1.4着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃2回・捲7回・差1回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は梅川風子122.3、村田奈穂103.4で差は18.9。相手筆頭は村田奈穂とした。",
+        "博士の軸は梅川風子"
+      ],
+      "top_entries": [
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "梅川風子",
+          "score": 122.3,
+          "win_probability": 86.0,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "村田奈穂",
+          "score": 103.4,
+          "win_probability": 5.3,
+          "style": "両",
+          "signals": [
+            "場相性あり",
+            "コメント前向き",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "又多風緑",
+          "score": 100.7,
+          "win_probability": 3.6,
+          "style": "両",
+          "signals": [
+            "場相性あり",
+            "コメント前向き"
+          ]
+        },
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "板根茜弥",
+          "score": 96.5,
+          "win_probability": 1.9,
+          "style": "追",
+          "signals": [
+            "コメント前向き"
+          ]
+        },
+        {
+          "umaban": 6,
+          "waku": 6,
+          "name": "清水美海",
+          "score": 93.2,
+          "win_probability": 1.2,
+          "style": "両",
+          "signals": [
+            "コメント前向き"
+          ]
+        }
+      ],
+      "rank": 2,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610274407",
+      "date": "20261027",
+      "venue": "大垣",
+      "venue_cd": "44",
+      "race_no": 7,
+      "start_time": "22:50",
+      "schedule_label": "ミッドナイト",
+      "prediction": [
+        1,
+        6,
+        2
+      ],
+      "trifecta": [
+        1,
+        6,
+        2
+      ],
+      "trio": [
+        1,
+        2,
+        6
+      ],
+      "exacta": [
+        1,
+        6
+      ],
+      "quinella": [
+        1,
+        6
+      ],
+      "wide": [
+        1,
+        6
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "吉田航",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 85.6,
+      "axis_gap": 20.5,
+      "opponent_gap": 1.0,
+      "chaos_score": 0.0,
+      "model_order": [
+        1,
+        6,
+        4,
+        2,
+        5
+      ],
+      "market_order": [
+        1,
+        2,
+        4,
+        3,
+        7
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 2,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "吉田航の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
+      "story": "大垣の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n吉田航は競走得点88.58、直近10走は1着3回・3着内8回、平均2.6着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃7回・捲3回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は吉田航121.5、田中雅史101.0で差は20.5。相手筆頭は田中雅史とした。\n大垣は400m、みなし直線56m。過去集計では差が50.7%で最多、この傾向と脚質の噛み合わせまで見た。\n吉田航の脚質なら、流れが少し早くても我慢が利く。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 8167,
+        "rates": {
+          "差": 50.7,
+          "捲": 25.9,
+          "逃": 23.4
+        },
+        "opened_year": 1952,
+        "straight_m": 56.0,
+        "max_cant": "30度37分08秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。吉田航は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 164.53,
+      "reasons": [
+        "市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。",
+        "吉田航の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
+        "吉田航は競走得点88.58、直近10走は1着3回・3着内8回、平均2.6着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃7回・捲3回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は吉田航121.5、田中雅史101.0で差は20.5。相手筆頭は田中雅史とした。",
+        "博士の軸は吉田航"
+      ],
+      "top_entries": [
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "吉田航",
+          "score": 121.5,
+          "win_probability": 85.6,
+          "style": "逃",
+          "signals": [
+            "コメント前向き",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 6,
+          "waku": 6,
+          "name": "田中雅史",
+          "score": 101.0,
+          "win_probability": 4.2,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "阿部兼士",
+          "score": 100.0,
+          "win_probability": 3.6,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "宇根秀俊",
+          "score": 97.4,
+          "win_probability": 2.5,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "田中俊充",
+          "score": 94.5,
+          "win_probability": 1.6,
+          "style": "追",
+          "signals": []
+        }
+      ],
+      "rank": 3,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610275507",
+      "date": "20261027",
+      "venue": "和歌山",
+      "venue_cd": "55",
+      "race_no": 7,
+      "start_time": "10:35",
+      "schedule_label": "デイ",
+      "prediction": [
+        4,
+        7,
+        2
+      ],
+      "trifecta": [
+        4,
+        7,
+        2
+      ],
+      "trio": [
+        2,
+        4,
+        7
+      ],
+      "exacta": [
+        4,
+        7
+      ],
+      "quinella": [
+        4,
+        7
+      ],
+      "wide": [
+        4,
+        7
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "久米詩",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 85.3,
+      "axis_gap": 19.7,
+      "opponent_gap": 1.7,
+      "chaos_score": 0.0,
+      "model_order": [
+        4,
+        2,
+        7,
+        5,
+        1
+      ],
+      "market_order": [
+        4,
+        7,
+        5,
+        2,
+        1
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 2,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "久米詩の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
+      "story": "妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n久米詩は競走得点56.46、直近10走は1着6回・3着内10回、平均1.4着、脚質は両型。ここを軸評価の土台にした。\n直近の決まり手記録は逃4回・捲5回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は久米詩121.9、田中まい102.2で差は19.7。相手筆頭は田中まいとした。\n和歌山は400m、みなし直線59.9m。過去集計では差が47.4%で最多、この傾向と脚質の噛み合わせまで見た。\n久米詩の脚質なら、流れが少し早くても我慢が利く。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\n市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 3032,
+        "rates": {
+          "差": 47.4,
+          "捲": 28.0,
+          "逃": 23.9
+        },
+        "opened_year": 1949,
+        "straight_m": 59.9,
+        "max_cant": "32度15分07秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。久米詩は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 163.6,
+      "reasons": [
+        "市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。",
+        "久米詩の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
+        "久米詩は競走得点56.46、直近10走は1着6回・3着内10回、平均1.4着、脚質は両型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃4回・捲5回・差1回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は久米詩121.9、田中まい102.2で差は19.7。相手筆頭は田中まいとした。",
+        "博士の軸は久米詩"
+      ],
+      "top_entries": [
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "久米詩",
+          "score": 121.9,
+          "win_probability": 85.3,
+          "style": "両",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 7,
+          "waku": 6,
+          "name": "田中まい",
+          "score": 102.2,
+          "win_probability": 4.7,
+          "style": "両",
+          "signals": [
+            "コメント前向き"
+          ]
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "中野咲",
+          "score": 100.6,
+          "win_probability": 3.7,
+          "style": "両",
+          "signals": [
+            "コメント前向き"
+          ]
+        },
+        {
+          "umaban": 5,
+          "waku": 5,
+          "name": "安東莉奈",
+          "score": 99.5,
+          "win_probability": 3.2,
+          "style": "追",
+          "signals": [
+            "コメント前向き"
+          ]
+        },
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "片岡美奈",
+          "score": 93.6,
+          "win_probability": 1.3,
+          "style": "両",
+          "signals": [
+            "コメント前向き"
+          ]
+        }
+      ],
+      "rank": 4,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610278303",
+      "date": "20261027",
+      "venue": "久留米",
+      "venue_cd": "83",
+      "race_no": 3,
+      "start_time": "21:20",
+      "schedule_label": "ミッドナイト",
+      "prediction": [
+        1,
+        2,
+        4
+      ],
+      "trifecta": [
+        1,
+        2,
+        4
+      ],
+      "trio": [
+        1,
+        2,
+        4
+      ],
+      "exacta": [
+        1,
+        2
+      ],
+      "quinella": [
+        1,
+        2
+      ],
+      "wide": [
+        1,
+        2
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "横溝貫太",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 80.5,
+      "axis_gap": 13.3,
+      "opponent_gap": 10.8,
+      "chaos_score": 0.0,
+      "model_order": [
+        1,
+        2,
+        4,
+        5,
+        6
+      ],
+      "market_order": [
+        1,
+        2,
+        4,
+        6,
+        3
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 3,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "横溝貫太の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
+      "story": "妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n横溝貫太は競走得点79.40、直近10走は1着9回・3着内10回、平均1.2着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は捲10回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は横溝貫太121.0、森川康輔107.7で差は13.3。相手筆頭は森川康輔とした。\n久留米は400m、みなし直線50.7m。過去集計では差が46.1%で最多、この傾向と脚質の噛み合わせまで見た。\n横溝貫太の脚質なら、流れが少し早くても我慢が利く。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 7365,
+        "rates": {
+          "差": 46.1,
+          "捲": 28.1,
+          "逃": 25.5
+        },
+        "opened_year": 1949,
+        "straight_m": 50.7,
+        "max_cant": "31度28分37秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。横溝貫太は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 163.41,
+      "reasons": [
+        "市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。",
+        "横溝貫太の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。",
+        "横溝貫太は競走得点79.40、直近10走は1着9回・3着内10回、平均1.2着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は捲10回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は横溝貫太121.0、森川康輔107.7で差は13.3。相手筆頭は森川康輔とした。",
+        "博士の軸は横溝貫太"
+      ],
+      "top_entries": [
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "横溝貫太",
+          "score": 121.0,
+          "win_probability": 80.5,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "森川康輔",
+          "score": 107.7,
+          "win_probability": 11.4,
+          "style": "両",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "楠本政明",
+          "score": 96.9,
+          "win_probability": 2.3,
+          "style": "逃",
+          "signals": [
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 6,
+          "waku": 6,
+          "name": "白井一機",
+          "score": 95.2,
+          "win_probability": 1.8,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "荒木真慈",
+          "score": 94.3,
+          "win_probability": 1.6,
+          "style": "追",
+          "signals": []
+        }
+      ],
+      "rank": 5,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610278405",
+      "date": "20261027",
+      "venue": "武雄",
+      "venue_cd": "84",
+      "race_no": 5,
+      "start_time": "17:38",
+      "schedule_label": "ナイター",
+      "prediction": [
+        1,
+        3,
+        2
+      ],
+      "trifecta": [
+        1,
+        3,
+        2
+      ],
+      "trio": [
+        1,
+        2,
+        3
+      ],
+      "exacta": [
+        1,
+        3
+      ],
+      "quinella": [
+        1,
+        3
+      ],
+      "wide": [
+        1,
+        3
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "西原裕太郎",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 84.0,
+      "axis_gap": 16.9,
+      "opponent_gap": 5.2,
+      "chaos_score": 0.0,
+      "model_order": [
+        1,
+        3,
+        2,
+        7,
+        5
+      ],
+      "market_order": [
+        1,
+        3,
+        7,
+        2,
+        4
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 2,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "吾輩の赤鉛筆はここで止まった。西原裕太郎から素直に入る。",
+      "story": "競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nナイターの空気に浮かされず、番組の骨を見たい。\n西原裕太郎は競走得点79.26、直近10走は1着3回・3着内9回、平均2.0着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃7回・捲2回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は西原裕太郎121.7、中込健太104.7で差は16.9。相手筆頭は中込健太とした。\n武雄は400m、みなし直線64.4m。過去集計では差が55.8%で最多、この傾向と脚質の噛み合わせまで見た。\n西原裕太郎は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 5733,
+        "rates": {
+          "差": 55.8,
+          "捲": 28.1,
+          "逃": 16.1
+        },
+        "opened_year": 1950,
+        "straight_m": 64.4,
+        "max_cant": "32度00分19秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。西原裕太郎は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 161.34,
+      "reasons": [
+        "市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。",
+        "吾輩の赤鉛筆はここで止まった。西原裕太郎から素直に入る。",
+        "西原裕太郎は競走得点79.26、直近10走は1着3回・3着内9回、平均2.0着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃7回・捲2回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は西原裕太郎121.7、中込健太104.7で差は16.9。相手筆頭は中込健太とした。",
+        "博士の軸は西原裕太郎"
+      ],
+      "top_entries": [
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "西原裕太郎",
+          "score": 121.7,
+          "win_probability": 84.0,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "中込健太",
+          "score": 104.7,
+          "win_probability": 7.0,
+          "style": "逃",
+          "signals": [
+            "コメント前向き",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "阿部利光",
+          "score": 99.6,
+          "win_probability": 3.3,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 7,
+          "waku": 6,
+          "name": "爲田学",
+          "score": 97.2,
+          "win_probability": 2.3,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 5,
+          "waku": 5,
+          "name": "齋藤和也",
+          "score": 94.4,
+          "win_probability": 1.5,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        }
+      ],
+      "rank": 6,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610278404",
+      "date": "20261027",
+      "venue": "武雄",
+      "venue_cd": "84",
+      "race_no": 4,
+      "start_time": "17:12",
+      "schedule_label": "ナイター",
+      "prediction": [
+        4,
+        3,
+        5
+      ],
+      "trifecta": [
+        4,
+        3,
+        5
+      ],
+      "trio": [
+        3,
+        4,
+        5
+      ],
+      "exacta": [
+        4,
+        3
+      ],
+      "quinella": [
+        3,
+        4
+      ],
+      "wide": [
+        4,
+        3
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "田上晃也",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 77.7,
+      "axis_gap": 13.8,
+      "opponent_gap": 4.9,
+      "chaos_score": 1.7,
+      "model_order": [
+        4,
+        3,
+        5,
+        1,
+        6
+      ],
+      "market_order": [
+        4,
+        3,
+        5,
+        1,
+        2
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 3,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "出走表を三度見ても、最後は田上晃也に戻る。軸はここである。",
+      "story": "世間は忙しいが、吾輩の一日は出走表で始まる。この一戦は足を止めて見たい。\n灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。\n田上晃也は競走得点79.83、直近10走は1着5回・3着内8回、平均2.2着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃6回・捲3回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は田上晃也119.9、佐藤凱王106.1で差は13.8。相手筆頭は佐藤凱王とした。\n武雄は400m、みなし直線64.4m。過去集計では差が55.8%で最多、この傾向と脚質の噛み合わせまで見た。\n田上晃也は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは3車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 5733,
+        "rates": {
+          "差": 55.8,
+          "捲": 28.1,
+          "逃": 16.1
+        },
+        "opened_year": 1950,
+        "straight_m": 64.4,
+        "max_cant": "32度00分19秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。田上晃也は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 154.1,
+      "reasons": [
+        "市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは3車。",
+        "出走表を三度見ても、最後は田上晃也に戻る。軸はここである。",
+        "田上晃也は競走得点79.83、直近10走は1着5回・3着内8回、平均2.2着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃6回・捲3回・差1回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は田上晃也119.9、佐藤凱王106.1で差は13.8。相手筆頭は佐藤凱王とした。",
+        "博士の軸は田上晃也"
+      ],
+      "top_entries": [
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "田上晃也",
+          "score": 119.9,
+          "win_probability": 77.7,
+          "style": "逃",
+          "signals": [
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "佐藤凱王",
+          "score": 106.1,
+          "win_probability": 10.2,
+          "style": "逃",
+          "signals": [
+            "コメント前向き"
+          ]
+        },
+        {
+          "umaban": 5,
+          "waku": 5,
+          "name": "塩川真一郎",
+          "score": 101.3,
+          "win_probability": 5.0,
+          "style": "追",
+          "signals": [
+            "場相性あり",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "富澤洋祐",
+          "score": 98.9,
+          "win_probability": 3.5,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 6,
+          "waku": 6,
+          "name": "関戸努",
+          "score": 92.9,
+          "win_probability": 1.5,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        }
+      ],
+      "rank": 7,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610278304",
+      "date": "20261027",
+      "venue": "久留米",
+      "venue_cd": "83",
+      "race_no": 4,
+      "start_time": "21:40",
+      "schedule_label": "ミッドナイト",
+      "prediction": [
+        1,
+        2,
+        6
+      ],
+      "trifecta": [
+        1,
+        2,
+        6
+      ],
+      "trio": [
+        1,
+        2,
+        6
+      ],
+      "exacta": [
+        1,
+        2
+      ],
+      "quinella": [
+        1,
+        2
+      ],
+      "wide": [
+        1,
+        2
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "高佐龍太郎",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 78.4,
+      "axis_gap": 12.6,
+      "opponent_gap": 9.9,
+      "chaos_score": 0.0,
+      "model_order": [
+        1,
+        2,
+        6,
+        3,
+        4
+      ],
+      "market_order": [
+        1,
+        2,
+        4,
+        3,
+        5
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 2,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "出走表を三度見ても、最後は高佐龍太郎に戻る。軸はここである。",
+      "story": "何度も紙片に書いたが、最後に残ったのはこの並びだった。\nミッドナイトは欲が顔を出しやすい。吾輩は眠気より指数を信じる。\n高佐龍太郎は競走得点79.43、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃1回・捲6回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は高佐龍太郎120.5、照屋将貴107.8で差は12.6。相手筆頭は照屋将貴とした。\n久留米は400m、みなし直線50.7m。過去集計では差が46.1%で最多、この傾向と脚質の噛み合わせまで見た。\n高佐龍太郎は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 7365,
+        "rates": {
+          "差": 46.1,
+          "捲": 28.1,
+          "逃": 25.5
+        },
+        "opened_year": 1949,
+        "straight_m": 50.7,
+        "max_cant": "31度28分37秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。高佐龍太郎は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 152.92,
+      "reasons": [
+        "市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。",
+        "出走表を三度見ても、最後は高佐龍太郎に戻る。軸はここである。",
+        "高佐龍太郎は競走得点79.43、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃1回・捲6回・差1回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は高佐龍太郎120.5、照屋将貴107.8で差は12.6。相手筆頭は照屋将貴とした。",
+        "博士の軸は高佐龍太郎"
+      ],
+      "top_entries": [
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "高佐龍太郎",
+          "score": 120.5,
+          "win_probability": 78.4,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "照屋将貴",
+          "score": 107.8,
+          "win_probability": 12.4,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 6,
+          "waku": 6,
+          "name": "竹田慎一",
+          "score": 98.0,
+          "win_probability": 2.9,
+          "style": "両",
+          "signals": [
+            "近況上位"
+          ]
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "古城英之",
+          "score": 95.6,
+          "win_probability": 2.1,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "丸林一孝",
+          "score": 94.7,
+          "win_probability": 1.8,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        }
+      ],
+      "rank": 8,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610274401",
+      "date": "20261027",
+      "venue": "大垣",
+      "venue_cd": "44",
+      "race_no": 1,
+      "start_time": "20:50",
+      "schedule_label": "ミッドナイト",
+      "prediction": [
+        1,
+        2,
+        3
+      ],
+      "trifecta": [
+        1,
+        2,
+        3
+      ],
+      "trio": [
+        1,
+        2,
+        3
+      ],
+      "exacta": [
+        1,
+        2
+      ],
+      "quinella": [
+        1,
+        2
+      ],
+      "wide": [
+        1,
+        2
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "北岡マリア",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 77.9,
+      "axis_gap": 15.2,
+      "opponent_gap": 1.4,
+      "chaos_score": 3.8,
+      "model_order": [
+        1,
+        3,
+        2,
+        4,
+        5
+      ],
+      "market_order": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 3,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "人気の有無より、脚の筋が通っている。吾輩は北岡マリアを先に置く。",
+      "story": "世間は忙しいが、吾輩の一日は出走表で始まる。この一戦は足を止めて見たい。\nミッドナイトは欲が顔を出しやすい。吾輩は眠気より指数を信じる。\n北岡マリアは競走得点56.33、直近10走は1着3回・3着内9回、平均1.9着、脚質は両型。ここを軸評価の土台にした。\n直近の決まり手記録は逃1回・捲7回・差2回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は北岡マリア120.0、元砂七夕美104.8で差は15.2。相手筆頭は元砂七夕美とした。\n大垣は400m、みなし直線56m。過去集計では差が50.7%で最多、この傾向と脚質の噛み合わせまで見た。\n脚の使い方を見ると、北岡マリアはこの並びで窮屈になりにくい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。",
+      "bank_profile": {
+        "bank": 400,
+        "races": 8167,
+        "rates": {
+          "差": 50.7,
+          "捲": 25.9,
+          "逃": 23.4
+        },
+        "opened_year": 1952,
+        "straight_m": 56.0,
+        "max_cant": "30度37分08秒",
+        "character": "標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。",
+        "sources": [],
+        "insight": "集計上は差が最多。北岡マリアは捲タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 152.18,
+      "reasons": [
+        "市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。",
+        "人気の有無より、脚の筋が通っている。吾輩は北岡マリアを先に置く。",
+        "北岡マリアは競走得点56.33、直近10走は1着3回・3着内9回、平均1.9着、脚質は両型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃1回・捲7回・差2回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は北岡マリア120.0、元砂七夕美104.8で差は15.2。相手筆頭は元砂七夕美とした。",
+        "博士の軸は北岡マリア"
+      ],
+      "top_entries": [
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "北岡マリア",
+          "score": 120.0,
+          "win_probability": 77.9,
+          "style": "両",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "元砂七夕美",
+          "score": 104.8,
+          "win_probability": 8.3,
+          "style": "両",
+          "signals": [
+            "場相性あり",
+            "コメント前向き",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "永禮美瑠",
+          "score": 103.4,
+          "win_probability": 6.8,
+          "style": "両",
+          "signals": [
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "五味田奈穂",
+          "score": 99.3,
+          "win_probability": 3.7,
+          "style": "逃",
+          "signals": [
+            "コメント前向き"
+          ]
+        },
+        {
+          "umaban": 5,
+          "waku": 5,
+          "name": "古山稀絵",
+          "score": 92.5,
+          "win_probability": 1.4,
+          "style": "両",
+          "signals": [
+            "コメント前向き"
+          ]
+        }
+      ],
+      "rank": 9,
+      "confidence_label": "合議本線"
+    },
+    {
+      "race_id": "202610273608",
+      "date": "20261027",
+      "venue": "小田原",
+      "venue_cd": "36",
+      "race_no": 8,
+      "start_time": "14:07",
+      "schedule_label": "デイ",
+      "prediction": [
+        4,
+        7,
+        1
+      ],
+      "trifecta": [
+        4,
+        7,
+        1
+      ],
+      "trio": [
+        1,
+        4,
+        7
+      ],
+      "exacta": [
+        4,
+        7
+      ],
+      "quinella": [
+        4,
+        7
+      ],
+      "wide": [
+        4,
+        7
+      ],
+      "frame_exacta": [],
+      "frame_quinella": [],
+      "axis_name": "日高裕太",
+      "axis_win_estimate": 60.0,
+      "raw_axis_win_probability": 78.5,
+      "axis_gap": 15.3,
+      "opponent_gap": 3.2,
+      "chaos_score": 0.0,
+      "model_order": [
+        4,
+        7,
+        1,
+        5,
+        2
+      ],
+      "market_order": [
+        4,
+        7,
+        3,
+        1,
+        2
+      ],
+      "market_axis_agreement": true,
+      "market_top3_agreement": 2,
+      "market_data_available": true,
+      "grade": "S",
+      "action_label": "買い",
+      "action_reason": "疑い深い吾輩でも、この並びには逆らいにくい。日高裕太中心。",
+      "story": "数字は無口だが、時々こちらをじっと見る。今日のこの番組がそれである。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n日高裕太は競走得点102.85、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃7回・捲2回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は日高裕太119.6、池田良104.3で差は15.3。相手筆頭は池田良とした。\n小田原は333m、みなし直線36.1m。過去集計では差が43.5%で最多、この傾向と脚質の噛み合わせまで見た。\n日高裕太は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\n市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。",
+      "bank_profile": {
+        "bank": 333,
+        "races": 6092,
+        "rates": {
+          "差": 43.5,
+          "捲": 33.7,
+          "逃": 22.8
+        },
+        "opened_year": 1949,
+        "straight_m": 36.1,
+        "max_cant": "35度34分12秒",
+        "character": "一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。",
+        "sources": [],
+        "insight": "集計上は差が最多。日高裕太は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。"
+      },
+      "quality": 150.32,
+      "reasons": [
+        "市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。",
+        "疑い深い吾輩でも、この並びには逆らいにくい。日高裕太中心。",
+        "日高裕太は競走得点102.85、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。",
+        "直近の決まり手記録は逃7回・捲2回・差1回。どの形で勝ち切っているかも指数へ入れた。",
+        "鉄脚指数は日高裕太119.6、池田良104.3で差は15.3。相手筆頭は池田良とした。",
+        "博士の軸は日高裕太"
+      ],
+      "top_entries": [
+        {
+          "umaban": 4,
+          "waku": 4,
+          "name": "日高裕太",
+          "score": 119.6,
+          "win_probability": 78.5,
+          "style": "逃",
+          "signals": [
+            "近況上位",
+            "コメント前向き",
+            "勝率上位",
+            "3着内安定"
+          ]
+        },
+        {
+          "umaban": 7,
+          "waku": 6,
+          "name": "池田良",
+          "score": 104.3,
+          "win_probability": 8.5,
+          "style": "追",
+          "signals": [
+            "場相性あり"
+          ]
+        },
+        {
+          "umaban": 1,
+          "waku": 1,
+          "name": "久木原洋",
+          "score": 101.1,
+          "win_probability": 5.4,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 3,
+          "waku": 3,
+          "name": "岡田泰地",
+          "score": 95.8,
+          "win_probability": 2.5,
+          "style": "追",
+          "signals": []
+        },
+        {
+          "umaban": 2,
+          "waku": 2,
+          "name": "中川勝貴",
+          "score": 95.1,
+          "win_probability": 2.2,
+          "style": "追",
+          "signals": []
+        }
+      ],
+      "rank": 10,
+      "confidence_label": "合議本線"
+    }
+  ],
+  "note_markdown": "鉄脚博士の競輪予想｜2026年10月27日 和歌山5R 発走09:53 本日の一押し10本\n\n吾輩は鉄脚博士である。\n現代にまぎれて競輪ばかり眺めている、少し偏屈な男です。\n今日は全レースを比較し、博士の指数と市場オッズを重ねて10本に絞りました。\n市場オッズは10/10レースで反映済みです。\n買い目だけではなく、吾輩がどこで赤鉛筆を止めたのかも書きます。\n\n【本日のことわざ】\n風が吹けば桶屋が儲かる\n意味: 一見無関係な出来事も、巡り巡って影響し合う。\n競輪で言えば: 風向き、ライン、仕掛けの順番。競輪は小さな変化が最後の着順まで動かします。\n\n博士流今日の占い: 小吉。相手を広げすぎず、二着候補を一枚ずつ吟味する日。 ラッキー車番は7番、注目会場は和歌山。\n\n先に数字を出します。盛りません。\n\n【現在の的中率】\n\n集計対象: 鉄脚博士の予想から結果が出た1238レース\n1着的中: 746/1238（60.3%）\n3連単: 74/1237（6.0%）\n3連複: 207/1177（17.6%）\n2車単: 271/1238（21.9%）\n2車複: 364/1238（29.4%）\nワイド: 618/1238（49.9%）\n2枠単: 2/53（3.8%）\n2枠複: 6/53（11.3%）\n\n【前日的中実績】\n\n2026年10月26日の的中: 4/10\n※払戻金は100円購入時の金額です。\n・和歌山 5R　2車単的中 130円 / 2車複的中 110円 / ワイド的中 100円　☆予想: 5-7-2　→ 結果: 5-7-3\n・名古屋 10R　2車単的中 160円 / 2車複的中 160円 / ワイド的中 130円　☆予想: 5-7-4　→ 結果: 5-7-2\n・川崎 6R　ワイド的中 160円　☆予想: 1-2-4　→ 結果: 3-2-1\n・小松島 11R　2車単的中 350円 / 2車複的中 270円 / ワイド的中 130円　☆予想: 1-4-2　→ 結果: 1-4-7\n\nさて、今日も素直に見ます。\n脚力、近況、バンク、ラインに、市場オッズの集合知を加えて順位を決めます。\n無料部分では最上位1本だけ出します。残りの合議候補、買い目、理由は有料部分です。\n\n\n1. 和歌山 5R 09:53発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 22.6 / 相手差 0.6\n予想: 7-1-4\n3連単候補: 7-1-4\n3連複候補: 1-4-7\n2車単候補: 7-1\n2車複候補: 1-7\nワイド候補: 7-1\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n中野楚樂は競走得点80.92、直近10走は1着8回・3着内10回、平均1.3着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃4回・捲4回・差2回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は中野楚樂123.0、岸川哲也100.4で差は22.6。相手筆頭は岸川哲也とした。\n和歌山は400m、みなし直線59.9m。過去集計では差が47.4%で最多、この傾向と脚質の噛み合わせまで見た。\n中野楚樂の脚質なら、流れが少し早くても我慢が利く。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\n市場オッズの中心は7番。博士の軸と一致、上位3車の重なりは2車。\n\nバンクメモ:\n🚴和歌山競輪場の特徴\n・400mバンク。\n・みなし直線は59.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去3,032レースの決まり手: 差し47.4% / 捲り28.0% / 逃げ23.9%\n・博士の読み: 集計上は差が最多。中野楚樂は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は7番。博士の軸と一致、上位3車の重なりは2車。\n・吾輩の赤鉛筆はここで止まった。中野楚樂から素直に入る。\n・中野楚樂は競走得点80.92、直近10走は1着8回・3着内10回、平均1.3着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃4回・捲4回・差2回。どの形で勝ち切っているかも指数へ入れた。\n\n## ここから先は\n有料部分では、本日の厳選10本の買い目候補と見解を出します。\n\n対象レース:\n・1. 和歌山 5R\n・2. 大垣 2R\n・3. 大垣 7R\n・4. 和歌山 7R\n・5. 久留米 3R\n・6. 武雄 5R\n・7. 武雄 4R\n・8. 久留米 4R\n・9. 大垣 1R\n・10. 小田原 8R\n\nここから先は有料部分です。価格は200円です。\n\n【本日の厳選一覧】\n\n1. 和歌山 5R 09:53発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 22.6 / 相手差 0.6\n予想: 7-1-4\n3連単候補: 7-1-4\n3連複候補: 1-4-7\n2車単候補: 7-1\n2車複候補: 1-7\nワイド候補: 7-1\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n中野楚樂は競走得点80.92、直近10走は1着8回・3着内10回、平均1.3着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃4回・捲4回・差2回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は中野楚樂123.0、岸川哲也100.4で差は22.6。相手筆頭は岸川哲也とした。\n和歌山は400m、みなし直線59.9m。過去集計では差が47.4%で最多、この傾向と脚質の噛み合わせまで見た。\n中野楚樂の脚質なら、流れが少し早くても我慢が利く。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\n市場オッズの中心は7番。博士の軸と一致、上位3車の重なりは2車。\n\nバンクメモ:\n🚴和歌山競輪場の特徴\n・400mバンク。\n・みなし直線は59.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去3,032レースの決まり手: 差し47.4% / 捲り28.0% / 逃げ23.9%\n・博士の読み: 集計上は差が最多。中野楚樂は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は7番。博士の軸と一致、上位3車の重なりは2車。\n・吾輩の赤鉛筆はここで止まった。中野楚樂から素直に入る。\n・中野楚樂は競走得点80.92、直近10走は1着8回・3着内10回、平均1.3着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃4回・捲4回・差2回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は中野楚樂123.0、岸川哲也100.4で差は22.6。相手筆頭は岸川哲也とした。\n・博士の軸は中野楚樂\n\n2. 大垣 2R 21:10発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 18.9 / 相手差 2.7\n予想: 1-2-3\n3連単候補: 1-2-3\n3連複候補: 1-2-3\n2車単候補: 1-2\n2車複候補: 1-2\nワイド候補: 1-2\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n何度も紙片に書いたが、最後に残ったのはこの並びだった。\nミッドナイトは欲が顔を出しやすい。吾輩は眠気より指数を信じる。\n梅川風子は競走得点58.52、直近10走は1着9回・3着内9回、平均1.4着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃2回・捲7回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は梅川風子122.3、村田奈穂103.4で差は18.9。相手筆頭は村田奈穂とした。\n大垣は400m、みなし直線56m。過去集計では差が50.7%で最多、この傾向と脚質の噛み合わせまで見た。\n梅川風子は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。\n\nバンクメモ:\n🚴大垣競輪場の特徴\n・400mバンク。\n・みなし直線は56m。\n・最大カントは30度37分08秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去8,167レースの決まり手: 差し50.7% / 捲り25.9% / 逃げ23.4%\n・博士の読み: 集計上は差が最多。梅川風子は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。\n・出走表を三度見ても、最後は梅川風子に戻る。軸はここである。\n・梅川風子は競走得点58.52、直近10走は1着9回・3着内9回、平均1.4着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃2回・捲7回・差1回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は梅川風子122.3、村田奈穂103.4で差は18.9。相手筆頭は村田奈穂とした。\n・博士の軸は梅川風子\n\n3. 大垣 7R 22:50発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 20.5 / 相手差 1.0\n予想: 1-6-2\n3連単候補: 1-6-2\n3連複候補: 1-2-6\n2車単候補: 1-6\n2車複候補: 1-6\nワイド候補: 1-6\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n大垣の番組表を開いた瞬間、少し眉が動いた。これは捨て置けない。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n吉田航は競走得点88.58、直近10走は1着3回・3着内8回、平均2.6着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃7回・捲3回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は吉田航121.5、田中雅史101.0で差は20.5。相手筆頭は田中雅史とした。\n大垣は400m、みなし直線56m。過去集計では差が50.7%で最多、この傾向と脚質の噛み合わせまで見た。\n吉田航の脚質なら、流れが少し早くても我慢が利く。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。\n\nバンクメモ:\n🚴大垣競輪場の特徴\n・400mバンク。\n・みなし直線は56m。\n・最大カントは30度37分08秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去8,167レースの決まり手: 差し50.7% / 捲り25.9% / 逃げ23.4%\n・博士の読み: 集計上は差が最多。吉田航は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。\n・吉田航の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n・吉田航は競走得点88.58、直近10走は1着3回・3着内8回、平均2.6着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃7回・捲3回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は吉田航121.5、田中雅史101.0で差は20.5。相手筆頭は田中雅史とした。\n・博士の軸は吉田航\n\n4. 和歌山 7R 10:35発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 19.7 / 相手差 1.7\n予想: 4-7-2\n3連単候補: 4-7-2\n3連複候補: 2-4-7\n2車単候補: 4-7\n2車複候補: 4-7\nワイド候補: 4-7\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\n早めの時間帯は変に欲を出さず、形が見えるところから入る。\n久米詩は競走得点56.46、直近10走は1着6回・3着内10回、平均1.4着、脚質は両型。ここを軸評価の土台にした。\n直近の決まり手記録は逃4回・捲5回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は久米詩121.9、田中まい102.2で差は19.7。相手筆頭は田中まいとした。\n和歌山は400m、みなし直線59.9m。過去集計では差が47.4%で最多、この傾向と脚質の噛み合わせまで見た。\n久米詩の脚質なら、流れが少し早くても我慢が利く。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\n市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。\n\nバンクメモ:\n🚴和歌山競輪場の特徴\n・400mバンク。\n・みなし直線は59.9m。\n・最大カントは32度15分07秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去3,032レースの決まり手: 差し47.4% / 捲り28.0% / 逃げ23.9%\n・博士の読み: 集計上は差が最多。久米詩は捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。\n・久米詩の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n・久米詩は競走得点56.46、直近10走は1着6回・3着内10回、平均1.4着、脚質は両型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃4回・捲5回・差1回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は久米詩121.9、田中まい102.2で差は19.7。相手筆頭は田中まいとした。\n・博士の軸は久米詩\n\n5. 久留米 3R 21:20発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 13.3 / 相手差 10.8\n予想: 1-2-4\n3連単候補: 1-2-4\n3連複候補: 1-2-4\n2車単候補: 1-2\n2車複候補: 1-2\nワイド候補: 1-2\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n妙に整いすぎたレースより、少し癖のある番組の方が本音を出す。\n夜の番組は気配が軽い選手を買いたくなるが、ここは数字の芯を優先する。\n横溝貫太は競走得点79.40、直近10走は1着9回・3着内10回、平均1.2着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は捲10回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は横溝貫太121.0、森川康輔107.7で差は13.3。相手筆頭は森川康輔とした。\n久留米は400m、みなし直線50.7m。過去集計では差が46.1%で最多、この傾向と脚質の噛み合わせまで見た。\n横溝貫太の脚質なら、流れが少し早くても我慢が利く。\n穴の影は濃くない。吾輩はここで無理に物語を作らない。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。\n\nバンクメモ:\n🚴久留米競輪場の特徴\n・400mバンク。\n・みなし直線は50.7m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,365レースの決まり手: 差し46.1% / 捲り28.1% / 逃げ25.5%\n・博士の読み: 集計上は差が最多。横溝貫太は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。\n・横溝貫太の数字だけが、紙の上で妙に静かに光っている。ここは逆らわない。\n・横溝貫太は競走得点79.40、直近10走は1着9回・3着内10回、平均1.2着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は捲10回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は横溝貫太121.0、森川康輔107.7で差は13.3。相手筆頭は森川康輔とした。\n・博士の軸は横溝貫太\n\n6. 武雄 5R 17:38発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 16.9 / 相手差 5.2\n予想: 1-3-2\n3連単候補: 1-3-2\n3連複候補: 1-2-3\n2車単候補: 1-3\n2車複候補: 1-3\nワイド候補: 1-3\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n競輪ばかり見ていると、こういう細かい差が気になって仕方ない。\nナイターの空気に浮かされず、番組の骨を見たい。\n西原裕太郎は競走得点79.26、直近10走は1着3回・3着内9回、平均2.0着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃7回・捲2回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は西原裕太郎121.7、中込健太104.7で差は16.9。相手筆頭は中込健太とした。\n武雄は400m、みなし直線64.4m。過去集計では差が55.8%で最多、この傾向と脚質の噛み合わせまで見た。\n西原裕太郎は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。\n\nバンクメモ:\n🚴武雄競輪場の特徴\n・400mバンク。\n・みなし直線は64.4m。\n・最大カントは32度00分19秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去5,733レースの決まり手: 差し55.8% / 捲り28.1% / 逃げ16.1%\n・博士の読み: 集計上は差が最多。西原裕太郎は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。\n・吾輩の赤鉛筆はここで止まった。西原裕太郎から素直に入る。\n・西原裕太郎は競走得点79.26、直近10走は1着3回・3着内9回、平均2.0着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃7回・捲2回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は西原裕太郎121.7、中込健太104.7で差は16.9。相手筆頭は中込健太とした。\n・博士の軸は西原裕太郎\n\n7. 武雄 4R 17:12発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 13.8 / 相手差 4.9\n予想: 4-3-5\n3連単候補: 4-3-5\n3連複候補: 3-4-5\n2車単候補: 4-3\n2車複候補: 3-4\nワイド候補: 4-3\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n世間は忙しいが、吾輩の一日は出走表で始まる。この一戦は足を止めて見たい。\n灯りの下では脚色がよく見える。だが吾輩は、最後に残る形を見る。\n田上晃也は競走得点79.83、直近10走は1着5回・3着内8回、平均2.2着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃6回・捲3回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は田上晃也119.9、佐藤凱王106.1で差は13.8。相手筆頭は佐藤凱王とした。\n武雄は400m、みなし直線64.4m。過去集計では差が55.8%で最多、この傾向と脚質の噛み合わせまで見た。\n田上晃也は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは3車。\n\nバンクメモ:\n🚴武雄競輪場の特徴\n・400mバンク。\n・みなし直線は64.4m。\n・最大カントは32度00分19秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去5,733レースの決まり手: 差し55.8% / 捲り28.1% / 逃げ16.1%\n・博士の読み: 集計上は差が最多。田上晃也は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは3車。\n・出走表を三度見ても、最後は田上晃也に戻る。軸はここである。\n・田上晃也は競走得点79.83、直近10走は1着5回・3着内8回、平均2.2着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃6回・捲3回・差1回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は田上晃也119.9、佐藤凱王106.1で差は13.8。相手筆頭は佐藤凱王とした。\n・博士の軸は田上晃也\n\n8. 久留米 4R 21:40発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 12.6 / 相手差 9.9\n予想: 1-2-6\n3連単候補: 1-2-6\n3連複候補: 1-2-6\n2車単候補: 1-2\n2車複候補: 1-2\nワイド候補: 1-2\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n何度も紙片に書いたが、最後に残ったのはこの並びだった。\nミッドナイトは欲が顔を出しやすい。吾輩は眠気より指数を信じる。\n高佐龍太郎は競走得点79.43、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃1回・捲6回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は高佐龍太郎120.5、照屋将貴107.8で差は12.6。相手筆頭は照屋将貴とした。\n久留米は400m、みなし直線50.7m。過去集計では差が46.1%で最多、この傾向と脚質の噛み合わせまで見た。\n高佐龍太郎は自分の仕事を知っている。こういう選手は予想の土台にしやすい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。\n\nバンクメモ:\n🚴久留米競輪場の特徴\n・400mバンク。\n・みなし直線は50.7m。\n・最大カントは31度28分37秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去7,365レースの決まり手: 差し46.1% / 捲り28.1% / 逃げ25.5%\n・博士の読み: 集計上は差が最多。高佐龍太郎は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは2車。\n・出走表を三度見ても、最後は高佐龍太郎に戻る。軸はここである。\n・高佐龍太郎は競走得点79.43、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃1回・捲6回・差1回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は高佐龍太郎120.5、照屋将貴107.8で差は12.6。相手筆頭は照屋将貴とした。\n・博士の軸は高佐龍太郎\n\n9. 大垣 1R 20:50発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 15.2 / 相手差 1.4\n予想: 1-2-3\n3連単候補: 1-2-3\n3連複候補: 1-2-3\n2車単候補: 1-2\n2車複候補: 1-2\nワイド候補: 1-2\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n世間は忙しいが、吾輩の一日は出走表で始まる。この一戦は足を止めて見たい。\nミッドナイトは欲が顔を出しやすい。吾輩は眠気より指数を信じる。\n北岡マリアは競走得点56.33、直近10走は1着3回・3着内9回、平均1.9着、脚質は両型。ここを軸評価の土台にした。\n直近の決まり手記録は逃1回・捲7回・差2回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は北岡マリア120.0、元砂七夕美104.8で差は15.2。相手筆頭は元砂七夕美とした。\n大垣は400m、みなし直線56m。過去集計では差が50.7%で最多、この傾向と脚質の噛み合わせまで見た。\n脚の使い方を見ると、北岡マリアはこの並びで窮屈になりにくい。\n荒れ気配は強くない。こういう日は素直さがいちばん怖い武器になる。\n市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。\n\nバンクメモ:\n🚴大垣競輪場の特徴\n・400mバンク。\n・みなし直線は56m。\n・最大カントは30度37分08秒。\n・標準的な400m走路。脚質だけでなく、ラインと仕掛けどころを合わせて見たい。\n・過去8,167レースの決まり手: 差し50.7% / 捲り25.9% / 逃げ23.4%\n・博士の読み: 集計上は差が最多。北岡マリアは捲タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は1番。博士の軸と一致、上位3車の重なりは3車。\n・人気の有無より、脚の筋が通っている。吾輩は北岡マリアを先に置く。\n・北岡マリアは競走得点56.33、直近10走は1着3回・3着内9回、平均1.9着、脚質は両型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃1回・捲7回・差2回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は北岡マリア120.0、元砂七夕美104.8で差は15.2。相手筆頭は元砂七夕美とした。\n・博士の軸は北岡マリア\n\n10. 小田原 8R 14:07発走\n判定: 買い S\n信頼区分: 合議本線\n指数差: 軸差 15.3 / 相手差 3.2\n予想: 4-7-1\n3連単候補: 4-7-1\n3連複候補: 1-4-7\n2車単候補: 4-7\n2車複候補: 4-7\nワイド候補: 4-7\n2枠単候補: 発売なし\n2枠複候補: 発売なし\n\n博士の見立て:\n\n数字は無口だが、時々こちらをじっと見る。今日のこの番組がそれである。\nまだ場が荒れきる前なら、素直な脚順を軽く扱わない。\n日高裕太は競走得点102.85、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。\n直近の決まり手記録は逃7回・捲2回・差1回。どの形で勝ち切っているかも指数へ入れた。\n鉄脚指数は日高裕太119.6、池田良104.3で差は15.3。相手筆頭は池田良とした。\n小田原は333m、みなし直線36.1m。過去集計では差が43.5%で最多、この傾向と脚質の噛み合わせまで見た。\n日高裕太は先に踏んで場を作れるタイプ。ここは脚の出しどころが合う。\n変なひねりは要らない。素直に見た者が、最後に少し笑う番組である。\n市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。\n\nバンクメモ:\n🚴小田原競輪場の特徴\n・333mバンク。\n・みなし直線は36.1m。\n・最大カントは35度34分12秒。\n・一周が短い短走路。仕掛けの遅れと位置取りの差が響きやすい。\n・過去6,092レースの決まり手: 差し43.5% / 捲り33.7% / 逃げ22.8%\n・博士の読み: 集計上は差が最多。日高裕太は逃タイプだけに、得意な形へ持ち込めるかが鍵になる。\n\n理由:\n\n・市場オッズの中心は4番。博士の軸と一致、上位3車の重なりは2車。\n・疑い深い吾輩でも、この並びには逆らいにくい。日高裕太中心。\n・日高裕太は競走得点102.85、直近10走は1着7回・3着内9回、平均1.6着、脚質は逃型。ここを軸評価の土台にした。\n・直近の決まり手記録は逃7回・捲2回・差1回。どの形で勝ち切っているかも指数へ入れた。\n・鉄脚指数は日高裕太119.6、池田良104.3で差は15.3。相手筆頭は池田良とした。\n・博士の軸は日高裕太\n\n【最後に】\n的中率はそのまま載せています。良い日も悪い日も数字を見て、予想精度を少しずつ上げていきます。\n\n#競輪 #競輪予想 #鉄脚博士 #本日の一押し #競輪好き #競輪データ #データ予想 #車券予想 #3連単予想 #2車単予想 #ワイド予想 #競輪場 #競輪ファン #今日の競輪 #KEIRIN"
+}
